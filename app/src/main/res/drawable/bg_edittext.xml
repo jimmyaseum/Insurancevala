@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- White foreground. -->
+    <item>
+        <shape>
+            <solid android:color="@android:color/transparent" />
+            <corners android:radius="@dimen/_30sdp" />
+
+            <stroke android:color="@color/colorTextHint"
+                android:width="@dimen/_1sdp"/>
+
+        </shape>
+    </item>
+</layer-list>

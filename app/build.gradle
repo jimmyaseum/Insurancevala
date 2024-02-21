@@ -1,0 +1,144 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-kapt'
+android {
+    compileSdkVersion 33
+    defaultConfig {
+        applicationId "com.app.insurancevala"
+        minSdkVersion 23
+        targetSdkVersion 33
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    signingConfigs {
+        release {
+            storeFile file("MitulThakkar.jks")
+            storePassword "MitulThakkar"
+            keyAlias "MitulThakkar"
+            keyPassword "MitulThakkar"
+        }
+    }
+
+    aaptOptions {
+        cruncherEnabled = false
+    }
+    buildTypes {
+        release {
+            debuggable false
+            shrinkResources false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            debuggable true
+            shrinkResources false
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+        }
+    }
+    dataBinding {
+        enabled = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+//    kapt {
+//        generateStubs = true
+//    }
+
+//    buildFeatures {
+//        viewBinding true
+//    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+    // android support libraries
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "androidx.appcompat:appcompat:$APP_COMPAT_VERSION"
+    implementation "androidx.core:core-ktx:$CORE_KTX_VERSION"
+    implementation "androidx.constraintlayout:constraintlayout:$CONSTRAINT_LAYOUT_VERSION"
+    implementation "androidx.legacy:legacy-support-v4:$LEGACY_SUPPORT_VERSION"
+    implementation "com.google.android.material:material:$MATERIAL_VERSION"
+
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+    implementation 'androidx.annotation:annotation:1.0.2'
+
+    // dependencies for local unit tests
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    testImplementation "junit:junit:$JUNIT_VERSION"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$ESPRESSO_VERSION"
+    androidTestImplementation "androidx.test:runner:$TEST_RUNNER_VERSION"
+
+    //SDP
+    implementation "com.intuit.sdp:sdp-android:$SDP_VERSION"
+
+    // Glide
+//    implementation "com.github.bumptech.glide:glide:$GLIDE_VERSION"
+//    annotationProcessor "com.github.bumptech.glide:compiler:$GLIDE_VERSION"
+//    implementation "jp.wasabeef:glide-transformations:$GLIDE_TRANSFORM_VERSION"
+
+    // parser
+    implementation "com.google.code.gson:gson:$GSON_VERSION"
+
+    // Retrofit
+    implementation "com.squareup.retrofit2:retrofit:$RETROFIT_VERSION"
+    implementation "com.squareup.retrofit2:converter-gson:$RETROFIT_VERSION"
+    implementation "com.squareup.okhttp3:logging-interceptor:$LOGGING_INTERCEPTOR_VERSION"
+
+    // lottie animation
+    implementation 'com.airbnb.android:lottie:3.5.0'
+
+    // bottom bar
+    implementation  'io.ak1:bubbletabbar:1.0.8'
+
+    // shimmer with recycleview
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+
+    // read more textview
+    implementation 'com.github.devendroid:ReadMoreOption:1.0.2'
+
+    // chart
+    implementation 'im.dacer:AndroidCharts:1.0.4'
+
+    //Permission
+    implementation "pub.devrel:easypermissions:3.0.0"
+
+    // file picker & Crop Image
+    implementation 'com.droidninja:filepicker:2.2.1'
+    implementation "androidx.palette:palette:1.0.0"
+    api "com.theartofdev.edmodo:android-image-cropper:2.8.0" // api
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1"
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9'
+
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    implementation 'com.github.bumptech.glide:glide:4.16.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
+
+    // SearchBar
+    implementation 'com.github.Ferfalk:SimpleSearchView:0.2.0'
+
+    // Chart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation 'io.github.farshidroohi:lineGraph:1.0.2'
+    implementation 'ir.mahozad.android:pie-chart:0.7.0'
+
+    // dialog
+    implementation 'com.github.chnouman:AwesomeDialog:1.0.5'
+
+}

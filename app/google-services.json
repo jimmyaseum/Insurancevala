@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "751572857580",
+    "project_id": "careerline-admin-ce2a6",
+    "storage_bucket": "careerline-admin-ce2a6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:751572857580:android:ccc42d0d5c174422772bc9",
+        "android_client_info": {
+          "package_name": "com.app.insurancevala"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "751572857580-558g49mpop9defirqp8g8b7olgmd8kn7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.insurancevala",
+            "certificate_hash": "8c66086f3e20d27f37511de2fc3b5c9bc459696f"
+          }
+        },
+        {
+          "client_id": "751572857580-pvj9m0oai756f86ih59pl15kcuu51jf6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNjy_kLWYYmsvkKOUNOQSYizgQqM5H6cI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "751572857580-pvj9m0oai756f86ih59pl15kcuu51jf6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

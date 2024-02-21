@@ -1,0 +1,46 @@
+<resources >
+    <string name="app_name">Mitul Thakkar</string>
+
+ <!--button-->
+    <string name="str_login">Login</string>
+    <string name="str_signup">Sign up</string>
+    <string name="str_reset_password">Reset password</string>
+    <string name="str_forgot_password">Forgot password?</string>
+    <string name="str_set_a_new_password">Set a new password</string>
+    <string name="str_save">Save</string>
+    <string name="str_okay">Okay</string>
+    <!--text-->
+    <string name="str_welcome_back">Hey, Welcome Back</string>
+    <string name="str_lets_get_started">Let\'s get Started</string>
+    <string name="str_donot_have_account">Don\'t have an account? </string>
+    <string name="str_already_have_account">Already have an account? </string>
+    <string name="str_forgot_your_password">Forgot your password?</string>
+    <string name="str_forgot_msg">Please, enter your email address below to receive your username and a new password.</string>
+    <string name="str_reset_title">Password reset email has been sent</string>
+    <string name="str_reset_msg">A password reset email has been sent to your e-mail address.</string>
+    <string name="str_set_new_password_title">Please, enter a new password below</string>
+    <string name="str_new_password_confirm_success">New password confirmed successful.</string>
+    <string name="str_new_password_confirm_success_msg">You have been successfully confirm your new password. Please, use your new password when logging in.</string>
+    <!-- hint -->
+    <string name="str_email">Email address</string>
+    <string name="dummy">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</string>
+    <string name="dummy2">Lorem Ipsum is simply dummy text of the printing and typesetting industry.</string>
+    <string name="dummy3">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</string>
+    <!-- Error -->
+    <string name="error_empty_email">Enter email address</string>
+    <string name="error_empty_username">Enter user name</string>
+    <string name="error_empty_usertype">Select User Type</string>
+    <string name="error_valid_email">Enter valid email address</string>
+    <string name="error_empty_password">Enter password</string>
+    <string name="error_empty_first_name">Enter first name</string>
+    <string name="error_empty_last_name">Enter last name</string>
+    <string name="error_empty_mobile_number">Enter mobile number</string>
+    <string name="error_valid_mobile_number">Enter valid mobile number</string>
+    <string name="error_valid_password">Enter password at least 6 characters</string>
+    <string name="error_empty_confirm_password">Enter confirm password</string>
+    <string name="error_mismatch_password">Password does not match</string>
+    <string name="msg_permission_storage">Application need permission to read photos or documents from device</string>
+    <string name="msg_permission_camera">Application need permission to access camera</string>
+    <string name="error_failed_to_connect">Failed to connect to server. Try again later.</string>
+
+</resources>

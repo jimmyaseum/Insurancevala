@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="colorPrimary">#000000</color>
+    <color name="colorOnPrimary">#FF0000</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorAccent">#FFFFFF</color>
+    <color name="colorGradish">#3B3A42</color>
+    <color name="colorTextHint">#91939F</color>
+
+    <color name="colorBlue">#0074bc</color>
+    <color name="colorRed">#FF0000</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorGray">#D3D3D3</color>
+    <color name="colorGray100">#E1E1E1</color>
+    <color name="colorGray200">#E5E5E5</color>
+    <color name="colorGray300">#C9C9C9</color>
+    <color name="colorGray400">#A9A6A6</color>
+    <color name="colorGray500">#686868</color>
+
+    <color name="button_primary">#3EA2D6</color>
+    <color name="shadow_primary">#b2d5ea</color>
+    <color name="button_gray">#FBF9F9</color>
+    <color name="shadow_gray">#eaeaea</color>
+    <color name="button_green">#36A68D</color>
+    <color name="shadow_green">#AEDBD1</color>
+    <color name="button_blue">#EAF5FC</color>
+    <color name="shadow_blue">#CCEEFF</color>
+    <color name="button_purple">#EDE5FE</color>
+    <color name="shadow_purple">#E1D2FF</color>
+    <color name="button_orange">#F8E6E6</color>
+    <color name="shadow_orange">#EFDFD5</color>
+
+    <color name="color1">#E88D89</color>
+    <color name="color2">#51C6C7</color>
+    <color name="color3">#6D82CE</color>
+    <color name="color4">#E9B074</color>
+    <color name="color5">#E5775A</color>
+    <color name="color6">#35937B</color>
+    <color name="color7">#0065A2</color>
+    <color name="color8">#8AC0DE</color>
+    <color name="color9">#BC85A3</color>
+    <color name="color10">#AA7B6F</color>
+    <color name="color11">#ac84fa</color>
+
+</resources>

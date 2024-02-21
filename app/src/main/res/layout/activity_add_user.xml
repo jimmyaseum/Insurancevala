@@ -1,0 +1,578 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout">
+
+    <RelativeLayout
+        android:id="@+id/llTop"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:padding="@dimen/_5sdp"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/imgBack"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/colorWhite"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/txtHearderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/poppins_regular"
+            android:gravity="center"
+            android:text="Add User"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp" />
+
+        <TextView
+            android:id="@+id/txtSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            android:gravity="center"
+            android:text="Save"
+            android:textColor="@color/button_primary"
+            android:textSize="@dimen/_12sdp"
+            android:layout_alignParentRight="true"
+            android:paddingRight="@dimen/_5sdp"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llTop">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/_20sdp"
+            android:layout_margin="@dimen/_10sdp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/LLFirstName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_5sdp">
+
+                     <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_username"
+                        app:tint="@color/colorGray500"/>
+
+                     <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="@dimen/_10sdp">
+
+                        <TextView
+                            android:id="@+id/txtFirstName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="First Name"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtFirstName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLLastName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_username"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="@dimen/_10sdp">
+
+                        <TextView
+                            android:id="@+id/txtLastName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Last Name"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtLastName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLMobileNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_call"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="@dimen/_10sdp">
+
+                        <TextView
+                            android:id="@+id/txtMobileNo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Mobile No"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtMobileNo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="number"
+                                android:maxEms="12"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLAlternateMobileNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_call"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="@dimen/_10sdp">
+
+                        <TextView
+                            android:id="@+id/txtAlternateMobileNo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Alternate Mobile No"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtAlternateMobileNo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="number"
+                                android:maxEms="12"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLEmailAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_email"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="@dimen/_10sdp">
+
+                        <TextView
+                            android:id="@+id/txtEmailAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Email Address"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtEmailAddress"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLAlternateEmailAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_email"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="@dimen/_10sdp">
+
+                        <TextView
+                            android:id="@+id/txtAlternateEmailAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Alternate Email Address"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtAlternateEmailAddress"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLUserType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_username"
+                        app:tint="@color/colorGray500"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="@dimen/_10sdp">
+
+                        <TextView
+                            android:id="@+id/txtUserType"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="User Type"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtUserType"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:clickable="true"
+                                android:editable="false"
+                                android:focusable="false"
+                                android:drawableRight="@drawable/ic_down"
+                                android:drawableTint="@color/colorGray500" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_lock"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="@dimen/_10sdp">
+
+                        <TextView
+                            android:id="@+id/txtPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Password"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtPassword"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorTextHint"
+                                android:textSize="@dimen/_12sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="textPassword" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLConfirmPassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_lock"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginLeft="@dimen/_10sdp">
+
+                        <TextView
+                            android:id="@+id/txtConfirmPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Confirm Password"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtConfirmPassword"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorTextHint"
+                                android:textSize="@dimen/_12sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionDone"
+                                android:inputType="textPassword"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <CheckBox
+                    android:id="@+id/cbshowpassword"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:text="Show Password"
+                    android:textSize="@dimen/_10sdp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:buttonTint="@color/colorBlack"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginLeft="@dimen/_10sdp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="@dimen/_5sdp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/imgProfilePic"
+                        android:layout_width="@dimen/_80sdp"
+                        android:layout_height="@dimen/_80sdp"
+                        app:civ_border_color="@color/colorBlack"
+                        app:civ_border_width="1dp"
+                        android:src="@drawable/ic_camera" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</RelativeLayout>

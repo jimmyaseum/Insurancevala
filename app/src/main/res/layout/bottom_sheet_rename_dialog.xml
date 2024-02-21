@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/layout">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_top_corner"
+        android:backgroundTint="@color/colorWhite"
+        android:paddingBottom="@dimen/_50sdp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/_12sdp"
+            android:fontFamily="@font/poppins_bold"
+            android:text="Want to change file name?"
+            android:gravity="center"
+            android:layout_margin="@dimen/_10sdp"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/img"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="@dimen/_70sdp"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/_5sdp"/>
+
+        <EditText
+            android:id="@+id/edtName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/_12sdp"
+            android:fontFamily="@font/poppins_regular"
+            android:background="@drawable/bg_edittext"
+            android:inputType="textCapWords"
+            android:padding="@dimen/_5sdp"
+            android:focusable="true"
+            android:selectAllOnFocus="true"
+            android:layout_margin="@dimen/_10sdp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp">
+
+            <TextView
+                android:id="@+id/txtButtonCancel"
+                style="@style/ButtonText"
+                android:text="Cancel"
+                android:textColor="@color/colorBlack"
+                android:background="@drawable/bg_edittext"
+                android:backgroundTint="@color/colorBlack"
+                android:layout_margin="@dimen/_2sdp"/>
+
+            <TextView
+                android:id="@+id/txtButtonSubmit"
+                style="@style/ButtonText"
+                android:text="Submit"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_card_gray"
+                android:layout_margin="@dimen/_2sdp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

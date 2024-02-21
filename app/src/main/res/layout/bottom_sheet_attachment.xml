@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardCornerRadius="@dimen/_10sdp"
+    android:elevation="@dimen/_5sdp"
+    app:contentPaddingLeft="@dimen/_5sdp"
+    app:contentPaddingRight="@dimen/_5sdp"
+    app:contentPaddingTop="@dimen/_15sdp"
+    app:contentPaddingBottom="@dimen/_15sdp"
+    android:layout_marginBottom="@dimen/_5sdp"
+    android:layout_marginLeft="@dimen/_5sdp"
+    android:layout_marginRight="@dimen/_5sdp"
+    android:id="@+id/layout">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/Select_Image"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:background="@drawable/bg2"
+                    android:src="@drawable/ic_gallery"
+                    app:tint="@color/colorWhite"
+                    android:padding="@dimen/_10sdp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gallery"
+                    android:textSize="@dimen/_12sdp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/_5sdp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/Select_Doc"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:background="@drawable/bg3"
+                    android:src="@drawable/ic_choose_file"
+                    app:tint="@color/colorWhite"
+                    android:padding="@dimen/_10sdp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Document"
+                    android:textSize="@dimen/_12sdp"
+                    android:fontFamily="@font/poppins_medium"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/_5sdp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/Select_WordDoc"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="@dimen/_40sdp"
+                    android:layout_height="@dimen/_40sdp"
+                    android:background="@drawable/bg4"
+                    android:src="@drawable/file"
+                    app:tint="@color/colorWhite"
+                    android:padding="@dimen/_10sdp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Ms Word Files"
+                    android:gravity="center"
+                    android:layout_marginTop="@dimen/_5sdp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+

@@ -1,0 +1,32 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/bottom_home"
+        android:icon="@drawable/ic_home"
+        android:title="Home"
+        android:checked="true"
+        android:color="@color/color1"/>
+
+    <item
+        android:id="@+id/bottom_lead"
+        android:icon="@drawable/ic_lead"
+        android:title="Client"
+        android:color="@color/color3"/>
+
+    <item
+        android:id="@+id/bottom_nb"
+        android:icon="@drawable/ic_nb"
+        android:title="NB Inquiry"
+        android:color="@color/color6"/>
+
+<!--    <item
+        android:id="@+id/bottom_quote"
+        android:icon="@drawable/ic_quote"
+        android:title="Quotations"
+        android:color="@color/color9" />-->
+
+    <item
+        android:id="@+id/bottom_more"
+        android:icon="@drawable/ic_more"
+        android:title="More"
+        android:color="@color/logger"/>
+</menu>

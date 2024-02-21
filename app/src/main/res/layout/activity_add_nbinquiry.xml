@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout">
+
+    <RelativeLayout
+        android:id="@+id/llTop"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:padding="@dimen/_5sdp"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/imgBack"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/colorWhite"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:id="@+id/txtHearderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/poppins_regular"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp" />
+
+        <TextView
+            android:id="@+id/txtSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            android:gravity="center"
+            android:text="Save"
+            android:textColor="@color/button_primary"
+            android:textSize="@dimen/_12sdp"
+            android:layout_alignParentRight="true"
+            android:paddingRight="@dimen/_5sdp"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="@dimen/_20sdp"
+        android:layout_margin="@dimen/_5sdp"
+        android:layout_below="@+id/llTop">
+
+        <LinearLayout
+            android:id="@+id/LLClient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="@dimen/_5sdp">
+
+            <ImageView
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:src="@drawable/ic_initial"
+                app:tint="@color/colorGray500"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="@dimen/_5sdp">
+
+                <TextView
+                    android:id="@+id/txtClient"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorGray500"
+                    android:text="Client"
+                    android:textSize="@dimen/_11sdp"
+                    android:fontFamily="@font/poppins_regular"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <EditText
+                        android:id="@+id/edtClient"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorBlack"
+                        android:textColorHint="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:background="@null"
+                        android:singleLine="true"
+                        android:clickable="true"
+                        android:editable="false"
+                        android:focusable="false"
+                        android:drawableRight="@drawable/ic_down"
+                        android:drawableTint="@color/colorGray500" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_1sdp"
+                        android:background="@color/colorGradish"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/LLClientType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="@dimen/_5sdp">
+
+            <ImageView
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:src="@drawable/ic_lead"
+                app:tint="@color/colorGray500"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="@dimen/_5sdp">
+
+                <TextView
+                    android:id="@+id/txtClientType"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorGray500"
+                    android:text="Client Type"
+                    android:textSize="@dimen/_11sdp"
+                    android:fontFamily="@font/poppins_regular"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <EditText
+                        android:id="@+id/edtClientType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorBlack"
+                        android:textColorHint="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:background="@color/colorGray100"
+                        android:clickable="false"
+                        android:enabled="false"
+                        android:focusable="false"
+                        android:editable="false"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_1sdp"
+                        android:background="@color/colorGradish"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/LLAllotmentTo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="@dimen/_5sdp">
+
+            <ImageView
+                android:layout_width="@dimen/_15sdp"
+                android:layout_height="@dimen/_15sdp"
+                android:src="@drawable/ic_initial"
+                app:tint="@color/colorGray500"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="@dimen/_5sdp">
+
+                <TextView
+                    android:id="@+id/txtAllotmentTo"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorGray500"
+                    android:text="Allotment To"
+                    android:textSize="@dimen/_11sdp"
+                    android:fontFamily="@font/poppins_regular"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <EditText
+                        android:id="@+id/edtAllotmentTo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorBlack"
+                        android:textColorHint="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:background="@null"
+                        android:singleLine="true"
+                        android:clickable="true"
+                        android:editable="false"
+                        android:focusable="false"
+                        android:drawableRight="@drawable/ic_down"
+                        android:drawableTint="@color/colorGray500" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_1sdp"
+                        android:background="@color/colorGradish"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <TextView
+            android:id="@+id/txtLeadTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/poppins_semibold"
+            android:gravity="center"
+            android:text="Inquiry"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/_12sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginLeft="@dimen/_10sdp"/>
+        <LinearLayout
+            android:id="@+id/LLInquiry"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="@dimen/_5sdp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvInquiry"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:listitem="@layout/adapter_add_more_inquiry"/>
+        </LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/layout">
+
+    <RelativeLayout
+        android:id="@+id/llTop"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:padding="@dimen/_5sdp"
+        android:background="@color/colorPrimary">
+
+        <TextView
+            android:id="@+id/txtHearderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Quotations"
+            android:textColor="@color/white"
+            android:fontFamily="@font/poppins_regular"
+            android:gravity="center"
+            android:textSize="@dimen/_12sdp"
+            android:layout_centerInParent="true"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/txtHeader"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="@dimen/_20sdp"
+        android:fontFamily="@font/poppins_medium"
+        android:textColor="@color/color9"
+        android:text="Quotation"
+        android:layout_centerInParent="true"/>
+
+</RelativeLayout>

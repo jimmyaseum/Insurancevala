@@ -1,0 +1,1460 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout">
+
+    <RelativeLayout
+        android:id="@+id/llTop"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:orientation="horizontal"
+        android:layout_alignParentTop="true"
+        android:padding="@dimen/_5sdp"
+        android:background="@color/colorPrimary">
+
+        <ImageView
+            android:id="@+id/imgBack"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/colorWhite"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:id="@+id/txtHearderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/poppins_regular"
+            android:gravity="center"
+            android:text="Client"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp" />
+
+        <TextView
+            android:id="@+id/txtSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_semibold"
+            android:gravity="center"
+            android:text="Save"
+            android:textColor="@color/button_primary"
+            android:textSize="@dimen/_12sdp"
+            android:layout_alignParentRight="true"
+            android:paddingRight="@dimen/_5sdp"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llTop"
+        android:layout_above="@+id/llBottom">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/_20sdp"
+            android:layout_margin="@dimen/_5sdp">
+
+            <LinearLayout
+                android:id="@+id/LLType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="right|center_vertical"
+                android:padding="@dimen/_5sdp">
+
+                <RadioGroup
+                    android:id="@+id/rgType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:id="@+id/rbForExisting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/_10sdp"
+                        android:text="Existing Client"
+                        android:checked="true"
+                        android:textSize="@dimen/_10sdp"
+                        android:textColor="@color/colorBlack"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:buttonTint="@color/colorBlack" />
+                    <RadioButton
+                        android:id="@+id/rbForProspect"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/_10sdp"
+                        android:text="Prospect"
+                        android:textSize="@dimen/_10sdp"
+                        android:textColor="@color/colorBlack"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:buttonTint="@color/colorBlack" />
+
+                </RadioGroup>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/LLInitial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="@dimen/_5sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:src="@drawable/ic_initial"
+                    app:tint="@color/colorGray500"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="@dimen/_5sdp">
+
+                    <TextView
+                        android:id="@+id/txtInitial"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorGray500"
+                        android:text="Initial"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/poppins_regular"/>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="2"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <EditText
+                            android:id="@+id/edtInitial"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorBlack"
+                            android:textColorHint="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:background="@null"
+                            android:singleLine="true"
+                            android:clickable="true"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:drawableRight="@drawable/ic_down"
+                            android:drawableTint="@color/colorGray500" />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_1sdp"
+                            android:background="@color/colorGradish"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LLFirstName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="@dimen/_5sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:src="@drawable/ic_username"
+                    app:tint="@color/colorGray500"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="@dimen/_5sdp">
+
+                    <TextView
+                        android:id="@+id/txtFirstName"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorGray500"
+                        android:text="First Name"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/poppins_regular"/>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="2"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <EditText
+                            android:id="@+id/edtFirstName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorBlack"
+                            android:textColorHint="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:background="@null"
+                            android:singleLine="true"
+                            android:imeOptions="actionNext"
+                            android:inputType="textCapWords" />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_1sdp"
+                            android:background="@color/colorGradish"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LLLastName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="@dimen/_5sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:src="@drawable/ic_username"
+                    app:tint="@color/colorGray500"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="@dimen/_5sdp">
+
+                    <TextView
+                        android:id="@+id/txtLastName"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorGray500"
+                        android:text="Last Name"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/poppins_regular"/>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="2"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <EditText
+                            android:id="@+id/edtLastName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorBlack"
+                            android:textColorHint="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:background="@null"
+                            android:singleLine="true"
+                            android:imeOptions="actionNext"
+                            android:inputType="textCapWords" />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_1sdp"
+                            android:background="@color/colorGradish"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LLMobileNo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="@dimen/_5sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:src="@drawable/ic_call"
+                    app:tint="@color/colorGray500"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="@dimen/_5sdp">
+
+                    <TextView
+                        android:id="@+id/txtMobileNo"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorGray500"
+                        android:text="Mobile No"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/poppins_regular"/>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="2"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <EditText
+                            android:id="@+id/edtMobileNo"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorBlack"
+                            android:textColorHint="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:background="@null"
+                            android:singleLine="true"
+                            android:imeOptions="actionNext"
+                            android:inputType="number"
+                            android:maxEms="12"/>
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_1sdp"
+                            android:background="@color/colorGradish"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LLEmailAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="@dimen/_5sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:src="@drawable/ic_email"
+                    app:tint="@color/colorGray500"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="@dimen/_5sdp">
+
+                    <TextView
+                        android:id="@+id/txtEmailAddress"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorGray500"
+                        android:text="Email"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/poppins_regular"/>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="2"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <EditText
+                            android:id="@+id/edtEmailAddress"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorBlack"
+                            android:textColorHint="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:background="@null"
+                            android:singleLine="true"
+                            android:imeOptions="actionNext"
+                            android:inputType="textCapWords" />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_1sdp"
+                            android:background="@color/colorGradish"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LLGroupCode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="@dimen/_5sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_15sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:src="@drawable/ic_title"
+                    app:tint="@color/colorGray500"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginLeft="@dimen/_5sdp">
+
+                    <TextView
+                        android:id="@+id/txtGroupCode"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorGray500"
+                        android:text="Group Code"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/poppins_regular"/>
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="2"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <EditText
+                            android:id="@+id/edtGroupCode"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorBlack"
+                            android:textColorHint="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:background="@null"
+                            android:singleLine="true"
+                            android:imeOptions="actionNext"
+                            android:inputType="textCapWords" />
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/_1sdp"
+                            android:background="@color/colorGradish"/>
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llMoreFields"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:animateLayoutChanges="true">
+
+                <TextView
+                    android:id="@+id/txtLeadTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:gravity="center"
+                    android:text="Lead Info"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_10sdp"/>
+
+                <LinearLayout
+                    android:id="@+id/LLLeadOwner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_initial"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtLeadOwner"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Lead Owner"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtLeadOwner"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:clickable="true"
+                                android:editable="false"
+                                android:focusable="false"
+                                android:drawableRight="@drawable/ic_down"
+                                android:drawableTint="@color/colorGray500" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLCompanyName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_company"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtCompanyName"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Company "
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtCompanyName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_title"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtTitle"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Title"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtTitle"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLPhoneNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_phone"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtPhoneNo"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Phone No"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtPhoneNo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="number"
+                                android:maxEms="12"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLWebsite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_website"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtWebsite"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Website"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtWebsite"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="text" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLLeadSource"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_initial"
+                        app:tint="@color/colorGray500"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtLeadSource"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Source"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtLeadSource"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:clickable="true"
+                                android:editable="false"
+                                android:focusable="false"
+                                android:drawableRight="@drawable/ic_down"
+                                android:drawableTint="@color/colorGray500"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLReferenceName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_username"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtReferenceName"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Ref. Name"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtReferenceName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLReferenceMobileNo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_call"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtReferenceMobileNo"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Ref. Mobile No"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtReferenceMobileNo"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="number"
+                                android:maxLength="12"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLIndustry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_industry"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtIndustry"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Industry"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtIndustry"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLNoOfEmp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_email"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtNoOfEmp"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="No Of Emp"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtNoOfEmp"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="number" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLAnnualRevenue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_email"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtAnnualRevenue"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Annual Revenue"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtAnnualRevenue"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="numberDecimal" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txtAddressTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:gravity="center"
+                    android:text="Address Info"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/_12sdp"
+                    android:layout_marginTop="@dimen/_10sdp"/>
+
+                <LinearLayout
+                    android:id="@+id/LLAddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_industry"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtAddress"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Address"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtAddress"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLCity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_username"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtCity"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="City"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtCity"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:clickable="true"
+                                android:editable="false"
+                                android:focusable="false"
+                                android:drawableRight="@drawable/ic_down"
+                                android:drawableTint="@color/colorGray500"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLState"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_username"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtState"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="State"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtState"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:clickable="true"
+                                android:editable="false"
+                                android:focusable="false"
+                                android:drawableRight="@drawable/ic_down"
+                                android:drawableTint="@color/colorGray500"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLCountry"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_call"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtCountry"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Country"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtCountry"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:clickable="true"
+                                android:editable="false"
+                                android:focusable="false"
+                                android:drawableRight="@drawable/ic_down"
+                                android:drawableTint="@color/colorGray500"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLZipcode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_email"
+                        app:tint="@color/colorGray500"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtZipcode"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Zipcode"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtZipcode"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:imeOptions="actionNext"
+                                android:inputType="number" />
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/LLNotes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/_5sdp">
+
+                    <ImageView
+                        android:layout_width="@dimen/_15sdp"
+                        android:layout_height="@dimen/_15sdp"
+                        android:src="@drawable/ic_description"
+                        app:tint="@color/colorGray500"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="@dimen/_5sdp">
+
+                        <TextView
+                            android:id="@+id/txtNotes"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/colorGray500"
+                            android:text="Notes"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:layout_gravity="center_vertical"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtNotes"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:minLines="2"
+                                android:inputType="textMultiLine|textCapWords"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/llBottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="@dimen/_10sdp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_1sdp"
+            android:background="@color/button_primary"
+            android:layout_marginBottom="@dimen/_5sdp"/>
+
+        <TextView
+            android:id="@+id/txtShowAllFiels"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/poppins_medium"
+            android:gravity="center"
+            android:text="Show all fields"
+            android:textColor="@color/colorBlack"
+            android:textSize="@dimen/_12sdp"
+            android:layout_gravity="center"
+            android:drawableTint="@color/colorBlack"
+            android:drawablePadding="@dimen/_10sdp"
+            android:drawableRight="@drawable/ic_down"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

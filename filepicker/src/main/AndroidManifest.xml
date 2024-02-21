@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="droidninja.filepicker">
+
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-feature android:name="android.hardware.camera"
+        android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <queries>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
+    </queries>
+    <application
+        android:allowBackup="false"
+        android:supportsRtl="true"
+        android:requestLegacyExternalStorage="true">
+        <activity
+            android:name=".FilePickerActivity"
+            android:configChanges="orientation|screenSize"/>
+        <activity android:name=".MediaDetailsActivity"
+            android:configChanges="orientation|screenSize"/>
+
+        <provider
+            android:name=".utils.FilePickerProvider"
+            android:authorities="${applicationId}.droidninja.filepicker.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
+    </application>
+
+</manifest>

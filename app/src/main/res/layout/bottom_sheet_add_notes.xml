@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/_10sdp"
+    android:background="@color/colorWhite"
+    android:id="@+id/layout">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:fontFamily="@font/poppins_semibold"
+                android:gravity="center"
+                android:paddingTop="@dimen/_2sdp"
+                android:text="Add Notes"
+                android:textColor="@color/button_primary"
+                android:textSize="@dimen/_12sdp" />
+            <ImageView
+                android:id="@+id/imgClose"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_20sdp"
+                android:src="@drawable/ic_add"
+                android:rotation="45"
+                android:layout_alignParentRight="true"
+                app:tint="@color/button_primary"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/_10sdp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Title"
+                android:textSize="@dimen/_12sdp"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/colorBlack"/>
+
+            <EditText
+                android:id="@+id/edtTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorBlack"
+                android:hint="Type Title"
+                android:textColorHint="@color/colorGradish"
+                android:textSize="@dimen/_10sdp"
+                android:fontFamily="@font/poppins_regular"
+                android:background="@null"
+                android:singleLine="true"
+                android:imeOptions="actionNext"
+                android:inputType="textCapWords" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/colorGradish"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/_15sdp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textSize="@dimen/_12sdp"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/colorBlack"/>
+
+            <EditText
+                android:id="@+id/edtDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorBlack"
+                android:hint="Type Description"
+                android:textColorHint="@color/colorGradish"
+                android:textSize="@dimen/_10sdp"
+                android:fontFamily="@font/poppins_regular"
+                android:background="@null"
+                android:imeOptions="actionNext"
+                android:inputType="textMultiLine"
+                android:minLines="6"
+                android:gravity="left"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/colorGradish"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LLAttachments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/_10sdp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Attachments"
+                android:textSize="@dimen/_12sdp"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="@color/colorBlack"/>
+
+            <EditText
+                android:id="@+id/edtAttachments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorBlack"
+                android:textColorHint="@color/colorGradish"
+                android:textSize="@dimen/_10sdp"
+                android:fontFamily="@font/poppins_regular"
+                android:background="@null"
+                android:singleLine="true"
+                android:clickable="true"
+                android:editable="false"
+                android:focusable="false"
+                android:text="Choose document"
+                android:drawableRight="@drawable/ic_down"
+                android:drawableTint="@color/colorBlack" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/colorGradish"/>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvAttachment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:overScrollMode="never" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_10sdp">
+
+            <TextView
+                android:id="@+id/txtButtonSubmit"
+                style="@style/ButtonText"
+                android:text="Submit"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_card_gray" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>
