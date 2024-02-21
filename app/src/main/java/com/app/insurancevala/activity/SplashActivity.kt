@@ -36,6 +36,7 @@ import com.app.insurancevala.model.api.AppVersion
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_splash.layout
 
+
 class SplashActivity : AppCompatActivity() {
 
     var currentVersion = ""
@@ -44,7 +45,7 @@ class SplashActivity : AppCompatActivity() {
     var sharedPreference: SharedPreference? = null
     var dialog: Dialog? = null
 
-        // commit by jimmy
+        // commit by jimmy jatin patel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
