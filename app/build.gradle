@@ -13,14 +13,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    signingConfigs {
-        release {
-            storeFile file("MitulThakkar.jks")
-            storePassword "MitulThakkar"
-            keyAlias "MitulThakkar"
-            keyPassword "MitulThakkar"
-        }
-    }
+
 
     aaptOptions {
         cruncherEnabled = false

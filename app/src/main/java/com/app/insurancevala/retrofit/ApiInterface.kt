@@ -1,13 +1,11 @@
 package com.app.insurancevala.retrofit
 
-import com.app.insurancevala.model.api.AppVersion
 import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.pojo.DocumentsModel
 import com.app.insurancevala.model.pojo.DocumentsResponse
 import com.app.insurancevala.model.response.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.Multipart
 import retrofit2.http.POST
@@ -18,14 +16,12 @@ import retrofit2.http.Part
  */
 interface ApiInterface {
 
-    @POST("Setting/VersionApi")
-    fun getAppVersion(@Body body: RequestBody?): Call<AppVersion>
-
     // AI005 Login
     @POST("Master/ManageUserLogin")
     fun login(@Body body: RequestBody?): retrofit2.Call<LoginResponse>
 
     // Dropdown
+
     @POST("Master/ManageLeadType")
     fun ManageLeadType(@Body body: RequestBody?): retrofit2.Call<LeadTypeResponse>
 

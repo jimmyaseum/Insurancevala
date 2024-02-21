@@ -22,8 +22,12 @@
             android:src="@drawable/ic_back"
             app:tint="@color/colorWhite"
             android:layout_alignParentLeft="true"
+<<<<<<< HEAD
             android:layout_centerVertical="true"
             android:visibility="gone"/>
+=======
+            android:layout_centerVertical="true" />
+>>>>>>> f4d4d88 (Commited By shubham 21-02-2024)
 
         <TextView
             android:id="@+id/txtHearderText"

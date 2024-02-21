@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: ir.mahozad.android:pie-chart:0.7.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a71c17584f5e7804633f36b1dfab9b2a/jetified-pie-chart-0.7.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a71c17584f5e7804633f36b1dfab9b2a/jetified-pie-chart-0.7.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a71c17584f5e7804633f36b1dfab9b2a/jetified-pie-chart-0.7.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/ir.mahozad.android/pie-chart/0.7.0/c21dcefe8668bfb9b40947a1519dc409108b9c7e/pie-chart-0.7.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/ir.mahozad.android/pie-chart/0.7.0/9c66d660ee9bfa12bb4729da68cd6e4e76392631/pie-chart-0.7.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

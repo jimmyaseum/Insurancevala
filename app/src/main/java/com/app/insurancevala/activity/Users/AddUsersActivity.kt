@@ -26,6 +26,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.FilePickerBuilder
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
+import com.app.insurancevala.activity.DashBoard.HomeActivity
+import com.app.insurancevala.activity.Login.LoginActivity
 import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetUserTypeListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.UserImageResponse
@@ -70,20 +72,20 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
 
-class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions.PermissionCallbacks {
+class AddUsersActivity : BaseActivity(), View.OnClickListener, EasyPermissions.PermissionCallbacks {
 
     var sharedPreference: SharedPreference? = null
     var state: String? = null
     var UserGUID: String? = null
     var IsFrom: String? = null
 
-    var arrayListUsertype : ArrayList<UserTypeModel>? = ArrayList()
-    var mUsertype : String = ""
-    var mUsertypeID : Int = 0
+    var arrayListUsertype: ArrayList<UserTypeModel>? = ArrayList()
+    var mUsertype: String = ""
+    var mUsertypeID: Int = 0
 
     val RC_FILE_PICKER_PERM = 900
     var ImagePaths = ArrayList<String>()
-    var imageURI : Uri? = null
+    var imageURI: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,6 +94,7 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
         getIntentData()
         initializeView()
     }
+
     private fun getIntentData() {
         state = intent.getStringExtra(AppConstant.STATE)
         UserGUID = intent.getStringExtra("UserGUID")
@@ -99,11 +102,18 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
 
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent()
+        setResult(RESULT_CANCELED, intent)
+        finish()
+    }
+
     override fun initializeView() {
-        if(state.equals(AppConstant.S_ADD)) {
+        if (state.equals(AppConstant.S_ADD)) {
             txtHearderText.text = "Add User"
             setMasterData()
-        } else if(state.equals(AppConstant.S_EDIT)) {
+        } else if (state.equals(AppConstant.S_EDIT)) {
             txtHearderText.text = "Update User"
 
             LLPassword.gone()
@@ -118,6 +128,7 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
         }
         SetInitListner()
     }
+
     private fun setMasterData() {
         if (isOnline(this)) {
             callManageUserType(0)
@@ -125,6 +136,7 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
             internetErrordialog(this@AddUsersActivity)
         }
     }
+
     private fun SetInitListner() {
         imgBack.setOnClickListener(this)
         cbshowpassword.setOnClickListener(this)
@@ -133,15 +145,17 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
         edtUserType.setOnClickListener(this)
         txtSave.setOnClickListener(this)
     }
+
     override fun onClick(v: View?) {
         hideKeyboard(this, v)
         when (v?.id) {
             R.id.imgBack -> {
                 preventTwoClick(v)
-                finish()
+                onBackPressed()
             }
+
             R.id.cbshowpassword -> {
-                if(cbshowpassword.isChecked) {
+                if (cbshowpassword.isChecked) {
                     edtPassword.setTransformationMethod(null)
                     edtConfirmPassword.setTransformationMethod(null)
                 } else {
@@ -149,6 +163,7 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
                     edtConfirmPassword.setTransformationMethod(PasswordTransformationMethod())
                 }
             }
+
             R.id.edtUserType -> {
                 preventTwoClick(v)
                 if (arrayListUsertype.isNullOrEmpty()) {
@@ -157,34 +172,40 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
                     selectUserTypeDialog()
                 }
             }
+
             R.id.imgProfilePic -> {
                 preventTwoClick(v)
                 showAttachmentBottomSheetDialog()
             }
+
             R.id.txtSave -> {
                 preventTwoClick(v)
                 validation()
             }
         }
     }
+
     private fun callManageUserType(mode: Int) {
-        if(mode == 1) {
+        if (mode == 1) {
             showProgress()
         }
         var jsonObject = JSONObject()
-        jsonObject.put("OperationType",AppConstant.GETALLACTIVEWITHFILTER)
+        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
         val call = ApiUtils.apiInterface.ManageUserType(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<UserTypeResponse> {
-            override fun onResponse(call: Call<UserTypeResponse>, response: Response<UserTypeResponse>) {
+            override fun onResponse(
+                call: Call<UserTypeResponse>,
+                response: Response<UserTypeResponse>
+            ) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         arrayListUsertype = response.body()?.Data!!
 
-                        if(arrayListUsertype!!.size > 0) {
-                            for(i in 0 until arrayListUsertype!!.size) {
-                                if(state.equals(AppConstant.S_EDIT)) {
-                                    if(arrayListUsertype!![i].ID == mUsertypeID) {
+                        if (arrayListUsertype!!.size > 0) {
+                            for (i in 0 until arrayListUsertype!!.size) {
+                                if (state.equals(AppConstant.S_EDIT)) {
+                                    if (arrayListUsertype!![i].ID == mUsertypeID) {
                                         arrayListUsertype!![i].IsSelected = true
                                         mUsertypeID = arrayListUsertype!![i].ID!!
                                         mUsertype = arrayListUsertype!![i].UserType!!
@@ -199,18 +220,27 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
                             selectUserTypeDialog()
                         }
                     } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
 
             override fun onFailure(call: Call<UserTypeResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         })
 
     }
+
     private fun selectUserTypeDialog() {
         var dialogSelectUserType = Dialog(this)
         dialogSelectUserType.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -225,12 +255,17 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
         dialogSelectUserType.setCancelable(true)
         dialogSelectUserType.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectUserType.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectUserType.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectUserType.window!!.setGravity(Gravity.CENTER)
 
-        val rvDialogCustomer = dialogSelectUserType.findViewById(R.id.rvDialogCustomer) as RecyclerView
-        val edtSearchCustomer = dialogSelectUserType.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectUserType.findViewById(R.id.txtid) as TextView
+        val rvDialogCustomer =
+            dialogSelectUserType.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectUserType.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectUserType.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectUserType.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -241,7 +276,7 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
 
         val itemAdapter = BottomSheetUserTypeListAdapter(this, arrayListUsertype!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                 itemAdapter.updateItem(pos)
                 mUsertype = arrayListUsertype!![pos].UserType!!
@@ -253,10 +288,9 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListUsertype!!.size > 6) {
+        if (arrayListUsertype!!.size > 6) {
             edtSearchCustomer.visible()
-        }
-        else {
+        } else {
             edtSearchCustomer.gone()
         }
 
@@ -277,7 +311,8 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
                         }
                     }
 
-                    val itemAdapter = BottomSheetUserTypeListAdapter(this@AddUsersActivity, arrItemsFinal1)
+                    val itemAdapter =
+                        BottomSheetUserTypeListAdapter(this@AddUsersActivity, arrItemsFinal1)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
@@ -290,7 +325,8 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter = BottomSheetUserTypeListAdapter(this@AddUsersActivity, arrayListUsertype!!)
+                    val itemAdapter =
+                        BottomSheetUserTypeListAdapter(this@AddUsersActivity, arrayListUsertype!!)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
@@ -327,34 +363,34 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
 
         if (edtFirstName.text.toString().trim().isEmpty()) {
             edtFirstName.setError(getString(R.string.error_empty_first_name), errortint(this))
-            isvalidate =  false
+            isvalidate = false
         }
         if (edtLastName.text.toString().trim().isEmpty()) {
             edtLastName.setError(getString(R.string.error_empty_last_name), errortint(this))
-            isvalidate =  false
+            isvalidate = false
         }
         if (edtMobileNo.text.toString().trim().isEmpty()) {
             edtMobileNo.setError(getString(R.string.error_empty_mobile_number), errortint(this))
-            isvalidate =  false
+            isvalidate = false
         }
         if (edtMobileNo.text.toString().trim().length < 10) {
             edtMobileNo.setError(getString(R.string.error_valid_mobile_number), errortint(this))
-            isvalidate =  false
+            isvalidate = false
         }
         if (edtEmailAddress.text.toString().trim().isEmpty()) {
             edtEmailAddress.setError(getString(R.string.error_empty_email), errortint(this))
-            isvalidate =  false
+            isvalidate = false
         }
         if (!edtEmailAddress.text.toString().trim().isValidEmail()) {
             edtEmailAddress.setError(getString(R.string.error_valid_email), errortint(this))
-            isvalidate =  false
+            isvalidate = false
         }
         if (edtUserType.text.toString().trim().isEmpty()) {
             edtUserType.setError(getString(R.string.error_empty_usertype), errortint(this))
-            isvalidate =  false
+            isvalidate = false
         }
 
-        if(state.equals(AppConstant.S_ADD)) {
+        if (state.equals(AppConstant.S_ADD)) {
             if (edtPassword.text.toString().trim().isEmpty()) {
                 edtPassword.setError("Enter Password", errortint(this))
                 isvalidate = false
@@ -412,10 +448,10 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
         jsonObject.put("UserTypeID", mUsertypeID)
         jsonObject.put("IsActive", true)
 
-        if(state.equals(AppConstant.S_ADD)) {
+        if (state.equals(AppConstant.S_ADD)) {
             jsonObject.put("Password", edtPassword.text.toString().trim())
             jsonObject.put("OperationType", AppConstant.INSERT)
-        } else if(state.equals(AppConstant.S_EDIT)) {
+        } else if (state.equals(AppConstant.S_EDIT)) {
             jsonObject.put("UserGUID", UserGUID)
             jsonObject.put("OperationType", AppConstant.EDIT)
         }
@@ -426,11 +462,15 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 201) {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
 
                         var ReferenceGUID = response.body()?.Data!![0]!!.ReferenceGUID.toString()
 
-                        if(imageURI != null) {
+                        if (imageURI != null) {
                             CallUploadImage(ReferenceGUID)
                         } else {
                             val intent = Intent()
@@ -440,16 +480,19 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
                     } else if (response.body()?.Status == 200) {
                         var ReferenceGUID = response.body()?.Data!![0]!!.ReferenceGUID.toString()
 
-                        if(imageURI != null) {
+                        if (imageURI != null) {
                             CallUploadImage(ReferenceGUID)
                         } else {
                             val intent = Intent()
                             setResult(RESULT_OK, intent)
                             finish()
                         }
-                    }
-                    else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                    } else {
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                         val intent = Intent()
                         setResult(RESULT_OK, intent)
                         finish()
@@ -459,7 +502,11 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
 
             override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
                 val intent = Intent()
                 setResult(RESULT_OK, intent)
                 finish()
@@ -469,7 +516,7 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
 
     private fun CallUploadImage(referenceGUID: String?) {
 
-       val partsList: java.util.ArrayList<MultipartBody.Part> = java.util.ArrayList()
+        val partsList: java.util.ArrayList<MultipartBody.Part> = java.util.ArrayList()
 
         if (imageURI != null) {
             partsList.add(CommonUtil.prepareFilePart(this, "image/*", "UserImage", imageURI!!))
@@ -485,7 +532,10 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
             attachment = partsList
         )
         call.enqueue(object : Callback<UserImageResponse> {
-            override fun onResponse(call: Call<UserImageResponse>, response: Response<UserImageResponse>) {
+            override fun onResponse(
+                call: Call<UserImageResponse>,
+                response: Response<UserImageResponse>
+            ) {
 
                 if (response.code() == 200) {
 
@@ -493,25 +543,38 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
 
                         val userimage = response.body()?.Data!!.UserImage
 
-                        if(userimage != null && userimage != "") {
+                        if (userimage != null && userimage != "") {
                             val sharedPreference = SharedPreference(this@AddUsersActivity)
-                            sharedPreference.setPreference(PrefConstants.PREF_USER_IMAGE,userimage)
+                            sharedPreference.setPreference(PrefConstants.PREF_USER_IMAGE, userimage)
                         }
 
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                         val intent = Intent()
                         setResult(RESULT_OK, intent)
                         finish()
                     } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                         val intent = Intent()
                         setResult(RESULT_OK, intent)
                         finish()
                     }
                 }
             }
+
             override fun onFailure(call: Call<UserImageResponse>, t: Throwable) {
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
                 val intent = Intent()
                 setResult(RESULT_OK, intent)
                 finish()
@@ -536,45 +599,53 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
                         val arrayListLead = response.body()?.Data!!
                         setAPIData(arrayListLead[0])
                     } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
 
             override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         })
     }
 
     private fun setAPIData(model: UserModel) {
 
-        if(model.FirstName != null && model.FirstName != "") {
+        if (model.FirstName != null && model.FirstName != "") {
             edtFirstName.setText(model.FirstName)
         }
-        if(model.LastName != null && model.LastName != "") {
+        if (model.LastName != null && model.LastName != "") {
             edtLastName.setText(model.LastName)
         }
-        if(model.MobileNo != null && model.MobileNo != "") {
+        if (model.MobileNo != null && model.MobileNo != "") {
             edtMobileNo.setText(model.MobileNo)
         }
-        if(model.AlternateMobileNo != null && model.AlternateMobileNo != "") {
+        if (model.AlternateMobileNo != null && model.AlternateMobileNo != "") {
             edtAlternateMobileNo.setText(model.AlternateMobileNo)
         }
-        if(model.EmailID != null && model.EmailID != "") {
+        if (model.EmailID != null && model.EmailID != "") {
             edtEmailAddress.setText(model.EmailID)
         }
-        if(model.AlternateEmailID != null && model.AlternateEmailID != "") {
+        if (model.AlternateEmailID != null && model.AlternateEmailID != "") {
             edtAlternateEmailAddress.setText(model.AlternateEmailID)
         }
-        if(model.UserTypeID != null && model.UserTypeID != 0) {
+        if (model.UserTypeID != null && model.UserTypeID != 0) {
             edtUserType.setText(model.UserType)
             mUsertype = model.UserType!!
             mUsertypeID = model.UserTypeID
         }
 
-        if(model.UserImage != null && model.UserImage != "") {
+        if (model.UserImage != null && model.UserImage != "") {
             Glide.with(this)
                 .load(model.UserImage)
                 .apply(
@@ -594,7 +665,11 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
             if (EasyPermissions.hasPermissions(this, FilePickerConst.PERMISSIONS_FILE_PICKER)) {
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_MEDIA_IMAGES)) {
+                    if (EasyPermissions.hasPermissions(
+                            this,
+                            Manifest.permission.READ_MEDIA_IMAGES
+                        )
+                    ) {
                         if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
                             photopicker()
                         } else {
@@ -613,9 +688,12 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
                             Manifest.permission.READ_MEDIA_IMAGES
                         )
                     }
-                }
-                else {
-                    if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                } else {
+                    if (EasyPermissions.hasPermissions(
+                            this,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        )
+                    ) {
                         if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
                             photopicker()
                         } else {
@@ -644,7 +722,7 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
                     FilePickerConst.PERMISSIONS_FILE_PICKER
                 )
             }
-        } else{
+        } else {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_MEDIA_IMAGES)) {
                     if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
@@ -665,9 +743,12 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
                         Manifest.permission.READ_MEDIA_IMAGES
                     )
                 }
-            }
-            else {
-                if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            } else {
+                if (EasyPermissions.hasPermissions(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                ) {
                     if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
                         photopicker()
                     } else {
@@ -698,6 +779,7 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
             .setActivityTheme(R.style.LibAppTheme)
             .pickPhoto(this, 20111)
     }
+
     @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
     @SuppressLint("Range")
@@ -736,7 +818,7 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
                     ImagePaths = java.util.ArrayList()
 //                    ImagePaths.addAll(data.getParcelableArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)!!)
                     ImagePaths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)!!)
-                    if (!ImagePaths.isNullOrEmpty()){
+                    if (!ImagePaths.isNullOrEmpty()) {
 //                        val PassportPath = ImagePaths[0]
                         val PassportPath = Uri.fromFile(File(ImagePaths[0]))
                         CropImage.activity(PassportPath)
@@ -749,7 +831,11 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
     }
 
     //Permission Result
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
@@ -765,5 +851,6 @@ class AddUsersActivity  : BaseActivity(), View.OnClickListener,  EasyPermissions
             AppSettingsDialog.Builder(this).build().show()
         }
     }
+
 
 }

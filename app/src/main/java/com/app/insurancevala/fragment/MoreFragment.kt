@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.Login.LoginActivity
 import com.app.insurancevala.activity.Users.AddUsersActivity
@@ -101,7 +102,8 @@ class MoreFragment : BaseFragment() {
     @SuppressLint("Range")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == AppConstant.INTENT_1003) {
+        if (requestCode == AppConstant.INTENT_1003 && resultCode == AppCompatActivity.RESULT_OK) {
+
             val sharedPreference = SharedPreference(requireContext())
             if (sharedPreference.getPreferenceString(PrefConstants.PREF_IS_LOGIN).equals("1")) {
                 val intent = Intent(requireActivity(), LoginActivity::class.java)
@@ -110,5 +112,4 @@ class MoreFragment : BaseFragment() {
             }
         }
     }
-
 }

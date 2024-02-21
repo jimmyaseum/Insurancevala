@@ -6,7 +6,6 @@ interface RecyclerClickListener {
     fun onItemClickEvent(view: View, position: Int, type: Int)
 }
 
-
 interface RecyclerItemClickListener {
     fun onItemClickEvent(view: View, position: Int, type: Int, name : String)
 }
