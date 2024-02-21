@@ -36,7 +36,6 @@ import com.app.insurancevala.model.api.AppVersion
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_splash.layout
 
-
 class SplashActivity : AppCompatActivity() {
 
     var currentVersion = ""
