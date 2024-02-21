@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.activity_splash.layout
 
 class SplashActivity : AppCompatActivity() {
 
+    // COMMIT BU SHUBHAM
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
