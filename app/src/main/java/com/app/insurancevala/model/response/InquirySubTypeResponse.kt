@@ -27,7 +27,7 @@ data class InquirySubTypeModel (
     @SerializedName("InquirySubType")
     val InquirySubType: String? = null,
     @SerializedName("InquiryTypeID")
-    val InquiryTypeID: String? = null,
+    val InquiryTypeID: Int? = null,
     @SerializedName("InquiryType")
     val InquiryType: String? = null,
     @SerializedName("IsActive")

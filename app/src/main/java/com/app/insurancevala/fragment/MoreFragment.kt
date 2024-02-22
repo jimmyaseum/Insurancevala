@@ -11,6 +11,8 @@ import com.app.insurancevala.R
 import com.app.insurancevala.activity.Login.LoginActivity
 import com.app.insurancevala.activity.Users.AddUsersActivity
 import com.app.insurancevala.activity.Users.UsersListActivity
+import com.app.insurancevala.master.InquirySubTypeListActivity
+import com.app.insurancevala.master.InquiryTypeListActivity
 import com.app.insurancevala.utils.AppConstant
 import com.app.insurancevala.utils.PrefConstants
 import com.app.insurancevala.utils.SharedPreference
@@ -22,14 +24,17 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.fragment_more_new.view.*
 import kotlinx.android.synthetic.main.fragment_more_new.*
-import kotlinx.android.synthetic.main.fragment_more_new.layout
 
 class MoreFragment : BaseFragment() {
 
     private var views: View? = null
     var sharedPreference: SharedPreference? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
 
         views = inflater.inflate(R.layout.fragment_more_new, container, false)
         initializeView()
@@ -49,11 +54,14 @@ class MoreFragment : BaseFragment() {
         val UserGUID = sharedPreference!!.getPreferenceString(PrefConstants.PREF_USER_GUID)!!
         val UserTypeID = sharedPreference!!.getPreferenceString(PrefConstants.PREF_USER_TYPE_ID)!!
 
-        if(UserTypeID.equals("1"))
-        {
+        if (UserTypeID.equals("1")) {
             views!!.LLManageUser.visible()
+            views!!.LLInquiryType.visible()
+            views!!.LLInquirySubType.visible()
         } else {
             views!!.LLManageUser.gone()
+            views!!.LLInquiryType.gone()
+            views!!.LLInquirySubType.gone()
         }
         views!!.tvUserName.text = Username
         views!!.txtMobileNo.text = Mobile
@@ -76,6 +84,20 @@ class MoreFragment : BaseFragment() {
 
         }
 
+        views!!.LLInquiryType.setOnClickListener {
+            preventTwoClick(it)
+            val intent = Intent(requireActivity(), InquiryTypeListActivity::class.java)
+            startActivity(intent)
+
+        }
+
+        views!!.LLInquirySubType.setOnClickListener {
+            preventTwoClick(it)
+            val intent = Intent(requireActivity(), InquirySubTypeListActivity::class.java)
+            startActivity(intent)
+
+        }
+
         views!!.txtLogout.setOnClickListener {
             preventTwoClick(it)
             val sharedPreference = SharedPreference(requireContext())
@@ -90,9 +112,9 @@ class MoreFragment : BaseFragment() {
         views!!.llEditProfile.setOnClickListener {
             preventTwoClick(it)
             val intent = Intent(requireActivity(), AddUsersActivity::class.java)
-            intent.putExtra("IsFrom","MoreFragment")
+            intent.putExtra("IsFrom", "MoreFragment")
             intent.putExtra(AppConstant.STATE, AppConstant.S_EDIT)
-            intent.putExtra("UserGUID",UserGUID)
+            intent.putExtra("UserGUID", UserGUID)
             startActivityForResult(intent, AppConstant.INTENT_1003)
         }
     }

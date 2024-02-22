@@ -123,9 +123,6 @@ interface ApiInterface {
         @Part attachment: ArrayList<MultipartBody.Part>?
     ): retrofit2.Call<CommonResponse>
 
-    @POST("Master/ManageNBInquiry")
-    fun ManageNBInquiry(@Body body: RequestBody?): retrofit2.Call<NBResponse>
-
     @POST("NBInquiry/NBInquiryFindAllActive")
     fun ManageNBInquiryFindAllActive(@Body body: RequestBody?): retrofit2.Call<NBResponse>
 

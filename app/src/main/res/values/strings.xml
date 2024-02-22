@@ -39,6 +39,9 @@
     <string name="error_valid_password">Enter password at least 6 characters</string>
     <string name="error_empty_confirm_password">Enter confirm password</string>
     <string name="error_mismatch_password">Password does not match</string>
+    <string name="error_empty_inquiry_type">Enter Inquiry Type</string>
+    <string name="error_empty_inquiry_sub_type">Enter Inquiry Sub Type</string>
+    <string name="error_empty_type">Select Status</string>
     <string name="msg_permission_storage">Application need permission to read photos or documents from device</string>
     <string name="msg_permission_camera">Application need permission to access camera</string>
     <string name="error_failed_to_connect">Failed to connect to server. Try again later.</string>

@@ -44,11 +44,14 @@ class SplashActivity : AppCompatActivity() {
     var sharedPreference: SharedPreference? = null
     var dialog: Dialog? = null
 
-        // commit by jimmy jatin patel
+    // commit by jimmy jatin patel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
 
         sharedPreference = SharedPreference(applicationContext)
 
@@ -113,24 +116,37 @@ class SplashActivity : AppCompatActivity() {
                         val version = response.body()?.Data!!
                         LatestVersion = version.Version
 
-                        if(currentVersion == LatestVersion) {
+                        if (currentVersion == LatestVersion) {
 
                             if (isOnline(this@SplashActivity)) {
                                 Handler().postDelayed({
                                     if (!isFinishing) {
                                         val sharedPreference = SharedPreference(applicationContext)
-                                        if (sharedPreference.getPreferenceString(PREF_IS_WELCOME).equals("1")) {
-                                            if (sharedPreference.getPreferenceString(PREF_IS_LOGIN).equals("1")) {
-                                                val intent = Intent(applicationContext, HomeActivity::class.java)
+                                        if (sharedPreference.getPreferenceString(PREF_IS_WELCOME)
+                                                .equals("1")
+                                        ) {
+                                            if (sharedPreference.getPreferenceString(PREF_IS_LOGIN)
+                                                    .equals("1")
+                                            ) {
+                                                val intent = Intent(
+                                                    applicationContext,
+                                                    HomeActivity::class.java
+                                                )
                                                 startActivity(intent)
                                                 finish()
                                             } else {
-                                                val intent = Intent(applicationContext, LoginActivity::class.java)
+                                                val intent = Intent(
+                                                    applicationContext,
+                                                    LoginActivity::class.java
+                                                )
                                                 startActivity(intent)
                                                 finish()
                                             }
                                         } else {
-                                            val intent = Intent(applicationContext, WelcomeActivity::class.java)
+                                            val intent = Intent(
+                                                applicationContext,
+                                                WelcomeActivity::class.java
+                                            )
                                             startActivity(intent)
                                             finish()
                                         }
@@ -146,13 +162,22 @@ class SplashActivity : AppCompatActivity() {
                     }
                     else {
                         hideProgress()
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
+
             override fun onFailure(call: Call<AppVersion>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         })
     }
@@ -197,6 +222,7 @@ class SplashActivity : AppCompatActivity() {
         hideProgress()
         progressDialog = showLoadingDialog(this)
     }
+
     fun showLoadingDialog(context: Context?): ProgressDialog {
         val progressDialog = ProgressDialog(context)
         progressDialog.let {

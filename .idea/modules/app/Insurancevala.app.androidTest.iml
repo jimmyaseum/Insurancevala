@@ -14,7 +14,6 @@
           <stringArguments>
             <stringArg name="classpath">
               <args>
-                <arg>$MODULE_DIR$/../../../app/build/intermediates/compile_and_runtime_not_namespaced_r_class_jar/debugAndroidTest/R.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-2/files-2.1/48e3e7d6d0cdb4e909654941fe2007ae/espresso-core-3.1.1-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a81a3210fa3009b450c915ffc7bab4aa/runner-1.1.1-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-2/files-2.1/bebe6942d919a7eb1a9810145b285df2/jetified-android-image-cropper-2.8.0-api.jar</arg>
@@ -111,7 +110,6 @@
                 <arg>$USER_HOME$/.gradle/caches/transforms-2/files-2.1/5f65ed2df36654ca12c0847e6fecc530/jetified-lineGraph-1.0.2-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-2/files-2.1/285ea310cabd17eeff87e4509a7154fe/jetified-pie-chart-0.7.0-api.jar</arg>
                 <arg>$USER_HOME$/.gradle/caches/transforms-2/files-2.1/460790667b9af0a6a59f86326b4a159b/jetified-AwesomeDialog-1.0.5-api.jar</arg>
-                <arg>$MODULE_DIR$/../../../app/build/intermediates/app_classes/debug/classes.jar</arg>
                 <arg>$USER_HOME$/AppData/Local/Android/Sdk/platforms/android-33/android.jar</arg>
                 <arg>$USER_HOME$/AppData/Local/Android/Sdk/build-tools/29.0.2/core-lambda-stubs.jar</arg>
               </args>
