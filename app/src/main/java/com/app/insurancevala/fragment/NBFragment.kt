@@ -39,11 +39,9 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
         initializeView()
         return views
     }
-
     override fun initializeView() {
         SetInitListner()
     }
-
     private fun SetInitListner() {
 
         views!!.imgAddNBInquiry.setOnClickListener(this)
@@ -131,7 +129,6 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
             views!!.refreshLayout.isRefreshing = false
         }
     }
-
     override fun onClick(v: View?) {
         hideKeyboard(requireContext(), v)
         when (v?.id) {
@@ -143,15 +140,15 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
             }
         }
     }
-
     private fun callManageNB() {
 
         showProgress()
 
         var jsonObject = JSONObject()
-        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
+        jsonObject.put("LeadID", 0)
+//        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
 
-        val call = ApiUtils.apiInterface.ManageNBInquiry(getRequestJSONBody(jsonObject.toString()))
+        val call = ApiUtils.apiInterface.ManageNBInquiryFindAllActive(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<NBResponse> {
             override fun onResponse(call: Call<NBResponse>, response: Response<NBResponse>) {
                 hideProgress()
@@ -194,7 +191,6 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
             }
         })
     }
-
     override fun onItemClickEvent(view: View, position: Int, type: Int) {
         when(type) {
             102 -> {
@@ -208,7 +204,6 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
             }
         }
     }
-
     @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

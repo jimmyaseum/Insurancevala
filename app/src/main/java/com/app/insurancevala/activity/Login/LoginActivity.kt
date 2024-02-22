@@ -28,7 +28,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
     companion object {
         var fcmDeviceToken = ""
     }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -52,7 +51,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         LLUserName.animation = leftanim
         LLPassword.animation = leftanim
         cbshowpassword.animation = leftanim
-        RLForgotPassword.animation = rightanim
+        txtForgotPassword.animation = rightanim
         LLLoginButton.animation = bottomanim
         LLDontHaveAcc.animation = bottomanim
     }

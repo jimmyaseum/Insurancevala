@@ -36,7 +36,6 @@ import com.app.insurancevala.model.api.AppVersion
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_splash.layout
 
-
 class SplashActivity : AppCompatActivity() {
 
     var currentVersion = ""
@@ -63,11 +62,33 @@ class SplashActivity : AppCompatActivity() {
 
         getCurrentVersion()
 
-        if (isOnline(this)) {
+            Handler().postDelayed({
+                if (!isFinishing) {
+                    val sharedPreference = SharedPreference(applicationContext)
+                    if (sharedPreference.getPreferenceString(PREF_IS_WELCOME).equals("1")) {
+                        if (sharedPreference.getPreferenceString(PREF_IS_LOGIN).equals("1")) {
+                            val intent = Intent(applicationContext, HomeActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        } else {
+                            val intent = Intent(applicationContext, LoginActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+                    } else {
+                        val intent = Intent(applicationContext, WelcomeActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
+                }
+
+            }, 3000)
+
+       /* if (isOnline(this)) {
             getLatestVersion()
         } else {
             internetErrordialog(this@SplashActivity)
-        }
+        }*/
     }
 
     private fun getLatestVersion() {
@@ -122,7 +143,6 @@ class SplashActivity : AppCompatActivity() {
                             sharedPreference?.clearSharedPreference()
                             showUpdateDialog()
                         }
-
                     }
                     else {
                         hideProgress()

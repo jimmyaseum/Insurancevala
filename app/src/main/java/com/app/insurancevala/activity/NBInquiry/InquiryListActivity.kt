@@ -9,6 +9,7 @@ import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.adapter.InquiryListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
+import com.app.insurancevala.model.response.NBInquiryByGUIDResponse
 import com.app.insurancevala.model.response.NBInquiryModel
 import com.app.insurancevala.model.response.NBResponse
 import com.app.insurancevala.retrofit.ApiUtils
@@ -156,18 +157,18 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
 
         var jsonObject = JSONObject()
         jsonObject.put("LeadGUID",LeadGUID)
-        jsonObject.put("OperationType", AppConstant.GETBYGUID)
+//        jsonObject.put("OperationType", AppConstant.GETBYGUID)
 
-        val call = ApiUtils.apiInterface.ManageNBInquiry(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<NBResponse> {
-            override fun onResponse(call: Call<NBResponse>, response: Response<NBResponse>) {
+        val call = ApiUtils.apiInterface.ManageNBInquiryFindByID(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<NBInquiryByGUIDResponse> {
+            override fun onResponse(call: Call<NBInquiryByGUIDResponse>, response: Response<NBInquiryByGUIDResponse>) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
 
                         arrayListInquiry?.clear()
                         arrayListInquiryNew?.clear()
-                        arrayListInquiry = response.body()?.Data!![0].NBInquiryList!!
+                        arrayListInquiry = response.body()?.Data!!.NBInquiryList!!
                         arrayListInquiryNew = arrayListInquiry
 
                         if(arrayListInquiryNew!!.size > 0) {
@@ -175,7 +176,6 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                             RvInquiryList.adapter = myAdapter
                             shimmer.stopShimmer()
                             shimmer.gone()
-
                         } else {
                             Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                             shimmer.stopShimmer()
@@ -192,8 +192,7 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                     }
                 }
             }
-
-            override fun onFailure(call: Call<NBResponse>, t: Throwable) {
+            override fun onFailure(call: Call<NBInquiryByGUIDResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
             }

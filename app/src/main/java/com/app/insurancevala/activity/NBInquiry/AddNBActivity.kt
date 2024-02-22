@@ -261,40 +261,46 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         jsonObject.put("AllotmentID", mAllotmentToID)
         jsonObject.put("NBInquiryList", jsonArrayEducation)
 
+        var call: Call<NBInquiryTypeAddUpdateResponse>? = null
+
         if(state.equals(AppConstant.S_ADD)) {
-            jsonObject.put("OperationType", AppConstant.INSERT)
-        }
+//            jsonObject.put("OperationType", AppConstant.INSERT)
+        call = ApiUtils.apiInterface.ManageNBInquiryInsert(getRequestJSONBody(jsonObject.toString()))
+    }
         else if(state.equals(AppConstant.S_EDIT)) {
             jsonObject.put("NBInquiryGUID", NBInquiryGUID)
-            jsonObject.put("OperationType", AppConstant.EDIT)
+//            jsonObject.put("OperationType", AppConstant.EDIT)
+            call = ApiUtils.apiInterface.ManageNBInquiryUpdate(getRequestJSONBody(jsonObject.toString()))
         }
 
-        val call = ApiUtils.apiInterface.ManageNBInquiry(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<NBResponse> {
-            override fun onResponse(call: Call<NBResponse>, response: Response<NBResponse>) {
-                hideProgress()
-                if (response.code() == 200) {
-                    if (response.body()?.Status == 201) {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
-                        val intent = Intent()
-                        setResult(RESULT_OK, intent)
-                        finish()
-                    } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
-                        val intent = Intent()
-                        setResult(RESULT_OK, intent)
-                        finish()
+        if (call != null) {
+            call.enqueue(object : Callback<NBInquiryTypeAddUpdateResponse> {
+                override fun onResponse(call: Call<NBInquiryTypeAddUpdateResponse>, response: Response<NBInquiryTypeAddUpdateResponse>) {
+                    hideProgress()
+                    if (response.code() == 200) {
+                        if (response.body()?.Status == 201) {
+                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            val intent = Intent()
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        } else {
+                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            val intent = Intent()
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        }
                     }
                 }
-            }
-            override fun onFailure(call: Call<NBResponse>, t: Throwable) {
-                hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
-                val intent = Intent()
-                setResult(RESULT_OK, intent)
-                finish()
-            }
-        })
+                override fun onFailure(call: Call<NBInquiryTypeAddUpdateResponse>, t: Throwable) {
+                    hideProgress()
+                    Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                    val intent = Intent()
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+            })
+        }
+
     }
 
     private fun callManageAllotmentTo(mode: Int) {
@@ -1507,23 +1513,22 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         var jsonObject = JSONObject()
         jsonObject.put("NBInquiryGUID",NBInquiryGUID)
-        jsonObject.put("OperationType", 10)
+//        jsonObject.put("OperationType", 10)
 
-        val call = ApiUtils.apiInterface.ManageNBInquiry(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<NBResponse> {
-            override fun onResponse(call: Call<NBResponse>, response: Response<NBResponse>) {
+        val call = ApiUtils.apiInterface.ManageNBInquiryByGUID(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<NBInquiryByGUIDResponse> {
+            override fun onResponse(call: Call<NBInquiryByGUIDResponse>, response: Response<NBInquiryByGUIDResponse>) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
-                        val arraylist = response.body()?.Data!![0]
+                        val arraylist = response.body()?.Data!!
                         SetAPIData(arraylist)
                     } else {
                         Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                     }
                 }
             }
-
-            override fun onFailure(call: Call<NBResponse>, t: Throwable) {
+            override fun onFailure(call: Call<NBInquiryByGUIDResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
             }

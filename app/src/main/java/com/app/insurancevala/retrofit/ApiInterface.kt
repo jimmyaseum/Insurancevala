@@ -126,6 +126,27 @@ interface ApiInterface {
     @POST("Master/ManageNBInquiry")
     fun ManageNBInquiry(@Body body: RequestBody?): retrofit2.Call<NBResponse>
 
+    @POST("NBInquiry/NBInquiryFindAllActive")
+    fun ManageNBInquiryFindAllActive(@Body body: RequestBody?): retrofit2.Call<NBResponse>
+
+    @POST("NBInquiry/NBInquiryInsert")
+    fun ManageNBInquiryInsert(@Body body: RequestBody?): retrofit2.Call<NBInquiryTypeAddUpdateResponse>
+
+    @POST("NBInquiry/NBInquiryUpdate")
+    fun ManageNBInquiryUpdate(@Body body: RequestBody?): retrofit2.Call<NBInquiryTypeAddUpdateResponse>
+
+    @POST("NBInquiry/NBInquiryByGUID")
+    fun ManageNBInquiryByGUID(@Body body: RequestBody?): retrofit2.Call<NBInquiryByGUIDResponse>
+
+    @POST("NBInquiry/NBInquiryTypeUpdate")
+    fun ManageNBInquiryTypeUpdate(@Body body: RequestBody?): retrofit2.Call<NBInquiryTypeAddUpdateResponse>
+
+    @POST("NBInquiry/NBInquiryTypeByGUID")
+    fun ManageNBInquiryTypeByGUID(@Body body: RequestBody?): retrofit2.Call<NBInquiryTypeByGUIDResponse>
+
+    @POST("NBInquiry/NBInquiryFindByID")
+    fun ManageNBInquiryFindByID(@Body body: RequestBody?): retrofit2.Call<NBInquiryByGUIDResponse>
+
     @POST("MasterSub/DashBoardCountView")
     fun ManageDashboard(@Body body: RequestBody?): retrofit2.Call<DashboardResponse>
 

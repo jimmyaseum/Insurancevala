@@ -81,7 +81,6 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         setMasterData()
         SetInitListner()
     }
-
     private fun setMasterData() {
          if(state.equals(AppConstant.S_EDIT)) {
              txtHearderText.text = "Update Inquiry"
@@ -99,7 +98,6 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         arrayListFrequency.add(SingleSelectionModel(5, "Monthly", false))
 
     }
-
     private fun SetInitListner() {
         imgBack.setOnClickListener(this)
         txtButtonSubmit.setOnClickListener(this)
@@ -112,7 +110,6 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         edtAllotmentTo.setOnClickListener(this)
 
     }
-
     override fun onClick(v: View?) {
         hideKeyboard(this, v)
         when (v?.id) {
@@ -170,7 +167,6 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
             }
         }
     }
-
     private fun validation() {
         when (isValidate()) {
             true -> {
@@ -182,7 +178,6 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
             }
         }
     }
-
     private fun isValidate(): Boolean {
 
         var isValidate = true
@@ -213,23 +208,22 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         }
         return isValidate
     }
-
     private fun callManageNBInquiryTypeGUID() {
 
         showProgress()
 
         var jsonObject = JSONObject()
         jsonObject.put("NBInquiryTypeGUID",NBInquiryTypeGUID)
-        jsonObject.put("OperationType", 11)
+//        jsonObject.put("OperationType", 11)
 
-        val call = ApiUtils.apiInterface.ManageNBInquiry(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<NBResponse> {
-            override fun onResponse(call: Call<NBResponse>, response: Response<NBResponse>) {
+        val call = ApiUtils.apiInterface.ManageNBInquiryTypeByGUID(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<NBInquiryTypeByGUIDResponse> {
+            override fun onResponse(call: Call<NBInquiryTypeByGUIDResponse>, response: Response<NBInquiryTypeByGUIDResponse>) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
 //                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
-                        val arraylist = response.body()?.Data!![0].NBInquirySUb
+                        val arraylist = response.body()?.Data!!
                         SetAPIData(arraylist)
                     } else {
                         Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
@@ -237,14 +231,12 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                 }
             }
 
-            override fun onFailure(call: Call<NBResponse>, t: Throwable) {
+            override fun onFailure(call: Call<NBInquiryTypeByGUIDResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
             }
         })
-
     }
-
     private fun callManageNBInquiryUpdate() {
 
         showProgress()
@@ -258,11 +250,11 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         jsonObject.put("LeadStatusID",mLeadstatusID)
         jsonObject.put("ProposedAmount",edtProposedAmount.text.toString().toDouble())
         jsonObject.put("Frequency",mFrequency)
-        jsonObject.put("OperationType", 8)
+//        jsonObject.put("OperationType", 8)
 
-        val call = ApiUtils.apiInterface.ManageNBInquiry(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<NBResponse> {
-            override fun onResponse(call: Call<NBResponse>, response: Response<NBResponse>) {
+        val call = ApiUtils.apiInterface.ManageNBInquiryTypeUpdate(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<NBInquiryTypeAddUpdateResponse> {
+            override fun onResponse(call: Call<NBInquiryTypeAddUpdateResponse>, response: Response<NBInquiryTypeAddUpdateResponse>) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
@@ -278,8 +270,7 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                     }
                 }
             }
-
-            override fun onFailure(call: Call<NBResponse>, t: Throwable) {
+            override fun onFailure(call: Call<NBInquiryTypeAddUpdateResponse>, t: Throwable) {
                 hideProgress()
                 val intent = Intent()
                 setResult(RESULT_OK, intent)
@@ -289,7 +280,6 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         })
 
     }
-
     private fun SetAPIData(arraylist: NBInquiryModel?) {
 
         if(arraylist!!.InquiryTypeID != null && arraylist.InquiryTypeID != 0) {
@@ -342,7 +332,6 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         }
 
     }
-
     private fun callManageInquiryType(mode: Int) {
         if (mode == 1) {
             showProgress()
@@ -509,7 +498,6 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         })
         dialogSelectInquiryType!!.show()
     }
-
     private fun callManageInquirySubType(mode: Int, mInquiryTypeID: Int) {
         if (mode == 1) {
             showProgress()
