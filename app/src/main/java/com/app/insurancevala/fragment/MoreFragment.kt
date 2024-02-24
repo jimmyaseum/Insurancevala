@@ -11,8 +11,14 @@ import com.app.insurancevala.R
 import com.app.insurancevala.activity.Login.LoginActivity
 import com.app.insurancevala.activity.Users.AddUsersActivity
 import com.app.insurancevala.activity.Users.UsersListActivity
+import com.app.insurancevala.master.InitialTypeListActivity
 import com.app.insurancevala.master.InquirySubTypeListActivity
 import com.app.insurancevala.master.InquiryTypeListActivity
+import com.app.insurancevala.master.LeadSourceListActivity
+import com.app.insurancevala.master.LeadStatusListActivity
+import com.app.insurancevala.master.LeadTypeListActivity
+import com.app.insurancevala.master.MastersListActivity
+import com.app.insurancevala.master.UserTypeListActivity
 import com.app.insurancevala.utils.AppConstant
 import com.app.insurancevala.utils.PrefConstants
 import com.app.insurancevala.utils.SharedPreference
@@ -56,12 +62,8 @@ class MoreFragment : BaseFragment() {
 
         if (UserTypeID.equals("1")) {
             views!!.LLManageUser.visible()
-            views!!.LLInquiryType.visible()
-            views!!.LLInquirySubType.visible()
         } else {
             views!!.LLManageUser.gone()
-            views!!.LLInquiryType.gone()
-            views!!.LLInquirySubType.gone()
         }
         views!!.tvUserName.text = Username
         views!!.txtMobileNo.text = Mobile
@@ -84,16 +86,9 @@ class MoreFragment : BaseFragment() {
 
         }
 
-        views!!.LLInquiryType.setOnClickListener {
+        views!!.LLMaster.setOnClickListener {
             preventTwoClick(it)
-            val intent = Intent(requireActivity(), InquiryTypeListActivity::class.java)
-            startActivity(intent)
-
-        }
-
-        views!!.LLInquirySubType.setOnClickListener {
-            preventTwoClick(it)
-            val intent = Intent(requireActivity(), InquirySubTypeListActivity::class.java)
+            val intent = Intent(requireActivity(), MastersListActivity::class.java)
             startActivity(intent)
 
         }

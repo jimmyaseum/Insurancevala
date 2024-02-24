@@ -44,6 +44,7 @@ class InquiryTypeListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
 
     override fun onRestart() {
         super.onRestart()
+        searchView.closeSearch()
         if (isOnline(this)) {
             callManageInquiryType()
         } else {

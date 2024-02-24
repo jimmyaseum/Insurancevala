@@ -44,6 +44,7 @@ class InquirySubTypeListActivity : BaseActivity(), View.OnClickListener, Recycle
 
     override fun onRestart() {
         super.onRestart()
+        searchView.closeSearch()
         if (isOnline(this)) {
             callManageInquirySubType()
         } else {

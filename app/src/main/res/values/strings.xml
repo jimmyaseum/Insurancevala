@@ -41,6 +41,11 @@
     <string name="error_mismatch_password">Password does not match</string>
     <string name="error_empty_inquiry_type">Enter Inquiry Type</string>
     <string name="error_empty_inquiry_sub_type">Enter Inquiry Sub Type</string>
+    <string name="error_empty_lead_type">Enter Lead Type</string>
+    <string name="error_empty_lead_status">Enter Lead Status</string>
+    <string name="error_empty_user_type">Enter User Type</string>
+    <string name="error_empty_initial_type">Enter Initial</string>
+    <string name="error_empty_lead_source">Enter Source</string>
     <string name="error_empty_type">Select Status</string>
     <string name="msg_permission_storage">Application need permission to read photos or documents from device</string>
     <string name="msg_permission_camera">Application need permission to access camera</string>

@@ -44,7 +44,7 @@ class AddInquiryTypeActivity : BaseActivity(), View.OnClickListener {
     var state: String? = null
     var InquiryTypeGUID: String? = null
 
-    var arrayListInquiryType: ArrayList<SingleSelectionModel>? = ArrayList()
+    var arrayListStatus: ArrayList<SingleSelectionModel>? = ArrayList()
 
     var mInquirytype: String = ""
 
@@ -83,8 +83,8 @@ class AddInquiryTypeActivity : BaseActivity(), View.OnClickListener {
 
         SetInitListner()
 
-        arrayListInquiryType?.add(SingleSelectionModel(0, "true", true))
-        arrayListInquiryType?.add(SingleSelectionModel(1, "false", false))
+        arrayListStatus?.add(SingleSelectionModel(0, "true", true))
+        arrayListStatus?.add(SingleSelectionModel(1, "false", false))
     }
 
     private fun setMasterData() {
@@ -111,7 +111,7 @@ class AddInquiryTypeActivity : BaseActivity(), View.OnClickListener {
 
             R.id.edtIsActive -> {
                 preventTwoClick(v)
-                if (!arrayListInquiryType.isNullOrEmpty()) {
+                if (!arrayListStatus.isNullOrEmpty()) {
                     selectInquiryTypeDialog()
                 }
             }
@@ -288,12 +288,12 @@ class AddInquiryTypeActivity : BaseActivity(), View.OnClickListener {
 
     edtSearchId.gone()
 
-        val itemAdapter = BottomSheetListAdapter(this, arrayListInquiryType!!)
+        val itemAdapter = BottomSheetListAdapter(this, arrayListStatus!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
             override fun onItemClickEvent(view: View, position: Int, type: Int) {
 
                 itemAdapter.updateItem(position)
-                mInquirytype = arrayListInquiryType!![position].Name.toString()
+                mInquirytype = arrayListStatus!![position].Name.toString()
                 edtIsActive.setText(mInquirytype)
                 dialogSelectInquiryType.dismiss()
             }

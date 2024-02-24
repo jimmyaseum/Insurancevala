@@ -144,6 +144,42 @@
         <activity
             android:name=".activity.Users.AddUsersActivity"
             android:exported="true" />
+
+        <activity android:name=".master.InquiryTypeListActivity"
+            android:exported="true" />
+        <activity android:name=".master.AddInquiryTypeActivity"
+            android:exported="true" />
+
+        <activity android:name=".master.InquirySubTypeListActivity"
+            android:exported="true" />
+        <activity android:name=".master.AddInquirySubTypeActivity"
+            android:exported="true" />
+
+        <activity android:name=".master.LeadTypeListActivity"
+            android:exported="true" />
+        <activity android:name=".master.AddLeadTypeActivity"
+            android:exported="true" />
+
+        <activity android:name=".master.LeadStatusListActivity"
+            android:exported="true"/>
+        <activity android:name=".master.AddLeadStatusActivity"
+            android:exported="true"/>
+
+        <activity android:name=".master.UserTypeListActivity"
+            android:exported="true"/>
+        <activity android:name=".master.AddUserTypeActivity"
+            android:exported="true"/>
+
+        <activity android:name=".master.InitialTypeListActivity"
+            android:exported="true"/>
+        <activity android:name=".master.AddInitialTypeActivity"
+            android:exported="true"/>
+
+        <activity android:name=".master.LeadSourceListActivity"
+            android:exported="true"/>
+        <activity android:name=".master.AddLeadSourceActivity"
+            android:exported="true"/>
+
         <!-- filepicker -->
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -158,6 +194,7 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:exported="true"
             android:theme="@style/Base.Theme.AppCompat" />
+        <activity android:name=".master.MastersListActivity" />
     </application>
 
 </manifest>
