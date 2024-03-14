@@ -12,8 +12,6 @@ import com.app.insurancevala.model.response.CallsModel
 import com.app.insurancevala.utils.AppConstant
 import com.app.insurancevala.utils.convertDateStringToString
 import kotlinx.android.synthetic.main.adapter_calls_item.view.*
-import kotlinx.android.synthetic.main.adapter_calls_item.view.txtCreatedBy
-import kotlinx.android.synthetic.main.adapter_calls_item.view.txtTitle
 
 class CallsListAdapter(private val context: Context?, private val arrayList: ArrayList<CallsModel>, private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<CallsListAdapter.ViewHolder>() {
 
@@ -34,8 +32,8 @@ class CallsListAdapter(private val context: Context?, private val arrayList: Arr
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var context: Context? = null
-        var images = arrayOf(R.drawable.ic_call_inbound, R.drawable.ic_call_outbound, R.drawable.ic_call_missed, R.drawable.ic_call_schedule)
-        var colors = arrayOf(R.color.button_green, R.color.colorBlue, R.color.colorRed, R.color.color5)
+        var images = arrayOf(R.drawable.ic_call_inbound)
+        var colors = arrayOf(R.color.button_green)
 
         fun bindItems(
             context: Context,
@@ -76,18 +74,18 @@ class CallsListAdapter(private val context: Context?, private val arrayList: Arr
                 itemView.txtStatus.text = arrayList[position].CallStatus
             }
 
-            if(arrayList[position].UpdatedBy == 0) {
+            if(arrayList[position].UpdatedBy == 0 || arrayList[position].UpdatedBy == null) {
                 if(!arrayList[position].CreatedOn.isNullOrEmpty()) {
                     val mdate = convertDateStringToString(arrayList[position].CreatedOn!! , AppConstant.ddMMyyyy_HHmmss, AppConstant.dd_LLL_yyyy)
                     val mtime = convertDateStringToString(arrayList[position].CreatedOn!! , AppConstant.ddMMyyyy_HHmmss, AppConstant.HH_MM_AA_FORMAT)
-                    itemView.txtCreatedBy.text = "created by " + arrayList[position].CreatedByName + " on " + mdate + " " + mtime
+                    itemView.txtCreatedBy.text = "Created By " + arrayList[position].CreatedByName + " On " + mdate + " " + mtime
                 }
 
             } else {
                 if(!arrayList[position].UpdatedOn.isNullOrEmpty()) {
                     val mdate = convertDateStringToString(arrayList[position].UpdatedOn!! , AppConstant.ddMMyyyy_HHmmss, AppConstant.dd_LLL_yyyy)
                     val mtime = convertDateStringToString(arrayList[position].UpdatedOn!! , AppConstant.ddMMyyyy_HHmmss, AppConstant.HH_MM_AA_FORMAT)
-                    itemView.txtCreatedBy.text = "updated by " + arrayList[position].UpdatedByName + " on " + mdate + " " + mtime
+                    itemView.txtCreatedBy.text = "Updated By " + arrayList[position].UpdatedByName + " On " + mdate + " " + mtime
                 }
             }
 

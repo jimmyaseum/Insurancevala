@@ -11,14 +11,7 @@ import com.app.insurancevala.R
 import com.app.insurancevala.activity.Login.LoginActivity
 import com.app.insurancevala.activity.Users.AddUsersActivity
 import com.app.insurancevala.activity.Users.UsersListActivity
-import com.app.insurancevala.master.InitialTypeListActivity
-import com.app.insurancevala.master.InquirySubTypeListActivity
-import com.app.insurancevala.master.InquiryTypeListActivity
-import com.app.insurancevala.master.LeadSourceListActivity
-import com.app.insurancevala.master.LeadStatusListActivity
-import com.app.insurancevala.master.LeadTypeListActivity
 import com.app.insurancevala.master.MastersListActivity
-import com.app.insurancevala.master.UserTypeListActivity
 import com.app.insurancevala.utils.AppConstant
 import com.app.insurancevala.utils.PrefConstants
 import com.app.insurancevala.utils.SharedPreference

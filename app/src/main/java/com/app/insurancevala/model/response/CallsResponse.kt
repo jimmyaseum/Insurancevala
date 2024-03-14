@@ -17,6 +17,21 @@ class CallsResponse {
     var ErrorMessage: String? = null
 }
 
+class CallsByGUIDResponse {
+    @SerializedName("Data")
+    var Data: CallsModel? = null
+    @SerializedName("Details")
+    var Details: String? = null
+    @SerializedName("Message")
+    var Message: String? = null
+    @SerializedName("Status")
+    var Status: Int? = null
+    @SerializedName("ItemCount")
+    var ItemCount: Int? = null
+    @SerializedName("ErrorMessage")
+    var ErrorMessage: String? = null
+}
+
 
 data class CallsModel (
     @SerializedName("ID")
@@ -69,4 +84,6 @@ data class CallsModel (
     val UpdatedOn: String? = null,
     @SerializedName("ReferenceGUID")
     val ReferenceGUID: String? = null,
+    @SerializedName("IsSelected")
+    val IsSelected: Boolean? = null,
     )

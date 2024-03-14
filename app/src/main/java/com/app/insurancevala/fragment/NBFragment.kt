@@ -81,7 +81,7 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
                     for (model in arrayListNB!!) {
                         try {
                             if (model.LeadID.toString()!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                                model.NBInquiryGUID!!.toLowerCase().contains(strSearch.toLowerCase()) ||
+                                model.LeadName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
                                 model.NBInquiryGUID!!.toLowerCase().contains(strSearch.toLowerCase()) ) {
                                 arrItemsFinal1.add(model)
                             }
@@ -125,6 +125,8 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
         })
 
         views!!.refreshLayout.setOnRefreshListener {
+            hideKeyboard(requireContext(),refreshLayout)
+            searchView.closeSearch()
             callManageNB()
             views!!.refreshLayout.isRefreshing = false
         }

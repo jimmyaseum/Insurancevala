@@ -43,16 +43,22 @@ class InquirySubTypeListAdapter(private val context: Context?, private val array
             itemView.txtSubType.visible()
 
             if(!arrayList[position].InquirySubType.isNullOrEmpty()) {
-                itemView.txtSubType.text = arrayList[position].InquirySubType
+                itemView.txtSubType.text = "Inquiry Sub Type -  " + arrayList[position].InquirySubType
             }
 
             if(!arrayList[position].InquiryType.isNullOrEmpty()) {
-                itemView.txtType.text = arrayList[position].InquiryType
+                itemView.txtType.text = "Inquiry Type -  " + arrayList[position].InquiryType
                 itemView.txtType.setTextColor(ContextCompat.getColor(context, R.color.colorBlack))
             }
 
             if(arrayList[position].IsActive != null) {
-                itemView.txtStatus.text = arrayList[position].IsActive.toString()
+                if (arrayList[position].IsActive!!) {
+                    itemView.txtStatus.setText("Active")
+                    itemView.txtStatus.setTextColor(ContextCompat.getColor(context, R.color.button_green))
+                } else{
+                    itemView.txtStatus.setText("InActive")
+                    itemView.txtStatus.setTextColor(ContextCompat.getColor(context, R.color.colorRed))
+                }
             }
 
             itemView.setOnClickListener {

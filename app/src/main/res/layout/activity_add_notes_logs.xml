@@ -194,11 +194,13 @@
                                 android:focusable="false"
                                 android:text="Choose document"
                                 android:drawableRight="@drawable/ic_down"
-                                android:drawableTint="@color/colorGray500"/>
+                                android:drawableTint="@color/colorGray500"
+                                android:visibility="visible"/>
                             <View
+                                android:id="@+id/viewAttachments"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -209,7 +211,7 @@
                     android:id="@+id/rvAttachment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
                     android:overScrollMode="never"
                     />
 

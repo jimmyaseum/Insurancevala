@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
@@ -14,11 +15,9 @@ import com.app.insurancevala.model.response.CallsResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.ferfalk.simplesearchview.SimpleSearchView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_calls_list.*
-import kotlinx.android.synthetic.main.activity_calls_list.layout
-import kotlinx.android.synthetic.main.activity_calls_list.imgSearch
-import kotlinx.android.synthetic.main.activity_calls_list.searchView
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -29,6 +28,7 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
     lateinit var adapter : CallsListAdapter
     var arrayListCalls: ArrayList<CallsModel>? = ArrayList()
     var arrayListCallsNew: ArrayList<CallsModel>? = ArrayList()
+    var ID: Int? = null
     var LeadID: Int? = null
 
     var ClosedCall : String? = ""
@@ -42,8 +42,12 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
     }
 
     private fun getIntentData() {
+        ID = intent.getIntExtra("ID",0)
         LeadID = intent.getIntExtra("LeadID",0)
         ClosedCall = intent.getStringExtra("ClosedCall")
+        if (!ClosedCall.isNullOrEmpty()) {
+            txtHearderText.text = "Closed Calls"
+        }
     }
 
     override fun initializeView() {
@@ -57,6 +61,7 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
     private fun SetInitListner() {
 
         imgBack.setOnClickListener(this)
+        imgAddCalls.setOnClickListener(this)
 
         var manager = LinearLayoutManager(this)
         RvCallsList.layoutManager = manager
@@ -125,6 +130,8 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@CallsListActivity,refreshLayout)
+            searchView.closeSearch()
             callManageCalls()
             refreshLayout.isRefreshing = false
         }
@@ -137,6 +144,10 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 preventTwoClick(v)
                 finish()
             }
+            R.id.imgAddCalls -> {
+                preventTwoClick(v)
+                showBottomSheetDialogAddCall()
+            }
         }
     }
 
@@ -146,6 +157,7 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
             101 -> {
                 preventTwoClick(view)
                 val intent = Intent(this, CallsDetailsActivity::class.java)
+                intent.putExtra("ID",ID)
                 intent.putExtra("LeadID",LeadID)
                 intent.putExtra("CallGUID",arrayListCallsNew!![position].CallGUID)
                 startActivity(intent)
@@ -154,6 +166,7 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 preventTwoClick(view)
                 val intent = Intent(this, AddCallLogsActivity::class.java)
                 intent.putExtra(AppConstant.STATE, AppConstant.S_EDIT)
+                intent.putExtra("ID",ID)
                 intent.putExtra("LeadID",LeadID)
                 intent.putExtra("CallGUID",arrayListCallsNew!![position].CallGUID)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
@@ -174,20 +187,57 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
         }
     }
 
+    private fun showBottomSheetDialogAddCall() {
+        val bottomSheetDialog = BottomSheetDialog(this, R.style.SheetDialog)
+        bottomSheetDialog.setContentView(R.layout.bottom_sheet_add_calls)
+        bottomSheetDialog.setCancelable(false)
+        bottomSheetDialog.setCanceledOnTouchOutside(false)
+        val txtScheduleCall = bottomSheetDialog.findViewById<TextView>(R.id.txtScheduleCall)
+        val txtLogCall = bottomSheetDialog.findViewById<TextView>(R.id.txtLogCall)
+        val txtCancel = bottomSheetDialog.findViewById<TextView>(R.id.txtCancel)
+
+        txtCancel!!.setOnClickListener {
+            bottomSheetDialog.dismiss()
+        }
+
+        txtScheduleCall!!.setOnClickListener {
+            bottomSheetDialog.dismiss()
+            val intent = Intent(this, AddCallLogsActivity::class.java)
+            intent.putExtra(AppConstant.STATE,AppConstant.S_ADD)
+            intent.putExtra("ID",ID)
+            intent.putExtra("LeadID",LeadID)
+            intent.putExtra("CALLTYPE","SCHEDULE")
+            startActivityForResult(intent, AppConstant.INTENT_1001)
+
+        }
+
+        txtLogCall!!.setOnClickListener {
+            bottomSheetDialog.dismiss()
+            val intent = Intent(this, AddCallLogsActivity::class.java)
+            intent.putExtra(AppConstant.STATE,AppConstant.S_ADD)
+            intent.putExtra("ID",ID)
+            intent.putExtra("LeadID",LeadID)
+            intent.putExtra("CALLTYPE","LOGCALL")
+            startActivityForResult(intent, AppConstant.INTENT_1001)
+
+        }
+        bottomSheetDialog.show()
+    }
+
     private fun callManageCalls() {
 
         showProgress()
 
         var jsonObject = JSONObject()
 
+        jsonObject.put("NBInquiryTypeID", ID)
         jsonObject.put("LeadID", LeadID)
-        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
 
         if(ClosedCall != "") {
             jsonObject.put("CallStatus", ClosedCall)
         }
 
-        val call = ApiUtils.apiInterface.ManageCalls(getRequestJSONBody(jsonObject.toString()))
+        val call = ApiUtils.apiInterface.ManageCallsFindAll(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<CallsResponse> {
             override fun onResponse(call: Call<CallsResponse>, response: Response<CallsResponse>) {
                 hideProgress()
@@ -205,6 +255,8 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
 
                             shimmer.stopShimmer()
                             shimmer.gone()
+                            FL.visible()
+                            RLNoData.gone()
 
                         } else {
                             Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()

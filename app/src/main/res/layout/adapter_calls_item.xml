@@ -28,31 +28,30 @@
             android:layout_marginLeft="@dimen/_10sdp">
             <TextView
                 android:id="@+id/txtTitle"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""
+                android:text="Title"
                 android:textColor="@color/colorBlack"
                 android:textSize="@dimen/_12sdp"
-                android:fontFamily="@font/poppins_medium"/>
+                android:fontFamily="@font/poppins_semibold"/>
 
             <TextView
                 android:id="@+id/txtStatus"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""
+                android:text="Status"
                 android:textColor="@color/color6"
                 android:textSize="@dimen/_10sdp"
-                android:fontFamily="@font/poppins_semibold"/>
+                android:fontFamily="@font/poppins_medium"/>
 
             <TextView
                 android:id="@+id/txtCreatedBy"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""
+                android:text="Created"
                 android:textColor="@color/colorGray500"
                 android:textSize="@dimen/_8sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:fontFamily="@font/poppins_light" />
+                android:fontFamily="@font/poppins_regular" />
         </LinearLayout>
 
     </LinearLayout>

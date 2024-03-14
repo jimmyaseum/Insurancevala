@@ -10,10 +10,10 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.OpenableColumns
-import android.util.Log
 import android.view.View
 import android.webkit.MimeTypeMap
 import android.widget.*
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.FilePickerBuilder
@@ -23,6 +23,7 @@ import com.app.insurancevala.adapter.MultipleAttachmentListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.pojo.AttachmentModel
+import com.app.insurancevala.model.pojo.DocumentsModel
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -47,12 +48,13 @@ import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
 import java.io.*
 
-class AddAttchmentsActivity : BaseActivity(), View.OnClickListener, RecyclerClickListener, EasyPermissions.PermissionCallbacks {
+class AddAttachmentsActivity : BaseActivity(), View.OnClickListener, RecyclerClickListener, EasyPermissions.PermissionCallbacks {
     // attachments
-    var arrayListAttachment: ArrayList<AttachmentModel>? = null
+    var arrayListAttachment: ArrayList<DocumentsModel>? = null
     lateinit var adapter: MultipleAttachmentListAdapter
     val RC_FILE_PICKER_PERM = 900
     var ImagePaths = ArrayList<String>()
+    var ID: Int? = null
     var LeadID: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,6 +66,7 @@ class AddAttchmentsActivity : BaseActivity(), View.OnClickListener, RecyclerClic
     }
 
     private fun getIntentData() {
+        ID = intent.getIntExtra("ID",0)
         LeadID = intent.getIntExtra("LeadID",0)
     }
 
@@ -78,7 +81,7 @@ class AddAttchmentsActivity : BaseActivity(), View.OnClickListener, RecyclerClic
         rvAttachment.isNestedScrollingEnabled = false
 
         arrayListAttachment = ArrayList()
-        adapter = MultipleAttachmentListAdapter(this, arrayListAttachment, this)
+        adapter = MultipleAttachmentListAdapter(this, true, arrayListAttachment, this)
         rvAttachment.adapter = adapter
 
         imgBack.setOnClickListener(this)
@@ -110,7 +113,7 @@ class AddAttchmentsActivity : BaseActivity(), View.OnClickListener, RecyclerClic
                 if (isOnline(this)) {
                     CallUploadDocuments()
                 } else {
-                    internetErrordialog(this@AddAttchmentsActivity)
+                    internetErrordialog(this@AddAttachmentsActivity)
                 }
             }
         }
@@ -404,14 +407,7 @@ class AddAttchmentsActivity : BaseActivity(), View.OnClickListener, RecyclerClic
 
         txtButtonSubmit!!.setOnClickListener {
             if(!edtName.text.toString().trim().equals("")) {
-                    arrayListAttachment!!.add(
-                    AttachmentModel(
-                        name = edtName.text.toString(),
-                        attachmentUri = fileuri,
-                        attachmentType = attachmenttype
-                    )
-                )
-                adapter.notifyDataSetChanged()
+                adapter.addItem(edtName.text.toString(), fileuri, attachmenttype)
                 bottomSheetDialog.dismiss()
             } else {
                 edtName.error = "Enter Name"
@@ -419,8 +415,6 @@ class AddAttchmentsActivity : BaseActivity(), View.OnClickListener, RecyclerClic
         }
 
         txtButtonCancel!!.setOnClickListener {
-            arrayListAttachment!!.add(AttachmentModel(name = name, attachmentUri = fileuri, attachmentType = attachmenttype))
-            adapter.notifyDataSetChanged()
             bottomSheetDialog.dismiss()
         }
 
@@ -436,19 +430,19 @@ class AddAttchmentsActivity : BaseActivity(), View.OnClickListener, RecyclerClic
 
         if(!arrayListAttachment.isNullOrEmpty()) {
             for (i in arrayListAttachment!!.indices) {
-                if (arrayListAttachment!![i].attachmentType == 2) {
-                    if (arrayListAttachment!![i].attachmentUri != null) {
-                        partsList.add(CommonUtil.prepareFilePart(this, "image/*", "AttachmentURL", arrayListAttachment!![i].attachmentUri!!))
-                        AttachmentName.add(arrayListAttachment!![i].name)
+                if (arrayListAttachment!![i].AttachmentType == "Image") {
+                    if (arrayListAttachment!![i].AttachmentURL != null) {
+                        partsList.add(CommonUtil.prepareFilePart(this, "image/*", "AttachmentURL", arrayListAttachment!![i].AttachmentURL!!.toUri()))
+                        AttachmentName.add(arrayListAttachment!![i].AttachmentName!!)
 
                     } else {
                         val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
                         partsList.add(MultipartBody.Part.createFormData("AttachmentURL", "", attachmentEmpty))
                     }
                 } else {
-                    if (arrayListAttachment!![i].attachmentUri != null) {
-                        partsList.add(CommonUtil.prepareFilePart(this, "application/*", "AttachmentURL", arrayListAttachment!![i].attachmentUri!!))
-                        AttachmentName.add(arrayListAttachment!![i].name)
+                    if (arrayListAttachment!![i].AttachmentURL != null) {
+                        partsList.add(CommonUtil.prepareFilePart(this, "application/*", "AttachmentURL", arrayListAttachment!![i].AttachmentURL!!.toUri()))
+                        AttachmentName.add(arrayListAttachment!![i].AttachmentName!!)
                     } else {
                         val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
                         partsList.add(MultipartBody.Part.createFormData("AttachmentURL", "", attachmentEmpty))
@@ -458,14 +452,16 @@ class AddAttchmentsActivity : BaseActivity(), View.OnClickListener, RecyclerClic
         }
 
         val a = AttachmentName.toString().replace("[", "").replace("]", "")
-
+        LogUtil.d(TAG,"111===> "+a)
         val mAttachmentName = CommonUtil.createPartFromString(a)
         val mreferenceGUID = CommonUtil.createPartFromString("")
+        val mID = CommonUtil.createPartFromString(ID.toString())
         val mAttachmentType = CommonUtil.createPartFromString(AppConstant.OTHER)
 
         val call = ApiUtils.apiInterface.ManageAttachment(
             LeadID = LeadID,
             ReferenceGUID = mreferenceGUID,
+            NBInquiryTypeID = mID,
             AttachmentType = mAttachmentType,
             AttachmentName = mAttachmentName,
             attachment = partsList

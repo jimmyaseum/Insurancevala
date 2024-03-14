@@ -4,14 +4,11 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.InquiryTypeModel
-import com.app.insurancevala.utils.gone
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.adapter_master_item.view.*
 
 class InquiryTypeListAdapter(private val context: Context?, private val arrayList: ArrayList<InquiryTypeModel>, private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<InquiryTypeListAdapter.ViewHolder>() {
@@ -48,7 +45,13 @@ class InquiryTypeListAdapter(private val context: Context?, private val arrayLis
             }
 
             if(arrayList[position].IsActive != null) {
-                itemView.txtStatus.text = arrayList[position].IsActive.toString()
+                if (arrayList[position].IsActive!!) {
+                    itemView.txtStatus.setText("Active")
+                    itemView.txtStatus.setTextColor(ContextCompat.getColor(context, R.color.button_green))
+                } else{
+                    itemView.txtStatus.setText("InActive")
+                    itemView.txtStatus.setTextColor(ContextCompat.getColor(context, R.color.colorRed))
+                }
             }
 
             itemView.setOnClickListener {

@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerClickListener
@@ -66,17 +67,44 @@ class InquiryListAdapter(private val context: Context?, private val arrayList: A
             var colors1 = arrayOf(R.color.color5, R.color.color11, R.color.color8)
 
             val reminder = position % 3
-//            itemView.v1.setBackgroundDrawable(ContextCompat.getDrawable(context, colors[reminder]))
+            itemView.v1.setBackgroundDrawable(ContextCompat.getDrawable(context, colors[reminder]))
 
             itemView.setOnClickListener {
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 101)
             }
 
-            itemView.txtEdit.setOnClickListener {
+            itemView.imgEdit.setOnClickListener {
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 102)
             }
             itemView.txtDelete.setOnClickListener {
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 103)
+            }
+            itemView.txtNotes.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 104)
+            }
+            itemView.txtTasks.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 105)
+            }
+            itemView.txtCalls.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 106)
+            }
+            itemView.txtMeetings.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 107)
+            }
+            itemView.txtAttachments.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 108)
+            }
+            itemView.txtClosed_Tasks.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 109)
+            }
+            itemView.txtClosed_Calls.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 110)
+            }
+            itemView.txtClosed_Meetings.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 111)
+            }
+            itemView.txtRecordings.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 112)
             }
         }
     }

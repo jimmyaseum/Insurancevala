@@ -151,6 +151,8 @@ class InquirySubTypeListActivity : BaseActivity(), View.OnClickListener, Recycle
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@InquirySubTypeListActivity,refreshLayout)
+            searchView.closeSearch()
             callManageInquirySubType()
             refreshLayout.isRefreshing = false
         }
@@ -181,7 +183,7 @@ class InquirySubTypeListActivity : BaseActivity(), View.OnClickListener, Recycle
                 val intent = Intent(this, AddInquirySubTypeActivity::class.java)
                 intent.putExtra(AppConstant.STATE, AppConstant.S_EDIT)
                 intent.putExtra("InquiryTypeGUID", arrayListInquirySubTypeNew!![position].InquirySubTypeGUID)
-                intent.putExtra("InquiryTypeID", arrayListInquirySubTypeNew!![position].InquiryTypeID!!.toInt())
+                intent.putExtra("InquiryTypeID", arrayListInquirySubTypeNew!![position].InquiryTypeID)
                 startActivity(intent)
             }
 

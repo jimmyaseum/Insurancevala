@@ -100,7 +100,7 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
             }
             R.id.txtForgotPassword -> {
                 preventTwoClick(v)
-                val intent = Intent(this@LoginActivity, ForgotpasswordActivity::class.java)
+                val intent = Intent(this@LoginActivity, ForgotPasswordActivity::class.java)
                 startActivity(intent)
                 finish()
             }

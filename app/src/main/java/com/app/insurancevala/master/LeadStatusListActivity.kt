@@ -143,6 +143,8 @@ class LeadStatusListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@LeadStatusListActivity,refreshLayout)
+            searchView.closeSearch()
             callManageLeadStatus()
             refreshLayout.isRefreshing = false
         }

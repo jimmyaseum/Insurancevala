@@ -151,6 +151,8 @@ class InitialTypeListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@InitialTypeListActivity,refreshLayout)
+            searchView.closeSearch()
             callManageInitialType()
             refreshLayout.isRefreshing = false
         }

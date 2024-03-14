@@ -56,8 +56,7 @@ class AddInquirySubTypeActivity : BaseActivity(), View.OnClickListener {
     var mInquiryTypeID: Int = 0
 
     var arrayListStatus: ArrayList<SingleSelectionModel>? = ArrayList()
-
-    var mInquirytype: String = ""
+    var mLeadStatus: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,8 +96,8 @@ class AddInquirySubTypeActivity : BaseActivity(), View.OnClickListener {
 
         SetInitListner()
 
-        arrayListStatus?.add(SingleSelectionModel(0, "true", true))
-        arrayListStatus?.add(SingleSelectionModel(1, "false", false))
+        arrayListStatus?.add(SingleSelectionModel(0, "Active", true))
+        arrayListStatus?.add(SingleSelectionModel(1, "InActive", false))
     }
 
     private fun setMasterData() {
@@ -111,7 +110,7 @@ class AddInquirySubTypeActivity : BaseActivity(), View.OnClickListener {
     private fun SetInitListner() {
         imgBack.setOnClickListener(this)
         edtInquiryType.setOnClickListener(this)
-        edtIsActive.setOnClickListener(this)
+        edtStatus.setOnClickListener(this)
         txtButtonCancel.setOnClickListener(this)
         txtButtonSubmit.setOnClickListener(this)
     }
@@ -133,7 +132,7 @@ class AddInquirySubTypeActivity : BaseActivity(), View.OnClickListener {
                 }
             }
 
-            R.id.edtIsActive -> {
+            R.id.edtStatus -> {
                 preventTwoClick(v)
                 if (!arrayListStatus.isNullOrEmpty()) {
                     selectStatusDialog()
@@ -180,8 +179,8 @@ class AddInquirySubTypeActivity : BaseActivity(), View.OnClickListener {
             edtInquirySubType.setError(getString(R.string.error_empty_inquiry_sub_type), errortint(this))
             isvalidate = false
         }
-        if (edtIsActive.text.toString().trim().isEmpty()) {
-            edtIsActive.setError(getString(R.string.error_empty_type), errortint(this))
+        if (edtStatus.text.toString().trim().isEmpty()) {
+            edtStatus.setError(getString(R.string.error_empty_type), errortint(this))
             isvalidate = false
         }
 
@@ -407,8 +406,8 @@ class AddInquirySubTypeActivity : BaseActivity(), View.OnClickListener {
             override fun onItemClickEvent(view: View, position: Int, type: Int) {
 
                 itemAdapter.updateItem(position)
-                mInquirytype = arrayListStatus!![position].Name.toString()
-                edtIsActive.setText(mInquirytype)
+                mLeadStatus = arrayListStatus!![position].Name.toString()
+                edtStatus.setText(mLeadStatus)
                 dialogSelectInquiryType.dismiss()
             }
         })
@@ -426,7 +425,7 @@ class AddInquirySubTypeActivity : BaseActivity(), View.OnClickListener {
         jsonObject.put("InquirySubType", edtInquirySubType.text.toString().trim())
         jsonObject.put("InquiryTypeID", mInquiryTypeID)
 
-        if (edtIsActive.text.toString().trim() == "true") {
+        if (edtStatus.text.toString().trim() == "Active") {
             jsonObject.put("IsActive", true)
         } else {
             jsonObject.put("IsActive", false)
@@ -489,7 +488,11 @@ class AddInquirySubTypeActivity : BaseActivity(), View.OnClickListener {
             edtInquirySubType.setText(model.InquirySubType)
         }
         if (model.IsActive != null) {
-            edtIsActive.setText(model.IsActive.toString())
+            if (model.IsActive) {
+                edtStatus.setText("Active")
+            } else {
+                edtStatus.setText("InActive")
+            }
         }
     }
 

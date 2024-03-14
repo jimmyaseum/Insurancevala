@@ -1,6 +1,7 @@
 package com.app.insurancevala.activity.Users
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
@@ -23,9 +24,6 @@ import com.example.awesomedialog.title
 import com.ferfalk.simplesearchview.SimpleSearchView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_users_list.*
-import kotlinx.android.synthetic.main.activity_users_list.layout
-import kotlinx.android.synthetic.main.activity_users_list.imgSearch
-import kotlinx.android.synthetic.main.activity_users_list.searchView
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -126,6 +124,8 @@ class UsersListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@UsersListActivity,refreshLayout)
+            searchView.closeSearch()
             callManageUsers()
             refreshLayout.isRefreshing = false
         }
@@ -172,6 +172,16 @@ class UsersListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                     .onPositive("Yes") {
                         CallDeleteAPI(arrayListUsersNew!![position].UserGUID!!)
                     }
+            }
+            104 -> {
+                preventTwoClick(view)
+                if (!arrayListUsersNew!![position].UserImage.isNullOrEmpty()) {
+                    val browserIntent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(arrayListUsersNew!![position].UserImage)
+                    )
+                    startActivity(browserIntent)
+                }
             }
         }
     }

@@ -1,12 +1,27 @@
 package com.app.insurancevala.model.response
 
-import com.app.insurancevala.model.pojo.AttachmentModel
 import com.app.insurancevala.model.pojo.DocumentsModel
 import com.google.gson.annotations.SerializedName
 
-class NotesResponse {
+class NoteResponse {
     @SerializedName("Data")
-    var Data: ArrayList<NotesModel>? = null
+    var Data: ArrayList<NoteModel>? = null
+    @SerializedName("Details")
+    var Details: String? = null
+    @SerializedName("Message")
+    var Message: String? = null
+    @SerializedName("Status")
+    var Status: Int? = null
+    @SerializedName("ItemCount")
+    var ItemCount: Int? = null
+    @SerializedName("ErrorMessage")
+    var ErrorMessage: String? = null
+
+}
+
+class NoteByGUIDResponse {
+    @SerializedName("Data")
+    var Data: NoteModel? = null
     @SerializedName("Details")
     var Details: String? = null
     @SerializedName("Message")
@@ -19,9 +34,11 @@ class NotesResponse {
     var ErrorMessage: String? = null
 }
 
-data class NotesModel (
+data class NoteModel (
     @SerializedName("ID")
     val ID: Int? = null,
+    @SerializedName("Note")
+    val Note: String? = null,
     @SerializedName("NoteGUID")
     val NoteGUID: String? = null,
     @SerializedName("Title")
@@ -46,7 +63,8 @@ data class NotesModel (
     val UpdatedOn: String? = null,
     @SerializedName("ReferenceGUID")
     val ReferenceGUID: String? = null,
-    @SerializedName("NoteAttachmentList")
-    val NoteAttachmentList: ArrayList<DocumentsModel>? = null,
-
-    )
+    @SerializedName("IsSelected")
+    var IsSelected : Boolean? = false,
+    @SerializedName("NotesAttachmentList")
+    val NotesAttachmentList: ArrayList<DocumentsModel>? = null,
+)

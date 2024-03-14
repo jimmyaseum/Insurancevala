@@ -143,6 +143,8 @@ class LeadSourceListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@LeadSourceListActivity,refreshLayout)
+            searchView.closeSearch()
             callManageLeadSource()
             refreshLayout.isRefreshing = false
         }

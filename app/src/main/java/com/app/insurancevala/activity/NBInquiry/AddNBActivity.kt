@@ -1,12 +1,15 @@
 package com.app.insurancevala.activity.NBInquiry
 
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.Window
@@ -16,36 +19,38 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.adapter.bottomsheetadapter.*
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.interFase.RecyclerItemClickListener
+import com.app.insurancevala.model.api.LeadCountResponse
 import com.app.insurancevala.model.pojo.InquiryInformationModel
 import com.app.insurancevala.model.response.*
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_add_lead.layout
 import kotlinx.android.synthetic.main.activity_add_nbinquiry.*
-import kotlinx.android.synthetic.main.activity_add_nbinquiry.edtAllotmentTo
-import kotlinx.android.synthetic.main.activity_add_nbinquiry.imgBack
-import kotlinx.android.synthetic.main.activity_add_nbinquiry.layout
-import kotlinx.android.synthetic.main.activity_add_nbinquiry.txtHearderText
-import kotlinx.android.synthetic.main.activity_add_nbinquiry.txtSave
-import kotlinx.android.synthetic.main.bottom_sheet_rename_dialog.img
 import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
-class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListener, RecyclerItemClickListener {
+class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListener,
+    RecyclerItemClickListener {
 
     var sharedPreference: SharedPreference? = null
     var state: String? = null
+    var AddMore: Boolean? = null
     var NBInquiryGUID: String? = null
 
     var arrayListAllotmentTo: ArrayList<UserModel>? = ArrayList()
@@ -55,7 +60,13 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
     var arrayListClient: ArrayList<LeadModel>? = ArrayList()
     var mClient: String = ""
     var mClientID: Int = 0
+    var mClientGUID: String = ""
     var mClientStageID: Int = 0
+
+    var arrayListFamilyMember: ArrayList<FamilyDetailsModel>? = ArrayList()
+    var mFamilyMember: String = ""
+    var mFamilyMemberID: Int = 0
+    var mFamilyMemberGUID: String = ""
 
     var arrayListleadtype: ArrayList<LeadTypeModel>? = ArrayList()
     var mLeadtype: String = ""
@@ -87,6 +98,9 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
     var mInquiryAllotmentToID: Int = 0
     var mAllotmentToItemPostion: Int = 0
 
+    var calendarNow: Calendar? = Calendar.getInstance()
+    var mInquiryDateItemPostion: Int = 0
+
     var arrayListInquiryInfo: ArrayList<InquiryInformationModel>? = ArrayList()
     lateinit var adapter: AddMoreInquiryAdapter
 
@@ -100,6 +114,31 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
     private fun getIntentData() {
         state = intent.getStringExtra(AppConstant.STATE)
+        AddMore = intent.getBooleanExtra("AddMore",true)
+        edtClient.setText(intent.getStringExtra("LeadName"))
+
+        mClientID = intent.getIntExtra("LeadID",0)
+
+        mClientStageID = intent.getIntExtra("LeadType",0)
+        if (mClientStageID.equals(1)) {
+            edtClientType.setText("Existing Client")
+        } else if (mClientStageID.equals(2)) {
+            edtClientType.setText("Prospect")
+        }
+
+        if (intent.hasExtra("ArrayListFamily")) {
+            val arrayListFamily: ArrayList<FamilyDetailsModel>? = intent.getSerializableExtra("ArrayListFamily") as? ArrayList<FamilyDetailsModel>
+            if (arrayListFamily != null && arrayListFamily.isNotEmpty()) {
+                Log.d("AddNBActivity", "Received ArrayListFamily: $arrayListFamily")
+                arrayListFamilyMember = arrayListFamily
+                LLFamilyMember.visible()
+            } else {
+                Log.d("AddNBActivity", "ArrayListFamily is null or empty")
+                LLFamilyMember.gone()
+            }
+        } else {
+            Log.d("AddNBActivity", "ArrayListFamily is not found in extras")
+        }
     }
 
     override fun initializeView() {
@@ -114,22 +153,20 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
     }
 
     private fun setMasterData() {
-        if(state.equals(AppConstant.S_ADD))
-        {
-            txtHearderText.text = "Create NB Inquiry"
-            if (isOnline(this))
-            {
-                callManageClient(0)
-                callManageAllotmentTo(0)
-                callManageInquiryType(0)
-                callManageLeadType(0)
-                callManageLeadStatus(0)
-            } else {
-                internetErrordialog(this@AddNBActivity)
-            }
+        if (isOnline(this)) {
+            callManageAllotmentTo(0)
+            callManageInquiryType(0)
+            callManageLeadType(0)
+            callManageLeadStatus(0)
+        } else {
+            internetErrordialog(this@AddNBActivity)
         }
-        else if(state.equals(AppConstant.S_EDIT))
-        {
+        if (state.equals(AppConstant.S_ADD)) {
+            txtHearderText.text = "Create NB Inquiry"
+            if (!AddMore!!) {
+                callManageLeadGUID(mClientGUID, null)
+            }
+        } else if (state.equals(AppConstant.S_EDIT)) {
             NBInquiryGUID = intent.getStringExtra("NBInquiryGUID")
             txtHearderText.text = "Update NB Inquiry"
             if (isOnline(this)) {
@@ -151,24 +188,43 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         txtSave.setOnClickListener(this)
 
         edtClient.setOnClickListener(this)
+        edtFamilyMember.setOnClickListener(this)
         edtAllotmentTo.setOnClickListener(this)
 
         rvInquiry.layoutManager = LinearLayoutManager(
-            applicationContext,
-            RecyclerView.VERTICAL, false
+            applicationContext, RecyclerView.VERTICAL, false
         )
         rvInquiry.isNestedScrollingEnabled = false
     }
 
     private fun setDefaultData() {
         arrayListInquiryInfo = ArrayList()
-        arrayListInquiryInfo?.add(InquiryInformationModel(AllotmentTo = mAllotmentTo , AllotmentToId = mAllotmentToID))
+        arrayListInquiryInfo?.add(
+            InquiryInformationModel(
+                AllotmentTo = mAllotmentTo, AllotmentToId = mAllotmentToID
+            )
+        )
         setAdapterData(arrayListInquiryInfo)
     }
 
     private fun setAdapterData(arrayList: ArrayList<InquiryInformationModel>?) {
-        adapter = AddMoreInquiryAdapter(arrayList, this@AddNBActivity)
+        adapter = AddMoreInquiryAdapter(arrayList, AddMore!!, this@AddNBActivity)
         rvInquiry.adapter = adapter
+
+        Handler().postDelayed({
+            smoothScrollToLastItem()
+        },100)
+    }
+
+    private fun smoothScrollToLastItem() {
+        val smoothScroller: RecyclerView.SmoothScroller = object : LinearSmoothScroller(this) {
+            override fun calculateSpeedPerPixel(displayMetrics: android.util.DisplayMetrics): Float {
+                // Gradually slow down the speed when near the last item
+                return 100f / displayMetrics.densityDpi
+            }
+        }
+        smoothScroller.targetPosition = adapter.itemCount - 1
+        rvInquiry.layoutManager?.startSmoothScroll(smoothScroller)
     }
 
     override fun onClick(v: View?) {
@@ -178,18 +234,28 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                 preventTwoClick(v)
                 finish()
             }
+
             R.id.edtClient -> {
                 preventTwoClick(v)
-                if (arrayListClient.isNullOrEmpty()) {
-                    callManageClient(1)
-                } else {
-                    selectClientDialog()
+                selectClientDialog()
+            }
+
+            R.id.edtFamilyMember -> {
+                preventTwoClick(v)
+                if (!arrayListFamilyMember!!.isNullOrEmpty()) {
+                    selectFamilyMemberDialog()
+                } else if (edtClient.text.isEmpty()) {
+                     toast("Select Client", Toast.LENGTH_SHORT)
+                } else{
+                    toast("No Family Member", Toast.LENGTH_SHORT)
                 }
             }
+
             R.id.txtSave -> {
                 preventTwoClick(v)
                 validation()
             }
+
             R.id.edtAllotmentTo -> {
                 preventTwoClick(v)
                 if (arrayListAllotmentTo.isNullOrEmpty()) {
@@ -215,16 +281,19 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
     fun isValidate(): Boolean {
         var isValidate = true
         if (edtClient.text.isEmpty()) {
-            edtClient.setError("Select Client",errortint(this))
+            edtClient.setError("Select Client", errortint(this))
             isValidate = false
         }
         if (edtAllotmentTo.text.isEmpty()) {
-            edtAllotmentTo.setError("Select Allotment To",errortint(this))
+            edtAllotmentTo.setError("Select Allotment To", errortint(this))
             isValidate = false
         }
-        if (!adapter.isValidateItem()) {
-            isValidate = false
+        if (::adapter.isInitialized) {
+            if (!adapter.isValidateItem()) {
+                isValidate = false
+            }
         }
+
         return isValidate
     }
 
@@ -249,6 +318,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                     jsonObjectEducation.put("ProposedAmount", arrayList!![i].Proposed.toDouble())
                     jsonObjectEducation.put("Frequency", arrayList!![i].Frequency)
                     jsonObjectEducation.put("InquiryAllotmentID", arrayList!![i].AllotmentToId)
+                    jsonObjectEducation.put("InquiryDate", arrayList!![i].mInquiryDate)
                     jsonArrayEducation.put(jsonObjectEducation)
                 }
             }
@@ -256,51 +326,58 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         val jsonObject = JSONObject()
         jsonObject.put("LeadID", mClientID)
-        jsonObject.put("LeadStageID",mClientStageID)
+        jsonObject.put("LeadStageID", mClientStageID)
         jsonObject.put("IsActive", true)
         jsonObject.put("AllotmentID", mAllotmentToID)
         jsonObject.put("NBInquiryList", jsonArrayEducation)
+        jsonObject.put("FamilyID",mFamilyMemberID)
 
         var call: Call<NBInquiryTypeAddUpdateResponse>? = null
 
-        if(state.equals(AppConstant.S_ADD)) {
-//            jsonObject.put("OperationType", AppConstant.INSERT)
-        call = ApiUtils.apiInterface.ManageNBInquiryInsert(getRequestJSONBody(jsonObject.toString()))
-    }
-        else if(state.equals(AppConstant.S_EDIT)) {
+        if (state.equals(AppConstant.S_ADD)) {
+            call = ApiUtils.apiInterface.ManageNBInquiryInsert(getRequestJSONBody(jsonObject.toString()))
+        } else if (state.equals(AppConstant.S_EDIT)) {
             jsonObject.put("NBInquiryGUID", NBInquiryGUID)
-//            jsonObject.put("OperationType", AppConstant.EDIT)
             call = ApiUtils.apiInterface.ManageNBInquiryUpdate(getRequestJSONBody(jsonObject.toString()))
         }
 
         if (call != null) {
             call.enqueue(object : Callback<NBInquiryTypeAddUpdateResponse> {
-                override fun onResponse(call: Call<NBInquiryTypeAddUpdateResponse>, response: Response<NBInquiryTypeAddUpdateResponse>) {
+                override fun onResponse(
+                    call: Call<NBInquiryTypeAddUpdateResponse>,
+                    response: Response<NBInquiryTypeAddUpdateResponse>
+                ) {
                     hideProgress()
                     if (response.code() == 200) {
                         if (response.body()?.Status == 201) {
-                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
+                            ).show()
                             val intent = Intent()
                             setResult(RESULT_OK, intent)
                             finish()
                         } else {
-                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
+                            ).show()
                             val intent = Intent()
                             setResult(RESULT_OK, intent)
                             finish()
                         }
                     }
                 }
+
                 override fun onFailure(call: Call<NBInquiryTypeAddUpdateResponse>, t: Throwable) {
                     hideProgress()
-                    Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                    Snackbar.make(
+                        layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
+                    ).show()
                     val intent = Intent()
                     setResult(RESULT_OK, intent)
                     finish()
                 }
             })
         }
-
     }
 
     private fun callManageAllotmentTo(mode: Int) {
@@ -321,44 +398,50 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         arrayListAllotmentTo = response.body()?.Data!!
-                        if(arrayListAllotmentTo!!.size > 0) {
-                            for(i in 0 until arrayListAllotmentTo!!.size) {
-                                if(state.equals(AppConstant.S_ADD)) {
+                        if (arrayListAllotmentTo!!.size > 0) {
+                            for (i in 0 until arrayListAllotmentTo!!.size) {
+                                if (state.equals(AppConstant.S_ADD)) {
                                     if (arrayListAllotmentTo!![i].ID == Userid.toInt()) {
                                         mAllotmentToID = arrayListAllotmentTo!![i].ID!!
-                                        mAllotmentTo = arrayListAllotmentTo!![i].FirstName!! + " " + arrayListAllotmentTo!![i].LastName!!
+                                        mAllotmentTo =
+                                            arrayListAllotmentTo!![i].FirstName!! + " " + arrayListAllotmentTo!![i].LastName!!
                                         edtAllotmentTo.setText(mAllotmentTo)
                                         edtAllotmentTo.setError(null)
                                     }
-                                }
-                                else if(state.equals(AppConstant.S_EDIT)) {
-                                    if(arrayListAllotmentTo!![i].ID == mAllotmentToID) {
+                                } else if (state.equals(AppConstant.S_EDIT)) {
+                                    if (arrayListAllotmentTo!![i].ID == mAllotmentToID) {
                                         mAllotmentToID = arrayListAllotmentTo!![i].ID!!
-                                        mAllotmentTo = arrayListAllotmentTo!![i].FirstName!! + " "+ arrayListAllotmentTo!![i].LastName!!
+                                        mAllotmentTo =
+                                            arrayListAllotmentTo!![i].FirstName!! + " " + arrayListAllotmentTo!![i].LastName!!
                                         edtAllotmentTo.setText(mAllotmentTo)
                                         edtAllotmentTo.setError(null)
                                     }
                                 }
                             }
                         }
-                        if(state.equals(AppConstant.S_ADD)) {
+                        if (state.equals(AppConstant.S_ADD)) {
                             setDefaultData()
                         }
                         if (mode == 1) {
                             selectAllotmentToDialog()
                         }
-                    }
-                    else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                    } else {
+                        Snackbar.make(
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
+
             override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
+                ).show()
             }
         })
     }
+
     private fun selectAllotmentToDialog() {
         var dialogSelectAllotmentTo = Dialog(this)
         dialogSelectAllotmentTo.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -373,12 +456,16 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         dialogSelectAllotmentTo.setCancelable(true)
         dialogSelectAllotmentTo.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectAllotmentTo.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectAllotmentTo.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectAllotmentTo.window!!.setGravity(Gravity.CENTER)
 
-        val rvDialogCustomer = dialogSelectAllotmentTo.findViewById(R.id.rvDialogCustomer) as RecyclerView
-        val edtSearchCustomer = dialogSelectAllotmentTo.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectAllotmentTo.findViewById(R.id.txtid) as TextView
+        val rvDialogCustomer =
+            dialogSelectAllotmentTo.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectAllotmentTo.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectAllotmentTo.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectAllotmentTo.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -389,10 +476,11 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         val itemAdapter = BottomSheetUsersListAdapter(this, arrayListAllotmentTo!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
                 itemAdapter.updateItem(pos)
                 mAllotmentToID = arrayListAllotmentTo!![pos].ID!!
-                mAllotmentTo = arrayListAllotmentTo!![pos].FirstName!! + " "+ arrayListAllotmentTo!![pos].LastName!!
+                mAllotmentTo =
+                    arrayListAllotmentTo!![pos].FirstName!! + " " + arrayListAllotmentTo!![pos].LastName!!
                 edtAllotmentTo.setText(mAllotmentTo)
                 edtAllotmentTo.setError(null)
                 dialogSelectAllotmentTo!!.dismiss()
@@ -401,7 +489,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListAllotmentTo!!.size > 6) {
+        if (arrayListAllotmentTo!!.size > 6) {
             edtSearchCustomer.visible()
         } else {
             edtSearchCustomer.gone()
@@ -410,38 +498,45 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         edtSearchCustomer.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
             }
+
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
+
             override fun onTextChanged(char: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 val arrItemsFinal1: ArrayList<UserModel> = ArrayList()
                 if (char.toString().trim().isNotEmpty()) {
                     val strSearch = char.toString()
                     for (model in arrayListAllotmentTo!!) {
-                        if (model.FirstName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                            model.LastName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                            model.MobileNo!!.toLowerCase().contains(strSearch.toLowerCase())) {
+                        if (model.FirstName!!.toLowerCase()
+                                .contains(strSearch.toLowerCase()) || model.LastName!!.toLowerCase()
+                                .contains(strSearch.toLowerCase()) || model.MobileNo!!.toLowerCase()
+                                .contains(strSearch.toLowerCase())
+                        ) {
                             arrItemsFinal1.add(model)
                         }
                     }
-                    val itemAdapter = BottomSheetUsersListAdapter(this@AddNBActivity, arrItemsFinal1)
+                    val itemAdapter =
+                        BottomSheetUsersListAdapter(this@AddNBActivity, arrItemsFinal1)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
                             mAllotmentToID = arrItemsFinal1!![pos].ID!!
-                            mAllotmentTo = arrItemsFinal1!![pos].FirstName!! + " "+ arrItemsFinal1!![pos].LastName!!
+                            mAllotmentTo =
+                                arrItemsFinal1!![pos].FirstName!! + " " + arrItemsFinal1!![pos].LastName!!
                             edtAllotmentTo.setText(mAllotmentTo)
                             edtAllotmentTo.setError(null)
                             dialogSelectAllotmentTo!!.dismiss()
                         }
                     })
                     rvDialogCustomer.adapter = itemAdapter
-                }
-                else {
-                    val itemAdapter = BottomSheetUsersListAdapter(this@AddNBActivity, arrayListAllotmentTo!!)
+                } else {
+                    val itemAdapter =
+                        BottomSheetUsersListAdapter(this@AddNBActivity, arrayListAllotmentTo!!)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                             mAllotmentToID = arrayListAllotmentTo!![pos].ID!!
-                            mAllotmentTo = arrayListAllotmentTo!![pos].FirstName!! + " "+ arrayListAllotmentTo!![pos].LastName!!
+                            mAllotmentTo =
+                                arrayListAllotmentTo!![pos].FirstName!! + " " + arrayListAllotmentTo!![pos].LastName!!
                             edtAllotmentTo.setText(mAllotmentTo)
                             edtAllotmentTo.setError(null)
 
@@ -450,72 +545,11 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 }
-           }
+            }
         })
         dialogSelectAllotmentTo!!.show()
     }
 
-    private fun callManageClient(mode: Int) {
-        if (mode == 1) {
-            showProgress()
-        }
-        var jsonObject = JSONObject()
-        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
-        val call = ApiUtils.apiInterface.ManageLead(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<LeadResponse> {
-            override fun onResponse(
-                call: Call<LeadResponse>,
-                response: Response<LeadResponse>
-            ) {
-                hideProgress()
-                if (response.code() == 200) {
-                    if (response.body()?.Status == 200) {
-                        arrayListClient = response.body()?.Data!!
-
-                        if(arrayListClient!!.size > 0) {
-                            for(i in 0 until arrayListClient!!.size) {
-                                if(state.equals(AppConstant.S_EDIT)) {
-                                    if(arrayListClient!![i].ID == mClientID) {
-                                        mClientID = arrayListClient!![i].ID!!
-                                        mClient = arrayListClient!![i].FirstName!! + " " + arrayListClient!![i].LastName
-                                        mClientStageID = arrayListClient!![i].LeadStage!!
-                                        edtClient.setText(mClient)
-                                        edtClient.setError(null)
-
-                                        if(mClientStageID.equals(1)) {
-                                            edtClientType.setText("Existing Client")
-                                        } else if ( mClientStageID.equals(2)) {
-                                            edtClientType.setText("Prospect")
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (mode == 1) {
-                            selectClientDialog()
-                        }
-                    } else {
-                        Snackbar.make(
-                            layout,
-                            response.body()?.Details.toString(),
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<LeadResponse>, t: Throwable) {
-                hideProgress()
-                Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
-                ).show()
-            }
-        })
-
-    }
     private fun selectClientDialog() {
         var dialogSelectClient = Dialog(this)
         dialogSelectClient.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -530,47 +564,22 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         dialogSelectClient.setCancelable(true)
         dialogSelectClient.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectClient.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectClient.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectClient.window!!.setGravity(Gravity.CENTER)
 
-        val rvDialogCustomer = dialogSelectClient.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val rvDialogCustomer =
+            dialogSelectClient.findViewById(R.id.rvDialogCustomer) as RecyclerView
         val edtSearchCustomer = dialogSelectClient.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectClient.findViewById(R.id.txtid) as TextView
+        val txtid = dialogSelectClient.findViewById(R.id.txtid) as TextView
+        val txtChar = dialogSelectClient.findViewById(R.id.txtChar) as TextView
         val imgClear = dialogSelectClient.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
             dialogSelectClient.dismiss()
         }
-
         txtid.text = "Select Clients"
-
-        val itemAdapter = BottomSheetClientListAdapter(this, arrayListClient!!)
-        itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
-
-                itemAdapter.updateItem(pos)
-                mClient = arrayListClient!![pos].FirstName!! + " " + arrayListClient!![pos].LastName
-                mClientID = arrayListClient!![pos].ID!!
-                mClientStageID = arrayListClient!![pos].LeadStage!!
-                edtClient.setText(mClient)
-                edtClient.setError(null)
-
-                if(mClientStageID.equals(1)) {
-                    edtClientType.setText("Existing Client")
-                } else if ( mClientStageID.equals(2)) {
-                    edtClientType.setText("Prospect")
-                }
-                dialogSelectClient!!.dismiss()
-            }
-        })
-
-        rvDialogCustomer.adapter = itemAdapter
-
-        if(arrayListClient!!.size > 6) {
-            edtSearchCustomer.visible()
-        } else {
-            edtSearchCustomer.gone()
-        }
 
         edtSearchCustomer.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
@@ -581,58 +590,71 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
             override fun onTextChanged(char: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 val arrItemsFinal1: ArrayList<LeadModel> = ArrayList()
-                if (char.toString().trim().isNotEmpty()) {
+                if (char.toString().trim().isNotEmpty() && edtSearchCustomer.text.toString()
+                        .trim().length > 2
+                ) {
                     val strSearch = char.toString()
-                    for (model in arrayListClient!!) {
-                        if (model.FirstName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                            model.LastName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                            model.MobileNo!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                            model.GroupCode!!.toLowerCase().contains(strSearch.toLowerCase())) {
-                            arrItemsFinal1.add(model)
+                    txtChar.gone()
+                    rvDialogCustomer.visible()
+                    callManageClient(0, strSearch)
+                } else {
+                    txtChar.visible()
+                    rvDialogCustomer.gone()
+                }
+            }
+
+            private fun callManageClient(mode: Int, searchdata: String) {
+                if (mode == 1) {
+                    showProgress()
+                }
+                var jsonObject = JSONObject()
+                jsonObject.put("GroupCode", searchdata)
+                jsonObject.put("FirstName", searchdata)
+                val call = ApiUtils.apiInterface.ManageLeadsFindAll(getRequestJSONBody(jsonObject.toString()))
+                call.enqueue(object : Callback<LeadResponse> {
+                    override fun onResponse(
+                        call: Call<LeadResponse>, response: Response<LeadResponse>
+                    ) {
+                        hideProgress()
+                        if (response.code() == 200) {
+                            if (response.body()?.Status == 200) {
+                                arrayListClient = response.body()?.Data!!
+
+                                if (arrayListClient!!.size > 0) {
+                                    val itemAdapter = BottomSheetClientListAdapter(
+                                        this@AddNBActivity, arrayListClient!!
+                                    )
+                                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                                        override fun onItemClickEvent(
+                                            v: View, pos: Int, flag: Int
+                                        ) {
+
+                                            itemAdapter.updateItem(pos)
+                                            callManageLeadGUID(arrayListClient!![pos].LeadGUID!!, dialogSelectClient)
+                                        }
+                                    })
+                                    rvDialogCustomer.adapter = itemAdapter
+                                }
+                            } else {
+                                Snackbar.make(
+                                    layout,
+                                    response.body()?.Details.toString(),
+                                    Snackbar.LENGTH_LONG
+                                ).show()
+                            }
                         }
                     }
 
-                    val itemAdapter = BottomSheetClientListAdapter(this@AddNBActivity, arrItemsFinal1)
-                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+                    override fun onFailure(call: Call<LeadResponse>, t: Throwable) {
+                        hideProgress()
+                        Snackbar.make(
+                            layout,
+                            getString(R.string.error_failed_to_connect),
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                })
 
-                            mClient = arrItemsFinal1!![pos].FirstName!! + " " + arrItemsFinal1!![pos].LastName
-                            mClientID = arrItemsFinal1!![pos].ID!!
-                            mClientStageID = arrItemsFinal1!![pos].LeadStage!!
-                            edtClient.setText(mClient)
-                            edtClient.setError(null)
-
-                            if(mClientStageID.equals(1)) {
-                                edtClientType.setText("Existing Client")
-                            } else if ( mClientStageID.equals(2)) {
-                                edtClientType.setText("Prospect")
-                            }
-                            dialogSelectClient!!.dismiss()
-                        }
-                    })
-                    rvDialogCustomer.adapter = itemAdapter
-                }
-                else {
-                    val itemAdapter = BottomSheetClientListAdapter(this@AddNBActivity, arrayListClient!!)
-                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
-
-                            mClient = arrayListClient!![pos].FirstName!! + " " + arrayListClient!![pos].LastName
-                            mClientID = arrayListClient!![pos].ID!!
-                            mClientStageID = arrayListClient!![pos].LeadStage!!
-                            edtClient.setText(mClient)
-                            edtClient.setError(null)
-
-                            if(mClientStageID.equals(1)) {
-                                edtClientType.setText("Existing Client")
-                            } else if ( mClientStageID.equals(2)) {
-                                edtClientType.setText("Prospect")
-                            }
-                            dialogSelectClient!!.dismiss()
-                        }
-                    })
-                    rvDialogCustomer.adapter = itemAdapter
-                }
             }
         })
         dialogSelectClient!!.show()
@@ -644,11 +666,11 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         }
         var jsonObject = JSONObject()
         jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
-        val call = ApiUtils.apiInterface.ManageInquiryType(getRequestJSONBody(jsonObject.toString()))
+        val call =
+            ApiUtils.apiInterface.ManageInquiryType(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<InquiryTypeResponse> {
             override fun onResponse(
-                call: Call<InquiryTypeResponse>,
-                response: Response<InquiryTypeResponse>
+                call: Call<InquiryTypeResponse>, response: Response<InquiryTypeResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
@@ -660,9 +682,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                         }
                     } else {
                         Snackbar.make(
-                            layout,
-                            response.body()?.Details.toString(),
-                            Snackbar.LENGTH_LONG
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
                         ).show()
                     }
                 }
@@ -671,13 +691,12 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
             override fun onFailure(call: Call<InquiryTypeResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                 ).show()
             }
         })
     }
+
     private fun selectInquiryTypeDialog() {
         var dialogSelectInquiryType = Dialog(this)
         dialogSelectInquiryType.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -692,12 +711,16 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         dialogSelectInquiryType.setCancelable(true)
         dialogSelectInquiryType.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectInquiryType.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectInquiryType.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectInquiryType.window!!.setGravity(Gravity.CENTER)
 
-        val rvDialogCustomer = dialogSelectInquiryType.findViewById(R.id.rvDialogCustomer) as RecyclerView
-        val edtSearchCustomer = dialogSelectInquiryType.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectInquiryType.findViewById(R.id.txtid) as TextView
+        val rvDialogCustomer =
+            dialogSelectInquiryType.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectInquiryType.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectInquiryType.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectInquiryType.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -708,7 +731,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         val itemAdapter = BottomSheetInquiryTypeListAdapter(this, arrayListInquiryType!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                 itemAdapter.updateItem(pos)
                 mInquiryTypeID = arrayListInquiryType!![pos].ID!!
@@ -726,10 +749,10 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListInquiryType!!.size > 6) {
-           edtSearchCustomer.visible()
+        if (arrayListInquiryType!!.size > 6) {
+            edtSearchCustomer.visible()
         } else {
-           edtSearchCustomer.gone()
+            edtSearchCustomer.gone()
         }
 
         edtSearchCustomer.addTextChangedListener(object : TextWatcher {
@@ -746,47 +769,54 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                     for (model in arrayListInquiryType!!) {
                         if (model.InquiryType!!.toLowerCase().contains(strSearch.toLowerCase())) {
                             arrItemsFinal1.add(model)
-                      }
-                  }
+                        }
+                    }
 
-                  val itemAdapter = BottomSheetInquiryTypeListAdapter(this@AddNBActivity, arrItemsFinal1)
-                  itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-                      override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+                    val itemAdapter =
+                        BottomSheetInquiryTypeListAdapter(this@AddNBActivity, arrItemsFinal1)
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
-                          mInquiryTypeID = arrItemsFinal1!![pos].ID!!
-                          mInquiryType = arrItemsFinal1!![pos].InquiryType!!
+                            mInquiryTypeID = arrItemsFinal1!![pos].ID!!
+                            mInquiryType = arrItemsFinal1!![pos].InquiryType!!
 
-                          adapter.updateInquiryTypeItem(mInquiryTypeItemPostion, mInquiryType, mInquiryTypeID)
+                            adapter.updateInquiryTypeItem(
+                                mInquiryTypeItemPostion, mInquiryType, mInquiryTypeID
+                            )
 
-                          arrayListInquirySubType = ArrayList()
-                          adapter.updateInquirySubTypeItem(mInquiryTypeItemPostion, "", 0)
+                            arrayListInquirySubType = ArrayList()
+                            adapter.updateInquirySubTypeItem(mInquiryTypeItemPostion, "", 0)
 
-                          callManageInquirySubType(1, mInquiryTypeID)
-                          dialogSelectInquiryType!!.dismiss()
-                      }
-                  })
-                  rvDialogCustomer.adapter = itemAdapter
-              } else {
-                  val itemAdapter = BottomSheetInquiryTypeListAdapter(this@AddNBActivity, arrayListInquiryType!!)
-                  itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-                      override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+                            callManageInquirySubType(1, mInquiryTypeID)
+                            dialogSelectInquiryType!!.dismiss()
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                } else {
+                    val itemAdapter = BottomSheetInquiryTypeListAdapter(
+                        this@AddNBActivity, arrayListInquiryType!!
+                    )
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
-                          mInquiryTypeID = arrayListInquiryType!![pos].ID!!
-                          mInquiryType = arrayListInquiryType!![pos].InquiryType!!
+                            mInquiryTypeID = arrayListInquiryType!![pos].ID!!
+                            mInquiryType = arrayListInquiryType!![pos].InquiryType!!
 
-                          adapter.updateInquiryTypeItem(mInquiryTypeItemPostion, mInquiryType, mInquiryTypeID)
+                            adapter.updateInquiryTypeItem(
+                                mInquiryTypeItemPostion, mInquiryType, mInquiryTypeID
+                            )
 
-                          arrayListInquirySubType = ArrayList()
-                          adapter.updateInquirySubTypeItem(mInquiryTypeItemPostion, "", 0)
+                            arrayListInquirySubType = ArrayList()
+                            adapter.updateInquirySubTypeItem(mInquiryTypeItemPostion, "", 0)
 
-                          callManageInquirySubType(1, mInquiryTypeID)
-                          dialogSelectInquiryType!!.dismiss()
+                            callManageInquirySubType(1, mInquiryTypeID)
+                            dialogSelectInquiryType!!.dismiss()
 
-                      }
-                  })
-                  rvDialogCustomer.adapter = itemAdapter
-              }
-          }
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                }
+            }
         })
         dialogSelectInquiryType!!.show()
     }
@@ -800,11 +830,11 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         var jsonObject = JSONObject()
         jsonObject.put("InquiryTypeID", mInquiryTypeID)
         jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
-        val call = ApiUtils.apiInterface.ManageInquirySubType(getRequestJSONBody(jsonObject.toString()))
+        val call =
+            ApiUtils.apiInterface.ManageInquirySubType(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<InquirySubTypeResponse> {
             override fun onResponse(
-                call: Call<InquirySubTypeResponse>,
-                response: Response<InquirySubTypeResponse>
+                call: Call<InquirySubTypeResponse>, response: Response<InquirySubTypeResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
@@ -816,9 +846,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                         }
                     } else {
                         Snackbar.make(
-                            layout,
-                            response.body()?.Details.toString(),
-                            Snackbar.LENGTH_LONG
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
                         ).show()
                     }
                 }
@@ -827,14 +855,12 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
             override fun onFailure(call: Call<InquirySubTypeResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                 ).show()
             }
         })
-
     }
+
     private fun selectInquirySubTypeDialog() {
         var dialogSelectInquirySubType = Dialog(this)
         dialogSelectInquirySubType.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -849,12 +875,16 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         dialogSelectInquirySubType.setCancelable(true)
         dialogSelectInquirySubType.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectInquirySubType.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectInquirySubType.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectInquirySubType.window!!.setGravity(Gravity.CENTER)
 
-        val rvDialogCustomer = dialogSelectInquirySubType.findViewById(R.id.rvDialogCustomer) as RecyclerView
-        val edtSearchCustomer = dialogSelectInquirySubType.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectInquirySubType.findViewById(R.id.txtid) as TextView
+        val rvDialogCustomer =
+            dialogSelectInquirySubType.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectInquirySubType.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectInquirySubType.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectInquirySubType.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -865,22 +895,24 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         val itemAdapter = BottomSheetInquirySubTypeListAdapter(this, arrayListInquirySubType!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                 itemAdapter.updateItem(pos)
                 mInquirySubTypeID = arrayListInquirySubType!![pos].ID!!
                 mInquirySubType = arrayListInquirySubType!![pos].InquirySubType!!
-                adapter.updateInquirySubTypeItem(mInquirySubTypeItemPostion, mInquirySubType, mInquirySubTypeID)
+                adapter.updateInquirySubTypeItem(
+                    mInquirySubTypeItemPostion, mInquirySubType, mInquirySubTypeID
+                )
                 dialogSelectInquirySubType!!.dismiss()
             }
         })
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListInquirySubType!!.size > 6) {
-          edtSearchCustomer.visible()
+        if (arrayListInquirySubType!!.size > 6) {
+            edtSearchCustomer.visible()
         } else {
-          edtSearchCustomer.gone()
+            edtSearchCustomer.gone()
         }
 
         edtSearchCustomer.addTextChangedListener(object : TextWatcher {
@@ -895,30 +927,39 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                 if (char.toString().trim().isNotEmpty()) {
                     val strSearch = char.toString()
                     for (model in arrayListInquirySubType!!) {
-                        if (model.InquirySubType!!.toLowerCase().contains(strSearch.toLowerCase())) {
-                          arrItemsFinal1.add(model)
+                        if (model.InquirySubType!!.toLowerCase()
+                                .contains(strSearch.toLowerCase())
+                        ) {
+                            arrItemsFinal1.add(model)
                         }
                     }
 
-                    val itemAdapter = BottomSheetInquirySubTypeListAdapter(this@AddNBActivity, arrItemsFinal1)
+                    val itemAdapter =
+                        BottomSheetInquirySubTypeListAdapter(this@AddNBActivity, arrItemsFinal1)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                             mInquirySubTypeID = arrItemsFinal1!![pos].ID!!
                             mInquirySubType = arrItemsFinal1!![pos].InquirySubType!!
-                            adapter.updateInquirySubTypeItem(mInquirySubTypeItemPostion, mInquirySubType, mInquirySubTypeID)
+                            adapter.updateInquirySubTypeItem(
+                                mInquirySubTypeItemPostion, mInquirySubType, mInquirySubTypeID
+                            )
                             dialogSelectInquirySubType!!.dismiss()
                         }
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter = BottomSheetInquirySubTypeListAdapter(this@AddNBActivity, arrayListInquirySubType!!)
+                    val itemAdapter = BottomSheetInquirySubTypeListAdapter(
+                        this@AddNBActivity, arrayListInquirySubType!!
+                    )
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                             mInquirySubTypeID = arrayListInquirySubType!![pos].ID!!
                             mInquirySubType = arrayListInquirySubType!![pos].InquirySubType!!
-                            adapter.updateInquirySubTypeItem(mInquirySubTypeItemPostion, mInquirySubType, mInquirySubTypeID)
+                            adapter.updateInquirySubTypeItem(
+                                mInquirySubTypeItemPostion, mInquirySubType, mInquirySubTypeID
+                            )
                             dialogSelectInquirySubType!!.dismiss()
 
                         }
@@ -934,13 +975,10 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         if (mode == 1) {
             showProgress()
         }
-        var jsonObject = JSONObject()
-        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
-        val call = ApiUtils.apiInterface.ManageLeadType(getRequestJSONBody(jsonObject.toString()))
+        val call = ApiUtils.apiInterface.getLeadTypeAllActive()
         call.enqueue(object : Callback<LeadTypeResponse> {
             override fun onResponse(
-                call: Call<LeadTypeResponse>,
-                response: Response<LeadTypeResponse>
+                call: Call<LeadTypeResponse>, response: Response<LeadTypeResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
@@ -952,9 +990,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                         }
                     } else {
                         Snackbar.make(
-                            layout,
-                            response.body()?.Details.toString(),
-                            Snackbar.LENGTH_LONG
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
                         ).show()
                     }
                 }
@@ -963,13 +999,12 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
             override fun onFailure(call: Call<LeadTypeResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                 ).show()
             }
         })
     }
+
     private fun selectLeadTypeDialog() {
         var dialogSelectLeadType = Dialog(this)
         dialogSelectLeadType.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -984,12 +1019,16 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         dialogSelectLeadType.setCancelable(true)
         dialogSelectLeadType.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectLeadType.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectLeadType.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectLeadType.window!!.setGravity(Gravity.CENTER)
 
-        val rvDialogCustomer = dialogSelectLeadType.findViewById(R.id.rvDialogCustomer) as RecyclerView
-        val edtSearchCustomer = dialogSelectLeadType.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectLeadType.findViewById(R.id.txtid) as TextView
+        val rvDialogCustomer =
+            dialogSelectLeadType.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectLeadType.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectLeadType.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectLeadType.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -1000,7 +1039,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         val itemAdapter = BottomSheetLeadTypeListAdapter(this, arrayListleadtype!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                 itemAdapter.updateItem(pos)
                 mLeadtype = arrayListleadtype!![pos].LeadType!!
@@ -1012,54 +1051,56 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListleadtype!!.size > 6) {
+        if (arrayListleadtype!!.size > 6) {
             edtSearchCustomer.visible()
         } else {
             edtSearchCustomer.gone()
         }
 
         edtSearchCustomer.addTextChangedListener(object : TextWatcher {
-           override fun afterTextChanged(p0: Editable?) {
-           }
+            override fun afterTextChanged(p0: Editable?) {
+            }
 
-           override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-           }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
 
-           override fun onTextChanged(char: CharSequence?, p1: Int, p2: Int, p3: Int) {
-               val arrItemsFinal1: ArrayList<LeadTypeModel> = ArrayList()
-               if (char.toString().trim().isNotEmpty()) {
-                   val strSearch = char.toString()
-                   for (model in arrayListleadtype!!) {
-                       if (model.LeadType!!.toLowerCase().contains(strSearch.toLowerCase())) {
-                           arrItemsFinal1.add(model)
-                       }
-                   }
+            override fun onTextChanged(char: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                val arrItemsFinal1: ArrayList<LeadTypeModel> = ArrayList()
+                if (char.toString().trim().isNotEmpty()) {
+                    val strSearch = char.toString()
+                    for (model in arrayListleadtype!!) {
+                        if (model.LeadType!!.toLowerCase().contains(strSearch.toLowerCase())) {
+                            arrItemsFinal1.add(model)
+                        }
+                    }
 
-                   val itemAdapter = BottomSheetLeadTypeListAdapter(this@AddNBActivity, arrItemsFinal1)
-                   itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-                       override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+                    val itemAdapter =
+                        BottomSheetLeadTypeListAdapter(this@AddNBActivity, arrItemsFinal1)
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                             mLeadtype = arrItemsFinal1!![pos].LeadType!!
                             mLeadtypeID = arrItemsFinal1!![pos].ID!!
                             adapter.updateLeadTypeItem(mLeadtypeItemPostion, mLeadtype, mLeadtypeID)
                             dialogSelectLeadType!!.dismiss()
-                      }
-                  })
-                  rvDialogCustomer.adapter = itemAdapter
-               } else {
-                  val itemAdapter = BottomSheetLeadTypeListAdapter(this@AddNBActivity, arrayListleadtype!!)
-                  itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-                      override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                } else {
+                    val itemAdapter =
+                        BottomSheetLeadTypeListAdapter(this@AddNBActivity, arrayListleadtype!!)
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
-                          mLeadtype = arrayListleadtype!![pos].LeadType!!
-                          mLeadtypeID = arrayListleadtype!![pos].ID!!
-                          adapter.updateLeadTypeItem(mLeadtypeItemPostion, mLeadtype, mLeadtypeID)
-                          dialogSelectLeadType!!.dismiss()
-                      }
-                  })
-                  rvDialogCustomer.adapter = itemAdapter
-              }
-          }
+                            mLeadtype = arrayListleadtype!![pos].LeadType!!
+                            mLeadtypeID = arrayListleadtype!![pos].ID!!
+                            adapter.updateLeadTypeItem(mLeadtypeItemPostion, mLeadtype, mLeadtypeID)
+                            dialogSelectLeadType!!.dismiss()
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                }
+            }
         })
         dialogSelectLeadType!!.show()
     }
@@ -1073,8 +1114,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         val call = ApiUtils.apiInterface.ManageLeadStatus(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<LeadStatusResponse> {
             override fun onResponse(
-                call: Call<LeadStatusResponse>,
-                response: Response<LeadStatusResponse>
+                call: Call<LeadStatusResponse>, response: Response<LeadStatusResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
@@ -1086,9 +1126,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                         }
                     } else {
                         Snackbar.make(
-                            layout,
-                            response.body()?.Details.toString(),
-                            Snackbar.LENGTH_LONG
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
                         ).show()
                     }
                 }
@@ -1097,13 +1135,12 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
             override fun onFailure(call: Call<LeadStatusResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                 ).show()
             }
         })
     }
+
     private fun selectLeadStatusDialog() {
         var dialogSelectLeadStatus = Dialog(this)
         dialogSelectLeadStatus.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -1118,12 +1155,16 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         dialogSelectLeadStatus.setCancelable(true)
         dialogSelectLeadStatus.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectLeadStatus.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectLeadStatus.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectLeadStatus.window!!.setGravity(Gravity.CENTER)
 
-        val rvDialogCustomer = dialogSelectLeadStatus.findViewById(R.id.rvDialogCustomer) as RecyclerView
-        val edtSearchCustomer = dialogSelectLeadStatus.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectLeadStatus.findViewById(R.id.txtid) as TextView
+        val rvDialogCustomer =
+            dialogSelectLeadStatus.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectLeadStatus.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectLeadStatus.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectLeadStatus.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -1134,7 +1175,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         val itemAdapter = BottomSheetLeadStatusListAdapter(this, arrayListleadstatus!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                 itemAdapter.updateItem(pos)
                 mLeadstatus = arrayListleadstatus!![pos].LeadStatus!!
@@ -1146,10 +1187,9 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListleadstatus!!.size > 6) {
+        if (arrayListleadstatus!!.size > 6) {
             edtSearchCustomer.visible()
-        }
-        else {
+        } else {
             edtSearchCustomer.gone()
         }
 
@@ -1170,26 +1210,32 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                         }
                     }
 
-                    val itemAdapter = BottomSheetLeadStatusListAdapter(this@AddNBActivity, arrItemsFinal1)
+                    val itemAdapter =
+                        BottomSheetLeadStatusListAdapter(this@AddNBActivity, arrItemsFinal1)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                             mLeadstatus = arrItemsFinal1!![pos].LeadStatus!!
                             mLeadstatusID = arrItemsFinal1!![pos].ID!!
-                            adapter.updateLeadStatusItem(mLeadstatusItemPostion, mLeadstatus, mLeadstatusID)
+                            adapter.updateLeadStatusItem(
+                                mLeadstatusItemPostion, mLeadstatus, mLeadstatusID
+                            )
 
                             dialogSelectLeadStatus!!.dismiss()
                         }
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter = BottomSheetLeadStatusListAdapter(this@AddNBActivity, arrayListleadstatus!!)
+                    val itemAdapter =
+                        BottomSheetLeadStatusListAdapter(this@AddNBActivity, arrayListleadstatus!!)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                             mLeadstatus = arrayListleadstatus!![pos].LeadStatus!!
                             mLeadstatusID = arrayListleadstatus!![pos].ID!!
-                            adapter.updateLeadStatusItem(mLeadstatusItemPostion, mLeadstatus, mLeadstatusID)
+                            adapter.updateLeadStatusItem(
+                                mLeadstatusItemPostion, mLeadstatus, mLeadstatusID
+                            )
 
                             dialogSelectLeadStatus!!.dismiss()
 
@@ -1217,8 +1263,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         val call = ApiUtils.apiInterface.ManageUsers(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<UserResponse> {
             override fun onResponse(
-                call: Call<UserResponse>,
-                response: Response<UserResponse>
+                call: Call<UserResponse>, response: Response<UserResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
@@ -1229,9 +1274,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                         }
                     } else {
                         Snackbar.make(
-                            layout,
-                            response.body()?.Details.toString(),
-                            Snackbar.LENGTH_LONG
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
                         ).show()
                     }
                 }
@@ -1240,13 +1283,12 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
             override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                 ).show()
             }
         })
     }
+
     private fun selectInquiryAllotmentToDialog() {
         var dialogSelectInquiryAllotmentTo = Dialog(this)
         dialogSelectInquiryAllotmentTo.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -1261,12 +1303,16 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         dialogSelectInquiryAllotmentTo.setCancelable(true)
         dialogSelectInquiryAllotmentTo.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectInquiryAllotmentTo.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectInquiryAllotmentTo.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectInquiryAllotmentTo.window!!.setGravity(Gravity.CENTER)
 
-        val rvDialogCustomer = dialogSelectInquiryAllotmentTo.findViewById(R.id.rvDialogCustomer) as RecyclerView
-        val edtSearchCustomer = dialogSelectInquiryAllotmentTo.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectInquiryAllotmentTo.findViewById(R.id.txtid) as TextView
+        val rvDialogCustomer =
+            dialogSelectInquiryAllotmentTo.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectInquiryAllotmentTo.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectInquiryAllotmentTo.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectInquiryAllotmentTo.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -1277,18 +1323,21 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         val itemAdapter = BottomSheetUsersListAdapter(this, arrayListInquiryAllotmentTo!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
                 itemAdapter.updateItem(pos)
                 mInquiryAllotmentToID = arrayListInquiryAllotmentTo!![pos].ID!!
-                mInquiryAllotmentTo = arrayListInquiryAllotmentTo!![pos].FirstName!! + " "+ arrayListInquiryAllotmentTo!![pos].LastName!!
-                adapter.updateAllotmentToItem(mAllotmentToItemPostion, mInquiryAllotmentTo, mInquiryAllotmentToID)
+                mInquiryAllotmentTo =
+                    arrayListInquiryAllotmentTo!![pos].FirstName!! + " " + arrayListInquiryAllotmentTo!![pos].LastName!!
+                adapter.updateAllotmentToItem(
+                    mAllotmentToItemPostion, mInquiryAllotmentTo, mInquiryAllotmentToID
+                )
                 dialogSelectInquiryAllotmentTo!!.dismiss()
             }
         })
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListInquiryAllotmentTo!!.size > 6) {
+        if (arrayListInquiryAllotmentTo!!.size > 6) {
             edtSearchCustomer.visible()
         } else {
             edtSearchCustomer.gone()
@@ -1296,7 +1345,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         edtSearchCustomer.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
-        }
+            }
 
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
@@ -1306,32 +1355,43 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                 if (char.toString().trim().isNotEmpty()) {
                     val strSearch = char.toString()
                     for (model in arrayListInquiryAllotmentTo!!) {
-                        if (model.FirstName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                            model.LastName!!.toLowerCase().contains(strSearch.toLowerCase())) {
+                        if (model.FirstName!!.toLowerCase()
+                                .contains(strSearch.toLowerCase()) || model.LastName!!.toLowerCase()
+                                .contains(strSearch.toLowerCase())
+                        ) {
                             arrItemsFinal1.add(model)
                         }
                     }
 
-                    val itemAdapter = BottomSheetUsersListAdapter(this@AddNBActivity, arrItemsFinal1)
+                    val itemAdapter =
+                        BottomSheetUsersListAdapter(this@AddNBActivity, arrItemsFinal1)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                             mInquiryAllotmentToID = arrItemsFinal1!![pos].ID!!
-                            mInquiryAllotmentTo = arrItemsFinal1!![pos].FirstName!! + " "+ arrItemsFinal1!![pos].LastName!!
-                            adapter.updateAllotmentToItem(mAllotmentToItemPostion, mInquiryAllotmentTo, mInquiryAllotmentToID)
+                            mInquiryAllotmentTo =
+                                arrItemsFinal1!![pos].FirstName!! + " " + arrItemsFinal1!![pos].LastName!!
+                            adapter.updateAllotmentToItem(
+                                mAllotmentToItemPostion, mInquiryAllotmentTo, mInquiryAllotmentToID
+                            )
 
                             dialogSelectInquiryAllotmentTo!!.dismiss()
                         }
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter = BottomSheetUsersListAdapter(this@AddNBActivity, arrayListInquiryAllotmentTo!!)
+                    val itemAdapter = BottomSheetUsersListAdapter(
+                        this@AddNBActivity, arrayListInquiryAllotmentTo!!
+                    )
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                             mInquiryAllotmentToID = arrayListInquiryAllotmentTo!![pos].ID!!
-                            mInquiryAllotmentTo = arrayListInquiryAllotmentTo!![pos].FirstName!! + " "+ arrayListInquiryAllotmentTo!![pos].LastName!!
-                            adapter.updateAllotmentToItem(mAllotmentToItemPostion, mInquiryAllotmentTo, mInquiryAllotmentToID)
+                            mInquiryAllotmentTo =
+                                arrayListInquiryAllotmentTo!![pos].FirstName!! + " " + arrayListInquiryAllotmentTo!![pos].LastName!!
+                            adapter.updateAllotmentToItem(
+                                mAllotmentToItemPostion, mInquiryAllotmentTo, mInquiryAllotmentToID
+                            )
 
                             dialogSelectInquiryAllotmentTo!!.dismiss()
 
@@ -1358,12 +1418,16 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         dialogSelectFrequency.setCancelable(true)
         dialogSelectFrequency.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectFrequency.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectFrequency.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectFrequency.window!!.setGravity(Gravity.CENTER)
 
-        val rvDialogCustomer = dialogSelectFrequency.findViewById(R.id.rvDialogCustomer) as RecyclerView
-        val edtSearchCustomer = dialogSelectFrequency.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectFrequency.findViewById(R.id.txtid) as TextView
+        val rvDialogCustomer =
+            dialogSelectFrequency.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectFrequency.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectFrequency.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectFrequency.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -1375,68 +1439,212 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         val itemAdapter = BottomSheetListAdapter(this, arrayListFrequency!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
                 itemAdapter.updateItem(pos)
                 mFrequency = arrayListFrequency!![pos].Name!!
                 mFrequencyID = arrayListFrequency!![pos].ID!!
-                adapter.updateFrequencyItem(mFrequencyItemPostion,mFrequency,mFrequencyID)
+                adapter.updateFrequencyItem(mFrequencyItemPostion, mFrequency, mFrequencyID)
                 dialogSelectFrequency!!.dismiss()
             }
         })
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListFrequency!!.size > 6) {
+        if (arrayListFrequency!!.size > 6) {
             edtSearchCustomer.visible()
         } else {
             edtSearchCustomer.gone()
         }
 
         edtSearchCustomer.addTextChangedListener(object : TextWatcher {
-         override fun afterTextChanged(p0: Editable?) {
-         }
+            override fun afterTextChanged(p0: Editable?) {
+            }
 
-         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-         }
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
 
-         override fun onTextChanged(char: CharSequence?, p1: Int, p2: Int, p3: Int) {
-             val arrItemsFinal1: ArrayList<SingleSelectionModel> = ArrayList()
-             if (char.toString().trim().isNotEmpty()) {
-                 val strSearch = char.toString()
-                 for (model in arrayListFrequency!!) {
-                     if (model.Name!!.toLowerCase().contains(strSearch.toLowerCase())) {
-                         arrItemsFinal1.add(model)
-                     }
-                 }
+            override fun onTextChanged(char: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                val arrItemsFinal1: ArrayList<SingleSelectionModel> = ArrayList()
+                if (char.toString().trim().isNotEmpty()) {
+                    val strSearch = char.toString()
+                    for (model in arrayListFrequency!!) {
+                        if (model.Name!!.toLowerCase().contains(strSearch.toLowerCase())) {
+                            arrItemsFinal1.add(model)
+                        }
+                    }
 
-                 val itemAdapter = BottomSheetListAdapter(this@AddNBActivity, arrItemsFinal1)
-                 itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-                     override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
-                         itemAdapter.updateItem(pos)
-                         mFrequency = arrItemsFinal1!![pos].Name!!
-                         mFrequencyID = arrItemsFinal1!![pos].ID!!
-                         adapter.updateFrequencyItem(mFrequencyItemPostion,mFrequency,mFrequencyID)
-                         dialogSelectFrequency!!.dismiss()
-                     }
-                 })
-                 rvDialogCustomer.adapter = itemAdapter
-             } else {
-                 val itemAdapter = BottomSheetListAdapter(this@AddNBActivity, arrayListFrequency!!)
-                 itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-                     override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
-                         itemAdapter.updateItem(pos)
-                         mFrequency = arrayListFrequency!![pos].Name!!
-                         mFrequencyID = arrayListFrequency!![pos].ID!!
-                         adapter.updateFrequencyItem(mFrequencyItemPostion,mFrequency,mFrequencyID)
-                         dialogSelectFrequency!!.dismiss()
+                    val itemAdapter = BottomSheetListAdapter(this@AddNBActivity, arrItemsFinal1)
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+                            itemAdapter.updateItem(pos)
+                            mFrequency = arrItemsFinal1!![pos].Name!!
+                            mFrequencyID = arrItemsFinal1!![pos].ID!!
+                            adapter.updateFrequencyItem(
+                                mFrequencyItemPostion, mFrequency, mFrequencyID
+                            )
+                            dialogSelectFrequency!!.dismiss()
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                } else {
+                    val itemAdapter =
+                        BottomSheetListAdapter(this@AddNBActivity, arrayListFrequency!!)
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+                            itemAdapter.updateItem(pos)
+                            mFrequency = arrayListFrequency!![pos].Name!!
+                            mFrequencyID = arrayListFrequency!![pos].ID!!
+                            adapter.updateFrequencyItem(
+                                mFrequencyItemPostion, mFrequency, mFrequencyID
+                            )
+                            dialogSelectFrequency!!.dismiss()
 
-                     }
-                 })
-                 rvDialogCustomer.adapter = itemAdapter
-             }
-         }
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                }
+            }
         })
         dialogSelectFrequency!!.show()
+    }
+
+    private fun showDatePickerDialog() {
+
+        val dpd = DatePickerDialog(
+            this,
+            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                calendarNow!!.set(Calendar.YEAR, year)
+                calendarNow!!.set(Calendar.MONTH, monthOfYear)
+                calendarNow!!.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                val mdate = SimpleDateFormat(
+                    AppConstant.yyyy_MM_dd_Dash, Locale.US
+                ).format(calendarNow!!.time)
+
+                val selecteddate = SimpleDateFormat(
+                    AppConstant.dd_MM_yyyy_HH_mm_ss, Locale.US
+                ).format(calendarNow!!.time)
+                val date = convertDateStringToString(
+                    selecteddate, AppConstant.dd_MM_yyyy_HH_mm_ss, AppConstant.dd_LLL_yyyy
+                )
+
+                adapter.updateInquiryDateItem(mInquiryDateItemPostion, date!!, mdate)
+            },
+            calendarNow!!.get(Calendar.YEAR),
+            calendarNow!!.get(Calendar.MONTH),
+            calendarNow!!.get(Calendar.DAY_OF_MONTH)
+        )
+//                dpd.datePicker.minDate = System.currentTimeMillis() - 1000
+        dpd.datePicker.maxDate = System.currentTimeMillis()
+        dpd.show()
+    }
+
+    private fun selectFamilyMemberDialog() {
+        var dialogSelectFamilyMember = Dialog(this)
+        dialogSelectFamilyMember.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_select, null)
+        dialogSelectFamilyMember.setContentView(dialogView)
+
+        val lp = WindowManager.LayoutParams()
+        lp.copyFrom(dialogSelectFamilyMember.window!!.attributes)
+
+        dialogSelectFamilyMember.window!!.attributes = lp
+        dialogSelectFamilyMember.setCancelable(true)
+        dialogSelectFamilyMember.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialogSelectFamilyMember.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        dialogSelectFamilyMember.window!!.setGravity(Gravity.CENTER)
+
+        val rvDialogCustomer =
+            dialogSelectFamilyMember.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectFamilyMember.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectFamilyMember.findViewById(R.id.txtid) as TextView
+        val imgClear = dialogSelectFamilyMember.findViewById(R.id.imgClear) as ImageView
+
+        imgClear.setOnClickListener {
+            dialogSelectFamilyMember.dismiss()
+        }
+
+        txtid.text = "Select Family Member"
+
+        val itemAdapter = BottomSheetFamilyMemberListAdapter(this, arrayListFamilyMember!!)
+        itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+
+                itemAdapter.updateItem(pos)
+                mFamilyMemberID = arrayListFamilyMember!![pos].ID!!
+                mFamilyMember = arrayListFamilyMember!![pos].FirstName!! + " " + arrayListFamilyMember!![pos].LastName!!
+                edtFamilyMember.setText(mFamilyMember)
+                edtFamilyMember.setError(null)
+                dialogSelectFamilyMember!!.dismiss()
+            }
+        })
+
+        rvDialogCustomer.adapter = itemAdapter
+
+        if (arrayListFamilyMember!!.size > 6) {
+            edtSearchCustomer.visible()
+        } else {
+            edtSearchCustomer.gone()
+        }
+
+        edtSearchCustomer.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(char: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                val arrItemsFinal1: ArrayList<FamilyDetailsModel> = ArrayList()
+                if (char.toString().trim().isNotEmpty()) {
+                    val strSearch = char.toString()
+                    for (model in arrayListFamilyMember!!) {
+                        if (model.FirstName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
+                            model.LastName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
+                            model.GroupCode!!.toLowerCase().contains(strSearch.toLowerCase())) {
+                            arrItemsFinal1.add(model)
+                        }
+                    }
+
+                    val itemAdapter =
+                        BottomSheetFamilyMemberListAdapter(this@AddNBActivity, arrItemsFinal1)
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+
+                            itemAdapter.updateItem(pos)
+                            mFamilyMemberID = arrItemsFinal1[pos].ID!!
+                            mFamilyMember = arrItemsFinal1[pos].FirstName + " " + arrItemsFinal1[pos].LastName
+                            edtFamilyMember.setText(mFamilyMember)
+                            edtFamilyMember.setError(null)
+                            dialogSelectFamilyMember.dismiss()
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                } else {
+                    val itemAdapter =
+                        BottomSheetFamilyMemberListAdapter(this@AddNBActivity, arrayListFamilyMember!!)
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+
+                            itemAdapter.updateItem(pos)
+                            mFamilyMemberID = arrayListFamilyMember!![pos].ID!!
+                            mFamilyMember = arrayListFamilyMember!![pos].FirstName + " " + arrayListFamilyMember!![pos].LastName
+                            edtFamilyMember.setText(mFamilyMember)
+                            edtFamilyMember.setError(null)
+                            dialogSelectFamilyMember!!.dismiss()
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                }
+            }
+        })
+        dialogSelectFamilyMember!!.show()
     }
 
     override fun onItemClickEvent(view: View, position: Int, type: Int, name: String) {
@@ -1451,17 +1659,20 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                     selectInquiryTypeDialog()
                 }
             }
+
             R.id.edtInquirySub -> {
                 preventTwoClick(view)
                 mInquirySubTypeItemPostion = position
                 selectInquirySubTypeDialog()
 
             }
+
             R.id.edtFrequency -> {
                 preventTwoClick(view)
                 mFrequencyItemPostion = position
                 selectFrequencyDialog()
             }
+
             R.id.edtAllotmentTo -> {
                 preventTwoClick(view)
                 mAllotmentToItemPostion = position
@@ -1471,6 +1682,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                     selectInquiryAllotmentToDialog()
                 }
             }
+
             R.id.edtLeadType -> {
                 preventTwoClick(view)
                 mLeadtypeItemPostion = position
@@ -1480,6 +1692,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                     selectLeadTypeDialog()
                 }
             }
+
             R.id.edtLeadStatus -> {
                 preventTwoClick(view)
                 mLeadstatusItemPostion = position
@@ -1489,15 +1702,27 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                     selectLeadStatusDialog()
                 }
             }
+
+            R.id.edtInquiryDate -> {
+                preventTwoClick(view)
+                mInquiryDateItemPostion = position
+                showDatePickerDialog()
+            }
+
             R.id.imgDelete -> {
                 if (::adapter.isInitialized) {
                     adapter.remove(position)
                 }
             }
+
             R.id.tvAddMore -> {
                 preventTwoClick(view)
                 if (::adapter.isInitialized) {
-                    adapter.addItem(InquiryInformationModel(AllotmentToId = mAllotmentToID , AllotmentTo = mAllotmentTo), 1)
+                    adapter.addItem(
+                        InquiryInformationModel(
+                            AllotmentToId = mAllotmentToID, AllotmentTo = mAllotmentTo
+                        ), 1
+                    )
                 }
             }
         }
@@ -1512,72 +1737,178 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         showProgress()
 
         var jsonObject = JSONObject()
-        jsonObject.put("NBInquiryGUID",NBInquiryGUID)
+        jsonObject.put("NBInquiryGUID", NBInquiryGUID)
 //        jsonObject.put("OperationType", 10)
 
-        val call = ApiUtils.apiInterface.ManageNBInquiryByGUID(getRequestJSONBody(jsonObject.toString()))
+        val call =
+            ApiUtils.apiInterface.ManageNBInquiryByGUID(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<NBInquiryByGUIDResponse> {
-            override fun onResponse(call: Call<NBInquiryByGUIDResponse>, response: Response<NBInquiryByGUIDResponse>) {
-                hideProgress()
+            override fun onResponse(
+                call: Call<NBInquiryByGUIDResponse>, response: Response<NBInquiryByGUIDResponse>
+            ) {
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arraylist = response.body()?.Data!!
                         SetAPIData(arraylist)
                     } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
+
             override fun onFailure(call: Call<NBInquiryByGUIDResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
+                ).show()
             }
         })
     }
 
     private fun SetAPIData(model: NBModel) {
 
-        if(model.LeadID != 0 && model.LeadID != null) {
+        if (model.LeadID != 0 && model.LeadID != null) {
             mClientID = model.LeadID
             mClient = model.LeadName!!
+            mClientGUID = model.LeadGUID!!
             mClientStageID = model.LeadStageID!!
             edtClient.setText(mClient)
             edtClient.setError(null)
 
-            if(mClientStageID.equals(1)) {
+            callManageLeadGUID(mClientGUID, null)
+
+            if (mClientStageID.equals(1)) {
                 edtClientType.setText("Existing Client")
-            } else if ( mClientStageID.equals(2)) {
+            } else if (mClientStageID.equals(2)) {
                 edtClientType.setText("Prospect")
             }
         }
 
-        if(model.AllotmentID != 0 && model.AllotmentID != null) {
+        if (model.AllotmentID != 0 && model.AllotmentID != null) {
             mAllotmentToID = model.AllotmentID
             mAllotmentTo = model.AllotmentName!!
             edtAllotmentTo.setText(mAllotmentTo)
             edtAllotmentTo.setError(null)
         }
 
-        if(model.NBInquiryList!!.size > 0) {
+        if (model.FamilyID != 0 && model.FamilyID != null) {
+            mFamilyMemberID = model.FamilyID
+            mFamilyMember = model.FamilyMemberName!!
+            edtFamilyMember.setText(mFamilyMember)
+            edtFamilyMember.setError(null)
+        }
+
+        if (model.NBInquiryList!!.size > 0) {
             arrayListInquiryInfo = ArrayList()
 
-            for(i in 0 until model.NBInquiryList.size) {
-                arrayListInquiryInfo?.add(InquiryInformationModel(
-                    InquirytypeId = model.NBInquiryList[i].InquiryTypeID!!,
-                    Inquirytype = model.NBInquiryList[i].InquiryType!!,
-                    InquirysubtypeId = model.NBInquiryList[i].InquirySubTypeID!!,
-                    Inquirysubtype = model.NBInquiryList[i].InquirySubType!!,
-                    Proposed = model.NBInquiryList[i].ProposedAmount.toString(),
-                    Frequency = model.NBInquiryList[i].Frequency!!,
-                    LeadtypeId = model.NBInquiryList[i].LeadTypeID!!,
-                    Leadtype = model.NBInquiryList[i].LeadType!!,
-                    LeadstatusId = model.NBInquiryList[i].LeadStatusID!!,
-                    Leadstatus = model.NBInquiryList[i].LeadStatus!!,
-                    AllotmentToId = model.NBInquiryList[i].InquiryAllotmentID!!,
-                    AllotmentTo = model.NBInquiryList[i].InquiryAllotmentName!!))
+            for (i in 0 until model.NBInquiryList.size) {
+
+                val mDate = convertDateStringToString(model.NBInquiryList[i].InquiryDate!! , AppConstant.DATE_INPUT_FORMAT,AppConstant.DEFAULT_DATE_FORMAT)
+
+                arrayListInquiryInfo?.add(
+                    InquiryInformationModel(
+                        InquirytypeId = model.NBInquiryList[i].InquiryTypeID!!,
+                        Inquirytype = model.NBInquiryList[i].InquiryType!!,
+                        InquirysubtypeId = model.NBInquiryList[i].InquirySubTypeID!!,
+                        Inquirysubtype = model.NBInquiryList[i].InquirySubType!!,
+                        Proposed = model.NBInquiryList[i].ProposedAmount!!.toString(),
+                        Frequency = model.NBInquiryList[i].Frequency!!,
+                        LeadtypeId = model.NBInquiryList[i].LeadTypeID!!,
+                        Leadtype = model.NBInquiryList[i].LeadType!!,
+                        LeadstatusId = model.NBInquiryList[i].LeadStatusID!!,
+                        Leadstatus = model.NBInquiryList[i].LeadStatus!!,
+                        AllotmentToId = model.NBInquiryList[i].InquiryAllotmentID!!,
+                        AllotmentTo = model.NBInquiryList[i].InquiryAllotmentName!!,
+                        InquiryDate = model.NBInquiryList[i].InquiryDate!!,
+                        mInquiryDate = mDate!!
+                    )
+                )
             }
             setAdapterData(arrayListInquiryInfo)
         }
+        hideProgress()
+    }
+
+    private fun callManageLeadGUID(mClientGUID: String, dialogSelectClient: Dialog?) {
+
+        if (dialogSelectClient != null) {
+            showProgress()
+        }
+
+        var jsonObject = JSONObject()
+        jsonObject.put("LeadGUID", mClientGUID)
+
+        val call = ApiUtils.apiInterface.ManageLeadsFindByID(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<LeadByGUIDResponse> {
+            override fun onResponse(call: Call<LeadByGUIDResponse>, response: Response<LeadByGUIDResponse>) {
+                if (response.code() == 200) {
+                    if (response.body()?.Status == 200) {
+                        val arrayListLead = response.body()?.Data!!
+//                        Log.e("arrayList","===>"+arrayListLead.toString())
+                        if (state.equals(AppConstant.S_ADD)) {
+                            setAPIData(arrayListLead, dialogSelectClient!!)
+                        } else {
+                            setAPIDataWhenEdit(arrayListLead)
+                        }
+                        if (dialogSelectClient != null) {
+                            hideProgress()
+                        }
+                    } else {
+                        Snackbar.make(
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<LeadByGUIDResponse>, t: Throwable) {
+                hideProgress()
+                Snackbar.make(
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
+                ).show()
+            }
+        })
+    }
+
+    private fun setAPIDataWhenEdit(leadModel: LeadModel) {
+        arrayListFamilyMember = leadModel.FamilyDetails
+
+//        if (arrayListFamilyMember!!.size > 0 ){
+//            LLFamilyMember.visible()
+//        } else
+//        {
+//            LLFamilyMember.gone()
+//        }
+
+    }
+
+    private fun setAPIData(leadModel: LeadModel, dialogSelectClient: Dialog) {
+        mClient = leadModel.FirstName!! + " " + leadModel.LastName
+        mClientID = leadModel.ID!!
+        mClientGUID = leadModel.LeadGUID!!
+        mClientStageID = leadModel.LeadStage!!
+        edtClient.setText(mClient)
+        edtClient.setError(null)
+        edtFamilyMember.setText("")
+
+        arrayListFamilyMember = leadModel.FamilyDetails
+
+        if (arrayListFamilyMember!!.size > 0 ){
+            LLFamilyMember.visible()
+        } else
+        {
+            LLFamilyMember.gone()
+        }
+
+        if (mClientStageID.equals(1)) {
+            edtClientType.setText("Existing Client")
+        } else if (mClientStageID.equals(2)) {
+            edtClientType.setText("Prospect")
+        }
+
+        dialogSelectClient!!.dismiss()
     }
 
 }

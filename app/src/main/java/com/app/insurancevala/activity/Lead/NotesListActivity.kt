@@ -9,15 +9,13 @@ import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.adapter.NotesListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
-import com.app.insurancevala.model.response.NotesModel
-import com.app.insurancevala.model.response.NotesResponse
+import com.app.insurancevala.model.response.NoteModel
+import com.app.insurancevala.model.response.NoteResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.ferfalk.simplesearchview.SimpleSearchView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_notes_list.*
-import kotlinx.android.synthetic.main.activity_notes_list.layout
-import kotlinx.android.synthetic.main.fragment_lead.view.*
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,9 +24,10 @@ import retrofit2.Response
 class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickListener {
 
     lateinit var adapter : NotesListAdapter
-    var arrayListNotes: ArrayList<NotesModel>? = ArrayList()
-    var arrayListNotesNew: ArrayList<NotesModel>? = ArrayList()
+    var arrayListNotes: ArrayList<NoteModel>? = ArrayList()
+    var arrayListNotesNew: ArrayList<NoteModel>? = ArrayList()
     var LeadID: Int? = null
+    var ID: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +39,7 @@ class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
 
     private fun getIntentData() {
         LeadID = intent.getIntExtra("LeadID",0)
+        ID = intent.getIntExtra("ID",0)
     }
 
     override fun initializeView() {
@@ -53,6 +53,7 @@ class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
 
     private fun SetInitListner() {
         imgBack.setOnClickListener(this)
+        imgAddNotes.setOnClickListener(this)
 
         var manager = LinearLayoutManager(this)
         RvNotesList.layoutManager = manager
@@ -73,7 +74,7 @@ class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 return false
             }
             override fun onQueryTextChange(newText: String): Boolean {
-                val arrItemsFinal1: ArrayList<NotesModel> = ArrayList()
+                val arrItemsFinal1: ArrayList<NoteModel> = ArrayList()
                 if (newText.trim().isNotEmpty()) {
                     val strSearch = newText
                     for (model in arrayListNotes!!) {
@@ -120,6 +121,8 @@ class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@NotesListActivity,refreshLayout)
+            searchView.closeSearch()
             callManageNotes()
             refreshLayout.isRefreshing = false
         }
@@ -130,6 +133,14 @@ class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
             R.id.imgBack -> {
                 preventTwoClick(v)
                 finish()
+            }
+            R.id.imgAddNotes -> {
+                preventTwoClick(v)
+                val intent = Intent(this, AddNotesActivity::class.java)
+                intent.putExtra(AppConstant.STATE,AppConstant.S_ADD)
+                intent.putExtra("ID",ID)
+                intent.putExtra("LeadID",LeadID)
+                startActivityForResult(intent, AppConstant.INTENT_1001)
             }
         }
     }
@@ -143,6 +154,7 @@ class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 preventTwoClick(view)
                 val intent = Intent(this, AddNotesActivity::class.java)
                 intent.putExtra(AppConstant.STATE,AppConstant.S_EDIT)
+                intent.putExtra("ID",ID)
                 intent.putExtra("LeadID",LeadID)
                 intent.putExtra("NoteGUID",arrayListNotesNew!![position].NoteGUID)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
@@ -166,13 +178,12 @@ class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
         showProgress()
 
         var jsonObject = JSONObject()
+        jsonObject.put("NBInquiryTypeID",ID)
+        jsonObject.put("LeadID",LeadID)
 
-        jsonObject.put("LeadID", LeadID)
-        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
-
-        val call = ApiUtils.apiInterface.ManageNotes(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<NotesResponse> {
-            override fun onResponse(call: Call<NotesResponse>, response: Response<NotesResponse>) {
+        val call = ApiUtils.apiInterface.ManageNoteFindAll(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<NoteResponse> {
+            override fun onResponse(call: Call<NoteResponse>, response: Response<NoteResponse>) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
@@ -188,6 +199,8 @@ class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
 
                             shimmer.stopShimmer()
                             shimmer.gone()
+                            FL.visible()
+                            RLNoData.gone()
 
                         } else {
                             Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
@@ -206,7 +219,7 @@ class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 }
             }
 
-            override fun onFailure(call: Call<NotesResponse>, t: Throwable) {
+            override fun onFailure(call: Call<NoteResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
             }

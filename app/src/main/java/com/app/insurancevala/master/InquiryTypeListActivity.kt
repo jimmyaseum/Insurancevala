@@ -151,6 +151,8 @@ class InquiryTypeListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@InquiryTypeListActivity,refreshLayout)
+            searchView.closeSearch()
             callManageInquiryType()
             refreshLayout.isRefreshing = false
         }

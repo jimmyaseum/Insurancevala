@@ -25,6 +25,8 @@ data class NBModel (
     val LeadID: Int? = null,
     @SerializedName("LeadName")
     val LeadName: String? = null,
+    @SerializedName("LeadGUID")
+    val LeadGUID: String? = null,
     @SerializedName("MobileNo")
     val MobileNo: String? = null,
     @SerializedName("LeadStageID")
@@ -33,6 +35,10 @@ data class NBModel (
     val AllotmentID: Int? = null,
     @SerializedName("AllotmentName")
     val AllotmentName: String? = null,
+    @SerializedName("FamilyID")
+    val FamilyID: Int? = null,
+    @SerializedName("FamilyMemberName")
+    val FamilyMemberName: String? = null,
     @SerializedName("IsActive")
     val IsActive: Boolean? = null,
     @SerializedName("CreatedBy")
@@ -79,6 +85,8 @@ data class NBInquiryModel (
     val ProposedAmount: Double? = null,
     @SerializedName("Frequency")
     val Frequency: String? = null,
+    @SerializedName("InquiryDate")
+    val InquiryDate: String? = null
 )
 
 // --------------------------------------------

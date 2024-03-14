@@ -7,11 +7,16 @@ import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
+import com.app.insurancevala.activity.Lead.AttachmentsListActivity
+import com.app.insurancevala.activity.Lead.CallsListActivity
+import com.app.insurancevala.activity.Lead.MeetingsListActivity
+import com.app.insurancevala.activity.Lead.NotesListActivity
+import com.app.insurancevala.activity.Lead.RecordingsListActivity
+import com.app.insurancevala.activity.Lead.TasksListActivity
 import com.app.insurancevala.adapter.InquiryListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.NBInquiryByGUIDResponse
 import com.app.insurancevala.model.response.NBInquiryModel
-import com.app.insurancevala.model.response.NBResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.ferfalk.simplesearchview.SimpleSearchView
@@ -21,7 +26,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import kotlinx.android.synthetic.main.activity_inquiry_list.*
-import kotlinx.android.synthetic.main.activity_inquiry_list.layout
 
 class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickListener {
 
@@ -136,6 +140,8 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@InquiryListActivity,refreshLayout)
+            searchView.closeSearch()
             callManageNB()
             refreshLayout.isRefreshing = false
         }
@@ -213,6 +219,81 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
             103 -> {
                 //delete
                 preventTwoClick(view)
+            }
+            104 -> {
+                //Notes
+                preventTwoClick(view)
+                val intent = Intent(this, NotesListActivity::class.java)
+                intent.putExtra("ID",arrayListInquiryNew!![position].ID)
+                intent.putExtra("LeadID",LeadID)
+                startActivity(intent)
+            }
+            105 -> {
+                //Tasks
+                preventTwoClick(view)
+                val intent = Intent(this, TasksListActivity::class.java)
+                intent.putExtra("ID",arrayListInquiryNew!![position].ID)
+                intent.putExtra("LeadID",LeadID)
+                startActivity(intent)
+            }
+            106 -> {
+                //Calls
+                preventTwoClick(view)
+                val intent = Intent(this, CallsListActivity::class.java)
+                intent.putExtra("ID",arrayListInquiryNew!![position].ID)
+                intent.putExtra("LeadID",LeadID)
+                startActivity(intent)
+            }
+            107 -> {
+                //Meetings
+                preventTwoClick(view)
+                val intent = Intent(this, MeetingsListActivity::class.java)
+                intent.putExtra("ID",arrayListInquiryNew!![position].ID)
+                intent.putExtra("LeadID",LeadID)
+                startActivity(intent)
+            }
+            108 -> {
+                //Attachments
+                preventTwoClick(view)
+                val intent = Intent(this, AttachmentsListActivity::class.java)
+                intent.putExtra("ID",arrayListInquiryNew!![position].ID)
+                intent.putExtra("LeadID",LeadID)
+                startActivity(intent)
+            }
+            109 -> {
+                //Closed_Tasks
+                preventTwoClick(view)
+                val intent = Intent(this, TasksListActivity::class.java)
+                intent.putExtra("ID",arrayListInquiryNew!![position].ID)
+                intent.putExtra("LeadID",LeadID)
+                intent.putExtra("ClosedTask","Completed")
+                startActivity(intent)
+            }
+            110 -> {
+                //Closed_Calls
+                preventTwoClick(view)
+                val intent = Intent(this, CallsListActivity::class.java)
+                intent.putExtra("ID",arrayListInquiryNew!![position].ID)
+                intent.putExtra("LeadID",LeadID)
+                intent.putExtra("ClosedCall","Completed")
+                startActivity(intent)
+            }
+            111 -> {
+                //Closed_Meetings
+                preventTwoClick(view)
+                val intent = Intent(this, MeetingsListActivity::class.java)
+                intent.putExtra("ID",arrayListInquiryNew!![position].ID)
+                intent.putExtra("LeadID",LeadID)
+                intent.putExtra("ClosedMeeting",4)
+                startActivity(intent)
+            }
+            112 -> {
+                //Attachments
+                preventTwoClick(view)
+                val intent = Intent(this, RecordingsListActivity::class.java)
+                intent.putExtra("ID",arrayListInquiryNew!![position].ID)
+                intent.putExtra("LeadID",LeadID)
+                startActivity(intent)
             }
         }
     }

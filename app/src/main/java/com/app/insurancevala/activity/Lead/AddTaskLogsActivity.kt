@@ -23,6 +23,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.*
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.FilePickerBuilder
@@ -34,6 +35,7 @@ import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetUsersListAdap
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.pojo.AttachmentModel
+import com.app.insurancevala.model.pojo.DocumentsModel
 import com.app.insurancevala.model.response.*
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
@@ -43,9 +45,7 @@ import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import de.hdodenhof.circleimageview.CircleImageView
 import droidninja.filepicker.FilePickerConst
-import kotlinx.android.synthetic.main.activity_add_lead.edtLeadOwner
 import kotlinx.android.synthetic.main.activity_add_task_logs.*
-import kotlinx.android.synthetic.main.activity_add_task_logs.layout
 import kotlinx.android.synthetic.main.activity_add_task_logs.view.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -65,12 +65,13 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
 
     var sharedPreference: SharedPreference? = null
     var state: String? = null
+    var ID: Int? = null
     var LeadID: Int? = null
     var TaskGUID: String? = null
     var ReferenceGUID: String? = null
 
     // attachments
-    var arrayListAttachment: ArrayList<AttachmentModel>? = null
+    var arrayListAttachment: ArrayList<DocumentsModel>? = null
     lateinit var adapter: MultipleAttachmentListAdapter
     val RC_FILE_PICKER_PERM = 900
     var ImagePaths = ArrayList<String>()
@@ -112,6 +113,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
 
     private fun getIntentData() {
         state = intent.getStringExtra(AppConstant.STATE)
+        ID = intent.getIntExtra("ID",0)
         LeadID = intent.getIntExtra("LeadID",0)
     }
 
@@ -172,6 +174,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
             txtHearderText.text = "Update Task"
 
             if (isOnline(this)) {
+                ID = intent.getIntExtra("ID",0)
                 LeadID = intent.getIntExtra("LeadID",0)
                 TaskGUID = intent.getStringExtra("TaskGUID")
 
@@ -189,7 +192,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         rvAttachment.isNestedScrollingEnabled = false
 
         arrayListAttachment = ArrayList()
-        adapter = MultipleAttachmentListAdapter(this, arrayListAttachment, this)
+        adapter = MultipleAttachmentListAdapter(this, true, arrayListAttachment, this)
         rvAttachment.adapter = adapter
 
         imgBack.setOnClickListener(this)
@@ -357,6 +360,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         var isreminder = false
 
         val jsonObject = JSONObject()
+        jsonObject.put("NBInquiryTypeID", ID)
         jsonObject.put("LeadID", LeadID)
         jsonObject.put("TaskOwnerID", mUsersID)
         jsonObject.put("Subject", edtSubject.text.toString().trim())
@@ -376,53 +380,85 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         jsonObject.put("IsReminder", isreminder)
         jsonObject.put("IsActive", true)
 
-        if(state.equals(AppConstant.S_ADD)) {
-            jsonObject.put("OperationType", AppConstant.INSERT)
-        } else if(state.equals(AppConstant.S_EDIT)) {
+        if(state.equals(AppConstant.S_EDIT)) {
             jsonObject.put("TaskGUID", TaskGUID)
-            jsonObject.put("OperationType", AppConstant.EDIT)
         }
 
-        val call = ApiUtils.apiInterface.ManageTask(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<TasksResponse> {
-            override fun onResponse(call: Call<TasksResponse>, response: Response<TasksResponse>) {
-                hideProgress()
-                if (response.code() == 200) {
-                    if (response.body()?.Status == 201) {
+        if(state.equals(AppConstant.S_ADD)) {
+            val call = ApiUtils.apiInterface.ManageTasksInsert(getRequestJSONBody(jsonObject.toString()))
+            call.enqueue(object : Callback<RefGUIDResponse> {
+                override fun onResponse(call: Call<RefGUIDResponse>, response: Response<RefGUIDResponse>) {
+                    hideProgress()
+                    if (response.code() == 200) {
+                        if (response.body()?.Status == 201) {
 
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
 
-                        ReferenceGUID = response.body()?.Data!![0]!!.ReferenceGUID.toString()
+                            ReferenceGUID = response.body()?.Data!!.ReferenceGUID
 
-                        if(arrayListAttachment!!.size > 0) {
-                            CallUploadDocuments(ReferenceGUID)
-                        } else {
+                            if(arrayListAttachment!!.size > 0) {
+                                CallUploadDocuments(ReferenceGUID)
+                            } else {
+                                Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                                val intent = Intent()
+                                setResult(RESULT_OK, intent)
+                                finish()
+                            }
+
+                        }  else {
+                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                             val intent = Intent()
                             setResult(RESULT_OK, intent)
                             finish()
                         }
-
-                    } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
-                        val intent = Intent()
-                        setResult(RESULT_OK, intent)
-                        finish()
                     }
                 }
-            }
 
-            override fun onFailure(call: Call<TasksResponse>, t: Throwable) {
-                hideProgress()
-                Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
-                ).show()
-                val intent = Intent()
-                setResult(RESULT_OK, intent)
-                finish()
-            }
-        })
+                override fun onFailure(call: Call<RefGUIDResponse>, t: Throwable) {
+                    hideProgress()
+                    Snackbar.make(
+                        layout,
+                        getString(R.string.error_failed_to_connect),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    val intent = Intent()
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+            })
+        } else {
+            val call = ApiUtils.apiInterface.ManageTasksUpdate(getRequestJSONBody(jsonObject.toString()))
+            call.enqueue(object : Callback<CommonResponse> {
+                override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
+                    hideProgress()
+                    if (response.code() == 200) {
+                        if (response.body()!!.Status == 200 && state!!.equals(AppConstant.S_EDIT)) {
+                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            val intent = Intent()
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        } else {
+                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            val intent = Intent()
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
+                    hideProgress()
+                    Snackbar.make(
+                        layout,
+                        getString(R.string.error_failed_to_connect),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    val intent = Intent()
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+            })
+        }
     }
 
     private fun callManageUsers(mode: Int) {
@@ -601,24 +637,23 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         showProgress()
 
         var jsonObject = JSONObject()
-        jsonObject.put("OperationType", AppConstant.GETBYGUID)
         jsonObject.put("TaskGUID", TaskGUID)
 
-        val call = ApiUtils.apiInterface.ManageTask(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<TasksResponse> {
-            override fun onResponse(call: Call<TasksResponse>, response: Response<TasksResponse>) {
+        val call = ApiUtils.apiInterface.ManageTasksFindByID(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<TasksByGUIDResponse> {
+            override fun onResponse(call: Call<TasksByGUIDResponse>, response: Response<TasksByGUIDResponse>) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arrayListLead = response.body()?.Data!!
-                        setAPIData(arrayListLead[0])
+                        setAPIData(arrayListLead)
                     } else {
                         Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                     }
                 }
             }
 
-            override fun onFailure(call: Call<TasksResponse>, t: Throwable) {
+            override fun onFailure(call: Call<TasksByGUIDResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
             }
@@ -701,7 +736,6 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                 mTasknotifyvia = "Both"
             }
             edtNotifyvia.setText(mTasknotifyvia)
-
         }
 
         if(model.ReminderDate != null && model.ReminderDate != "") {
@@ -709,8 +743,16 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
             FollowUpTaskDate = convertDateStringToString(model.ReminderDate , AppConstant.dd_MM_yyyy_Slash,AppConstant.yyyy_MM_dd_Dash).toString()
         }
 
-        if(model.TaskAttachmentList!!.size > 0) {
-            LLAttachments.gone()
+        txtAttachments.gone()
+        edtAttachments.gone()
+        viewAttachments.gone()
+        if(!model.TasksAttachmentList.isNullOrEmpty()) {
+            arrayListAttachment = ArrayList()
+            arrayListAttachment = model.TasksAttachmentList
+            adapter = MultipleAttachmentListAdapter(this, false, arrayListAttachment, this)
+
+            txtAttachments.visible()
+            rvAttachment.adapter = adapter
         }
     }
 
@@ -1271,7 +1313,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
 
                 showBottomSheetDialogRename(displayName , PassportPath , 1)
 
-//                arrayListAttachment!!.add(AttachmentModel(name = displayName!!, attachmentUri = PassportPath, attachmentType = 1))
+//                arrayListAttachment!!.add(AttachmentModel(name = displayName!!,attachmentUri = PassportPath, attachmentType = 1))
 //                adapter.notifyDataSetChanged()
             }
         }
@@ -1359,14 +1401,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
 
         txtButtonSubmit!!.setOnClickListener {
             if(!edtName.text.toString().trim().equals("")) {
-                arrayListAttachment!!.add(
-                    AttachmentModel(
-                        name = edtName.text.toString(),
-                        attachmentUri = fileuri,
-                        attachmentType = attachmenttype
-                    )
-                )
-                adapter.notifyDataSetChanged()
+                adapter.addItem(edtName.text.toString(), fileuri, attachmenttype)
                 bottomSheetDialog.dismiss()
             } else {
                 edtName.error = "Enter Name"
@@ -1374,8 +1409,6 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         }
 
         txtButtonCancel!!.setOnClickListener {
-            arrayListAttachment!!.add(AttachmentModel(name = name, attachmentUri = fileuri, attachmentType = attachmenttype))
-            adapter.notifyDataSetChanged()
             bottomSheetDialog.dismiss()
         }
 
@@ -1391,19 +1424,19 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
 
         if(!arrayListAttachment.isNullOrEmpty()) {
             for (i in arrayListAttachment!!.indices) {
-                if (arrayListAttachment!![i].attachmentType == 2) {
-                    if (arrayListAttachment!![i].attachmentUri != null) {
-                        partsList.add(CommonUtil.prepareFilePart(this, "image/*", "AttachmentURL", arrayListAttachment!![i].attachmentUri!!))
-                        AttachmentName.add(arrayListAttachment!![i].name)
+                if (arrayListAttachment!![i].AttachmentType == "Image") {
+                    if (arrayListAttachment!![i].AttachmentURL != null) {
+                        partsList.add(CommonUtil.prepareFilePart(this, "image/*", "AttachmentURL", arrayListAttachment!![i].AttachmentURL!!.toUri()))
+                        AttachmentName.add(arrayListAttachment!![i].AttachmentName!!)
 
                     } else {
                         val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
                         partsList.add(MultipartBody.Part.createFormData("AttachmentURL", "", attachmentEmpty))
                     }
                 } else {
-                    if (arrayListAttachment!![i].attachmentUri != null) {
-                        partsList.add(CommonUtil.prepareFilePart(this, "application/*", "AttachmentURL", arrayListAttachment!![i].attachmentUri!!))
-                        AttachmentName.add(arrayListAttachment!![i].name)
+                    if (arrayListAttachment!![i].AttachmentURL != null) {
+                        partsList.add(CommonUtil.prepareFilePart(this, "application/*", "AttachmentURL", arrayListAttachment!![i].AttachmentURL!!.toUri()))
+                        AttachmentName.add(arrayListAttachment!![i].AttachmentName!!)
                     } else {
                         val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
                         partsList.add(MultipartBody.Part.createFormData("AttachmentURL", "", attachmentEmpty))
@@ -1413,14 +1446,16 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         }
 
         val a = AttachmentName.toString().replace("[", "").replace("]", "")
-
+        LogUtil.d(TAG,"111===> "+a)
         val mAttachmentName = CommonUtil.createPartFromString(a)
         val mreferenceGUID = CommonUtil.createPartFromString(referenceGUID.toString())
         val mAttachmentType = CommonUtil.createPartFromString(AppConstant.TASK)
+        val mID = CommonUtil.createPartFromString(ID.toString())
 
         val call = ApiUtils.apiInterface.ManageAttachment(
             LeadID = LeadID,
             ReferenceGUID = mreferenceGUID,
+            NBInquiryTypeID = mID,
             AttachmentType = mAttachmentType,
             AttachmentName = mAttachmentName,
             attachment = partsList

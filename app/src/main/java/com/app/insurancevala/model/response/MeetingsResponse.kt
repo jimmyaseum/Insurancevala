@@ -18,6 +18,21 @@ class MeetingsResponse {
     var ErrorMessage: String? = null
 }
 
+class MeetingsByGUIDResponse {
+    @SerializedName("Data")
+    var Data: MeetingsModel? = null
+    @SerializedName("Details")
+    var Details: String? = null
+    @SerializedName("Message")
+    var Message: String? = null
+    @SerializedName("Status")
+    var Status: Int? = null
+    @SerializedName("ItemCount")
+    var ItemCount: Int? = null
+    @SerializedName("ErrorMessage")
+    var ErrorMessage: String? = null
+}
+
 data class MeetingsModel (
     @SerializedName("ID")
     val ID: Int? = null,

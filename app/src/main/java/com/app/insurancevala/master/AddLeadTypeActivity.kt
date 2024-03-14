@@ -18,6 +18,8 @@ import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
+import com.app.insurancevala.model.api.CommonResponse
+import com.app.insurancevala.model.response.LeadTypeByGUIDResponse
 import com.app.insurancevala.model.response.LeadTypeModel
 import com.app.insurancevala.model.response.LeadTypeResponse
 import com.app.insurancevala.model.response.SingleSelectionModel
@@ -83,8 +85,8 @@ class AddLeadTypeActivity : BaseActivity(), View.OnClickListener {
 
         SetInitListner()
 
-        arrayListStatus?.add(SingleSelectionModel(0, "true", true))
-        arrayListStatus?.add(SingleSelectionModel(1, "false", false))
+        arrayListStatus?.add(SingleSelectionModel(0, "Active", true))
+        arrayListStatus?.add(SingleSelectionModel(1, "InActive", false))
     }
 
     private fun setMasterData() {
@@ -96,7 +98,7 @@ class AddLeadTypeActivity : BaseActivity(), View.OnClickListener {
 
     private fun SetInitListner() {
         imgBack.setOnClickListener(this)
-        edtIsActive.setOnClickListener(this)
+        edtStatus.setOnClickListener(this)
         txtButtonCancel.setOnClickListener(this)
         txtButtonSubmit.setOnClickListener(this)
     }
@@ -109,7 +111,7 @@ class AddLeadTypeActivity : BaseActivity(), View.OnClickListener {
                 onBackPressed()
             }
 
-            R.id.edtIsActive -> {
+            R.id.edtStatus -> {
                 preventTwoClick(v)
                 if (!arrayListStatus.isNullOrEmpty()) {
                     selectLeadTypeDialog()
@@ -152,8 +154,8 @@ class AddLeadTypeActivity : BaseActivity(), View.OnClickListener {
             edtLeadType.setError(getString(R.string.error_empty_lead_type), errortint(this))
             isvalidate = false
         }
-        if (edtIsActive.text.toString().trim().isEmpty()) {
-            edtIsActive.setError(getString(R.string.error_empty_type), errortint(this))
+        if (edtStatus.text.toString().trim().isEmpty()) {
+            edtStatus.setError(getString(R.string.error_empty_type), errortint(this))
             isvalidate = false
         }
 
@@ -164,28 +166,31 @@ class AddLeadTypeActivity : BaseActivity(), View.OnClickListener {
 
         showProgress()
 
+        val call: Call<CommonResponse>
+
         val jsonObject = JSONObject()
         jsonObject.put("LeadType", edtLeadType.text.toString().trim())
 
-        if (edtIsActive.text.toString().trim() == "true") {
+        if (edtStatus.text.toString().trim() == "Active") {
             jsonObject.put("IsActive", true)
         } else {
             jsonObject.put("IsActive", false)
         }
 
-        if (state.equals(AppConstant.S_ADD)) {
-            jsonObject.put("OperationType", AppConstant.INSERT)
-        } else if (state.equals(AppConstant.S_EDIT)) {
+        if (state.equals(AppConstant.S_EDIT)){
             jsonObject.put("LeadTypeGUID", LeadTypeGUID)
-            jsonObject.put("OperationType", AppConstant.EDIT)
         }
 
-        val call =
-            ApiUtils.apiInterface.ManageLeadType(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<LeadTypeResponse> {
+        if (state.equals(AppConstant.S_ADD)) {
+            call = ApiUtils.apiInterface.ManageLeadTypeInsert(getRequestJSONBody(jsonObject.toString()))
+        } else {
+            call = ApiUtils.apiInterface.ManageLeadTypeUpdate(getRequestJSONBody(jsonObject.toString()))
+        }
+
+        call.enqueue(object : Callback<CommonResponse> {
             override fun onResponse(
-                call: Call<LeadTypeResponse>,
-                response: Response<LeadTypeResponse>
+                call: Call<CommonResponse>,
+                response: Response<CommonResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
@@ -207,7 +212,7 @@ class AddLeadTypeActivity : BaseActivity(), View.OnClickListener {
                 }
             }
 
-            override fun onFailure(call: Call<LeadTypeResponse>, t: Throwable) {
+            override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
                 hideProgress()
             }
         })
@@ -217,22 +222,20 @@ class AddLeadTypeActivity : BaseActivity(), View.OnClickListener {
 
         showProgress()
 
-        var jsonObject = JSONObject()
-        jsonObject.put("OperationType", AppConstant.GETBYGUID)
+        val jsonObject = JSONObject()
         jsonObject.put("LeadTypeGUID", LeadTypeGUID)
 
-        val call =
-            ApiUtils.apiInterface.ManageLeadType(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<LeadTypeResponse> {
+        val call = ApiUtils.apiInterface.ManageLeadTypeFindByID(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<LeadTypeByGUIDResponse> {
             override fun onResponse(
-                call: Call<LeadTypeResponse>,
-                response: Response<LeadTypeResponse>
+                call: Call<LeadTypeByGUIDResponse>,
+                response: Response<LeadTypeByGUIDResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arrayListLead = response.body()?.Data!!
-                        setAPIData(arrayListLead[0])
+                        setAPIData(arrayListLead)
                     } else {
                         Snackbar.make(
                             layout,
@@ -243,7 +246,7 @@ class AddLeadTypeActivity : BaseActivity(), View.OnClickListener {
                 }
             }
 
-            override fun onFailure(call: Call<LeadTypeResponse>, t: Throwable) {
+            override fun onFailure(call: Call<LeadTypeByGUIDResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
                     layout,
@@ -294,7 +297,7 @@ class AddLeadTypeActivity : BaseActivity(), View.OnClickListener {
 
                 itemAdapter.updateItem(position)
                 mLeadtype = arrayListStatus!![position].Name.toString()
-                edtIsActive.setText(mLeadtype)
+                edtStatus.setText(mLeadtype)
                 dialogSelectLeadType.dismiss()
             }
         })
@@ -310,7 +313,11 @@ class AddLeadTypeActivity : BaseActivity(), View.OnClickListener {
             edtLeadType.setText(model.LeadType)
         }
         if (model.IsActive != null) {
-            edtIsActive.setText(model.IsActive.toString())
+            if (model.IsActive) {
+                edtStatus.setText("Active")
+            } else {
+                edtStatus.setText("InActive")
+            }
         }
     }
 

@@ -9,6 +9,7 @@ import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.adapter.master.LeadTypeListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
+import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.response.LeadTypeModel
 import com.app.insurancevala.model.response.LeadTypeResponse
 import com.app.insurancevala.retrofit.ApiUtils
@@ -143,6 +144,8 @@ class LeadTypeListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@LeadTypeListActivity,refreshLayout)
+            searchView.closeSearch()
             callManageLeadType()
             refreshLayout.isRefreshing = false
         }
@@ -196,12 +199,11 @@ class LeadTypeListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
 
         var jsonObject = JSONObject()
         jsonObject.put("LeadTypeGUID", GUID)
-        jsonObject.put("OperationType", AppConstant.DELETE)
 
-        val call = ApiUtils.apiInterface.ManageLeadType(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<LeadTypeResponse> {
+        val call = ApiUtils.apiInterface.ManageLeadTypeDelete(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<CommonResponse> {
             override fun onResponse(
-                call: Call<LeadTypeResponse>, response: Response<LeadTypeResponse>
+                call: Call<CommonResponse>, response: Response<CommonResponse>
             ) {
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
@@ -213,7 +215,7 @@ class LeadTypeListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
                 }
             }
 
-            override fun onFailure(call: Call<LeadTypeResponse>, t: Throwable) {
+            override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
                 Snackbar.make(
                     layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                 ).show()
@@ -229,7 +231,7 @@ class LeadTypeListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
 
         jsonObject.put("OperationType", AppConstant.GETALL)
 
-        val call = ApiUtils.apiInterface.ManageLeadType(getRequestJSONBody(jsonObject.toString()))
+        val call = ApiUtils.apiInterface.ManageLeadTypeFindAll(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<LeadTypeResponse> {
             override fun onResponse(
                 call: Call<LeadTypeResponse>, response: Response<LeadTypeResponse>

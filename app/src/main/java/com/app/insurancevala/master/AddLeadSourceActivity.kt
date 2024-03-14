@@ -82,8 +82,8 @@ class AddLeadSourceActivity : BaseActivity(), View.OnClickListener {
 
         SetInitListner()
 
-        arrayListStatus?.add(SingleSelectionModel(0, "true", true))
-        arrayListStatus?.add(SingleSelectionModel(1, "false", false))
+        arrayListStatus?.add(SingleSelectionModel(0, "Active", true))
+        arrayListStatus?.add(SingleSelectionModel(1, "InActive", false))
     }
 
     private fun setMasterData() {
@@ -95,7 +95,7 @@ class AddLeadSourceActivity : BaseActivity(), View.OnClickListener {
 
     private fun SetInitListner() {
         imgBack.setOnClickListener(this)
-        edtIsActive.setOnClickListener(this)
+        edtStatus.setOnClickListener(this)
         txtButtonCancel.setOnClickListener(this)
         txtButtonSubmit.setOnClickListener(this)
     }
@@ -108,7 +108,7 @@ class AddLeadSourceActivity : BaseActivity(), View.OnClickListener {
                 onBackPressed()
             }
 
-            R.id.edtIsActive -> {
+            R.id.edtStatus -> {
                 preventTwoClick(v)
                 if (!arrayListStatus.isNullOrEmpty()) {
                     selectLeadStatusDialog()
@@ -151,8 +151,8 @@ class AddLeadSourceActivity : BaseActivity(), View.OnClickListener {
             edtLeadSource.setError(getString(R.string.error_empty_lead_source), errortint(this))
             isvalidate = false
         }
-        if (edtIsActive.text.toString().trim().isEmpty()) {
-            edtIsActive.setError(getString(R.string.error_empty_type), errortint(this))
+        if (edtStatus.text.toString().trim().isEmpty()) {
+            edtStatus.setError(getString(R.string.error_empty_type), errortint(this))
             isvalidate = false
         }
 
@@ -166,7 +166,7 @@ class AddLeadSourceActivity : BaseActivity(), View.OnClickListener {
         val jsonObject = JSONObject()
         jsonObject.put("LeadSource", edtLeadSource.text.toString().trim())
 
-        if (edtIsActive.text.toString().trim() == "true") {
+        if (edtStatus.text.toString().trim() == "Active") {
             jsonObject.put("IsActive", true)
         } else {
             jsonObject.put("IsActive", false)
@@ -281,7 +281,7 @@ class AddLeadSourceActivity : BaseActivity(), View.OnClickListener {
             dialogSelectLeadSource.dismiss()
         }
 
-        txtid.text = "Select Source"
+        txtid.text = "Select Status"
 
         edtSearchId.gone()
 
@@ -291,7 +291,7 @@ class AddLeadSourceActivity : BaseActivity(), View.OnClickListener {
 
                 itemAdapter.updateItem(position)
                 mLeadStatus = arrayListStatus!![position].Name.toString()
-                edtIsActive.setText(mLeadStatus)
+                edtStatus.setText(mLeadStatus)
                 dialogSelectLeadSource.dismiss()
             }
         })
@@ -307,7 +307,11 @@ class AddLeadSourceActivity : BaseActivity(), View.OnClickListener {
             edtLeadSource.setText(model.LeadSource)
         }
         if (model.IsActive != null) {
-            edtIsActive.setText(model.IsActive.toString())
+            if (model.IsActive) {
+                edtStatus.setText("Active")
+            } else {
+                edtStatus.setText("InActive")
+            }
         }
     }
 

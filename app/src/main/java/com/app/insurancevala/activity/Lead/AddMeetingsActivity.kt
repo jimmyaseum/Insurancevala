@@ -24,6 +24,7 @@ import android.view.Window
 import android.view.WindowManager
 import android.webkit.MimeTypeMap
 import android.widget.*
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.FilePickerBuilder
@@ -37,6 +38,7 @@ import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetUserTypeListA
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.pojo.AttachmentModel
+import com.app.insurancevala.model.pojo.DocumentsModel
 import com.app.insurancevala.model.response.*
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
@@ -49,7 +51,6 @@ import droidninja.filepicker.FilePickerConst
 import kotlinx.android.synthetic.main.activity_add_meeting_logs.*
 import kotlinx.android.synthetic.main.activity_add_meeting_logs.layout
 import kotlinx.android.synthetic.main.activity_add_meeting_logs.view.*
-import kotlinx.android.synthetic.main.activity_registration.edtUserType
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -68,12 +69,13 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 
     var sharedPreference: SharedPreference? = null
     var state: String? = null
+    var ID: Int? = null
     var LeadID: Int? = null
     var MeetingGUID: String? = null
     var ReferenceGUID: String? = null
 
     // attachments
-    var arrayListAttachment: ArrayList<AttachmentModel>? = null
+    var arrayListAttachment: ArrayList<DocumentsModel>? = null
     lateinit var adapter: MultipleAttachmentListAdapter
     val RC_FILE_PICKER_PERM = 900
     var ImagePaths = ArrayList<String>()
@@ -110,6 +112,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 
     private fun getIntentData() {
         state = intent.getStringExtra(AppConstant.STATE)
+        ID = intent.getIntExtra("ID",0)
         LeadID = intent.getIntExtra("LeadID",0)
     }
 
@@ -121,6 +124,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
             txtHearderText.text = "Update Meeting"
 
             if (isOnline(this)) {
+                ID = intent.getIntExtra("ID",0)
                 LeadID = intent.getIntExtra("LeadID",0)
                 MeetingGUID = intent.getStringExtra("MeetingGUID")
 
@@ -165,7 +169,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         rvAttachment.isNestedScrollingEnabled = false
 
         arrayListAttachment = ArrayList()
-        adapter = MultipleAttachmentListAdapter(this, arrayListAttachment, this)
+        adapter = MultipleAttachmentListAdapter(this, true, arrayListAttachment, this)
         rvAttachment.adapter = adapter
 
         imgBack.setOnClickListener(this)
@@ -362,6 +366,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         var isFollowup = false
 
         val jsonObject = JSONObject()
+        jsonObject.put("NBInquiryTypeID", ID)
         jsonObject.put("LeadID", LeadID)
         jsonObject.put("MeetingTypeID", mMeetingtypeID)
         jsonObject.put("MeetingDate", MeetingDate)
@@ -384,75 +389,106 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         jsonObject.put("IsFollowup", isFollowup)
         jsonObject.put("IsActive", true)
 
-        if(state.equals(AppConstant.S_ADD)) {
-            jsonObject.put("OperationType", AppConstant.INSERT)
-        } else if(state.equals(AppConstant.S_EDIT)) {
+        if(state.equals(AppConstant.S_EDIT)) {
             jsonObject.put("MeetingGUID", MeetingGUID)
-            jsonObject.put("OperationType", AppConstant.EDIT)
         }
 
-        val call = ApiUtils.apiInterface.ManageMeetings(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<MeetingsResponse> {
-            override fun onResponse(call: Call<MeetingsResponse>, response: Response<MeetingsResponse>) {
-                hideProgress()
-                if (response.code() == 200) {
-                    if (response.body()?.Status == 201) {
+        if(state.equals(AppConstant.S_ADD)) {
+            val call = ApiUtils.apiInterface.ManageMeetingInsert(getRequestJSONBody(jsonObject.toString()))
+            call.enqueue(object : Callback<RefGUIDResponse> {
+                override fun onResponse(call: Call<RefGUIDResponse>, response: Response<RefGUIDResponse>) {
+                    hideProgress()
+                    if (response.code() == 200) {
+                        if (response.body()?.Status == 201) {
 
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
-                        ReferenceGUID = response.body()?.Data!![0]!!.ReferenceGUID.toString()
+                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            ReferenceGUID = response.body()?.Data!!.ReferenceGUID
 
-                        if(arrayListAttachment!!.size > 0) {
-                            CallUploadDocuments(ReferenceGUID)
+                            if(arrayListAttachment!!.size > 0) {
+                                CallUploadDocuments(ReferenceGUID)
+                            } else {
+                                val intent = Intent()
+                                setResult(RESULT_OK, intent)
+                                finish()
+                            }
                         } else {
+                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                             val intent = Intent()
                             setResult(RESULT_OK, intent)
                             finish()
                         }
-                    } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
-                        val intent = Intent()
-                        setResult(RESULT_OK, intent)
-                        finish()
                     }
                 }
-            }
 
-            override fun onFailure(call: Call<MeetingsResponse>, t: Throwable) {
-                hideProgress()
-                Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
-                ).show()
-                val intent = Intent()
-                setResult(RESULT_OK, intent)
-                finish()
-            }
-        })
+                override fun onFailure(call: Call<RefGUIDResponse>, t: Throwable) {
+                    hideProgress()
+                    Snackbar.make(
+                        layout,
+                        getString(R.string.error_failed_to_connect),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    val intent = Intent()
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+            })
+        } else {
+            val call = ApiUtils.apiInterface.ManageMeetingUpdate(getRequestJSONBody(jsonObject.toString()))
+            call.enqueue(object : Callback<CommonResponse> {
+                override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
+                    hideProgress()
+                    if (response.code() == 200) {
+                        if (response.body()?.Status == 201) {
+                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            val intent = Intent()
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        } else {
+                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            val intent = Intent()
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
+                    hideProgress()
+                    Snackbar.make(
+                        layout,
+                        getString(R.string.error_failed_to_connect),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    val intent = Intent()
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+            })
+        }
     }
     private fun callManageMeetingsGUID() {
 
         showProgress()
 
         var jsonObject = JSONObject()
-        jsonObject.put("OperationType", AppConstant.GETBYGUID)
+
         jsonObject.put("MeetingGUID", MeetingGUID)
 
-        val call = ApiUtils.apiInterface.ManageMeetings(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<MeetingsResponse> {
-            override fun onResponse(call: Call<MeetingsResponse>, response: Response<MeetingsResponse>) {
+        val call = ApiUtils.apiInterface.ManageMeetingFindByID(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<MeetingsByGUIDResponse> {
+            override fun onResponse(call: Call<MeetingsByGUIDResponse>, response: Response<MeetingsByGUIDResponse>) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arrayListLead = response.body()?.Data!!
-                        setAPIData(arrayListLead[0])
+                        setAPIData(arrayListLead)
                     } else {
                         Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                     }
                 }
             }
 
-            override fun onFailure(call: Call<MeetingsResponse>, t: Throwable) {
+            override fun onFailure(call: Call<MeetingsByGUIDResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
             }
@@ -522,8 +558,17 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         if(model.FollowupNotes != null && model.FollowupNotes != "") {
             edtFollowupNotes.setText(model.FollowupNotes)
         }
-        if(model.MeetingAttachmentList!!.size > 0) {
-            LLAttachments.gone()
+
+        txtAttachments.gone()
+        edtAttachments.gone()
+        viewAttachments.gone()
+        if(!model.MeetingAttachmentList.isNullOrEmpty()) {
+            arrayListAttachment = java.util.ArrayList()
+            arrayListAttachment = model.MeetingAttachmentList
+            adapter = MultipleAttachmentListAdapter(this, false, arrayListAttachment, this)
+
+            rvAttachment.adapter = adapter
+            txtAttachments.visible()
         }
     }
 
@@ -1253,14 +1298,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 
         txtButtonSubmit!!.setOnClickListener {
             if(!edtName.text.toString().trim().equals("")) {
-                arrayListAttachment!!.add(
-                    AttachmentModel(
-                        name = edtName.text.toString(),
-                        attachmentUri = fileuri,
-                        attachmentType = attachmenttype
-                    )
-                )
-                adapter.notifyDataSetChanged()
+                adapter.addItem(edtName.text.toString(), fileuri, attachmenttype)
                 bottomSheetDialog.dismiss()
             } else {
                 edtName.error = "Enter Name"
@@ -1268,8 +1306,6 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         }
 
         txtButtonCancel!!.setOnClickListener {
-            arrayListAttachment!!.add(AttachmentModel(name = name, attachmentUri = fileuri, attachmentType = attachmenttype))
-            adapter.notifyDataSetChanged()
             bottomSheetDialog.dismiss()
         }
 
@@ -1285,19 +1321,19 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 
         if(!arrayListAttachment.isNullOrEmpty()) {
             for (i in arrayListAttachment!!.indices) {
-                if (arrayListAttachment!![i].attachmentType == 2) {
-                    if (arrayListAttachment!![i].attachmentUri != null) {
-                        partsList.add(CommonUtil.prepareFilePart(this, "image/*", "AttachmentURL", arrayListAttachment!![i].attachmentUri!!))
-                        AttachmentName.add(arrayListAttachment!![i].name)
+                if (arrayListAttachment!![i].AttachmentType == "Image") {
+                    if (arrayListAttachment!![i].AttachmentURL != null) {
+                        partsList.add(CommonUtil.prepareFilePart(this, "image/*", "AttachmentURL", arrayListAttachment!![i].AttachmentURL!!.toUri()))
+                        AttachmentName.add(arrayListAttachment!![i].AttachmentName!!)
 
                     } else {
                         val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
                         partsList.add(MultipartBody.Part.createFormData("AttachmentURL", "", attachmentEmpty))
                     }
                 } else {
-                    if (arrayListAttachment!![i].attachmentUri != null) {
-                        partsList.add(CommonUtil.prepareFilePart(this, "application/*", "AttachmentURL", arrayListAttachment!![i].attachmentUri!!))
-                        AttachmentName.add(arrayListAttachment!![i].name)
+                    if (arrayListAttachment!![i].AttachmentURL != null) {
+                        partsList.add(CommonUtil.prepareFilePart(this, "application/*", "AttachmentURL", arrayListAttachment!![i].AttachmentURL!!.toUri()))
+                        AttachmentName.add(arrayListAttachment!![i].AttachmentName!!)
                     } else {
                         val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
                         partsList.add(MultipartBody.Part.createFormData("AttachmentURL", "", attachmentEmpty))
@@ -1307,14 +1343,16 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         }
 
         val a = AttachmentName.toString().replace("[", "").replace("]", "")
-
+        LogUtil.d(TAG,"111===> "+a)
         val mAttachmentName = CommonUtil.createPartFromString(a)
         val mreferenceGUID = CommonUtil.createPartFromString(referenceGUID.toString())
+        val mID = CommonUtil.createPartFromString(ID.toString())
         val mAttachmentType = CommonUtil.createPartFromString(AppConstant.MEETING)
 
         val call = ApiUtils.apiInterface.ManageAttachment(
             LeadID = LeadID,
             ReferenceGUID = mreferenceGUID,
+            NBInquiryTypeID = mID,
             AttachmentType = mAttachmentType,
             AttachmentName = mAttachmentName,
             attachment = partsList
@@ -1329,7 +1367,6 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                         val intent = Intent()
                         setResult(RESULT_OK, intent)
                         finish()
-
                     } else {
                         Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                         val intent = Intent()

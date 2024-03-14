@@ -58,6 +58,20 @@
                 android:padding="@dimen/_5sdp"
                 android:textColorHint="@color/colorGradish" />
 
+            <TextView
+                android:id="@+id/txtChar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:fontFamily="@font/poppins_regular"
+                android:text="Enter Minimum 3 Character"
+                android:gravity="center"
+                android:textColorHint="@color/colorGradish"
+                android:textSize="@dimen/_12sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@color/colorWhite"
+                android:visibility="gone"/>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvDialogCustomer"
                 android:layout_width="match_parent"

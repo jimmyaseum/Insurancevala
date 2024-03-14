@@ -46,9 +46,14 @@
     <string name="error_empty_user_type">Enter User Type</string>
     <string name="error_empty_initial_type">Enter Initial</string>
     <string name="error_empty_lead_source">Enter Source</string>
+    <string name="error_empty_country">Enter Country</string>
+    <string name="error_empty_state">Enter State</string>
+    <string name="error_empty_city">Enter City</string>
     <string name="error_empty_type">Select Status</string>
     <string name="msg_permission_storage">Application need permission to read photos or documents from device</string>
     <string name="msg_permission_camera">Application need permission to access camera</string>
     <string name="error_failed_to_connect">Failed to connect to server. Try again later.</string>
+
+    <string name="audio_file">Audio from File</string>
 
 </resources>

@@ -212,7 +212,8 @@
                                 android:singleLine="true"
                                 android:imeOptions="actionNext"
                                 android:inputType="number"
-                                android:maxEms="12"/>
+                                android:maxLength="10"
+                                android:maxEms="10"/>
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"

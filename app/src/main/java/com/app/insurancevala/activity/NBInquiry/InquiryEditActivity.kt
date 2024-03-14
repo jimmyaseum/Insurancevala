@@ -650,9 +650,7 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         if (mode == 1) {
             showProgress()
         }
-        var jsonObject = JSONObject()
-        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
-        val call = ApiUtils.apiInterface.ManageLeadType(getRequestJSONBody(jsonObject.toString()))
+        val call = ApiUtils.apiInterface.getLeadTypeAllActive()
         call.enqueue(object : Callback<LeadTypeResponse> {
             override fun onResponse(
                 call: Call<LeadTypeResponse>,

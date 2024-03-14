@@ -1,6 +1,7 @@
 package com.app.insurancevala.model.response
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 class LeadResponse {
     @SerializedName("Data")
@@ -18,6 +19,21 @@ class LeadResponse {
 
 }
 
+class LeadByGUIDResponse {
+    @SerializedName("Data")
+    var Data: LeadModel? = null
+    @SerializedName("Details")
+    var Details: String? = null
+    @SerializedName("Message")
+    var Message: String? = null
+    @SerializedName("Status")
+    var Status: Int? = null
+    @SerializedName("ItemCount")
+    var ItemCount: Int? = null
+    @SerializedName("ErrorMessage")
+    var ErrorMessage: String? = null
+}
+
 data class LeadModel (
     @SerializedName("ID")
     val ID: Int? = null,
@@ -33,6 +49,8 @@ data class LeadModel (
     val EmailID: String? = null,
     @SerializedName("MobileNo")
     var MobileNo : String? = null,
+    @SerializedName("CategoryName")
+    var CategoryName : String? = null,
     @SerializedName("GroupCode")
     var GroupCode : String? = "",
     @SerializedName("LeadImage")
@@ -41,6 +59,12 @@ data class LeadModel (
     val LeadStage: Int? = null,
     @SerializedName("InitialID")
     val InitialID: Int? = null,
+    @SerializedName("CategoryID")
+    val CategoryID: Int? = null,
+    @SerializedName("IsFamilyDetails")
+    val IsFamilyDetails: Boolean? = null,
+    @SerializedName("OccupationID")
+    val OccupationID: Int? = null,
     @SerializedName("LeadOwnerID")
     val LeadOwnerID: String? = null,
     @SerializedName("LeadSourceID")
@@ -75,6 +99,10 @@ data class LeadModel (
     val PinCode: String? = null,
     @SerializedName("Notes")
     val Notes: String? = null,
+    @SerializedName("BirthDate")
+    val BirthDate: String? = null,
+    @SerializedName("MarriageDate")
+    val MarriageDate: String? = null,
     @SerializedName("IsActive")
     val IsActive: Boolean? = null,
     @SerializedName("IsSelected")
@@ -88,5 +116,32 @@ data class LeadModel (
     @SerializedName("TotalMeeting")
     val TotalMeeting: Int? = null,
     @SerializedName("TotalCall")
-    val TotalCall: Int? = null
-)
+    val TotalCall: Int? = null,
+    @SerializedName("FamilysDetails")
+    val FamilyDetails: ArrayList<FamilyDetailsModel>? = null
+):Serializable
+
+data class FamilyDetailsModel (
+    @SerializedName("ID")
+    val ID: Int? = null,
+    @SerializedName("InitialID")
+    val InitialID: Int? = null,
+    @SerializedName("InitialName")
+    val InitialName: String? = null,
+    @SerializedName("RelationID")
+    val RelationID: Int? = null,
+    @SerializedName("RelationName")
+    val RelationName: String? = null,
+    @SerializedName("FirstName")
+    val FirstName: String? = null,
+    @SerializedName("LastName")
+    val LastName: String? = null,
+    @SerializedName("MobileNo")
+    val MobileNo: String? = null,
+    @SerializedName("BirthDate")
+    val BirthDate: String? = null,
+    @SerializedName("GroupCode")
+    val GroupCode: String? = null,
+    @SerializedName("IsSelected")
+    var IsSelected : Boolean? = null
+):Serializable

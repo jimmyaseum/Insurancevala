@@ -110,7 +110,6 @@
                     android:id="@+id/LLStatus"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
@@ -130,7 +129,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_regular"
-                            android:text="IsActive"
+                            android:text="Status"
                             android:textSize="@dimen/_10sdp"
                             android:textColor="@color/colorGray500" />
 
@@ -140,7 +139,7 @@
                             android:orientation="vertical">
 
                             <EditText
-                                android:id="@+id/edtIsActive"
+                                android:id="@+id/edtStatus"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:background="@null"

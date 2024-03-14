@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerClickListener
@@ -48,7 +49,13 @@ class UserTypeListAdapter(private val context: Context?, private val arrayList: 
             }
 
             if(arrayList[position].IsActive != null) {
-                itemView.txtStatus.text = arrayList[position].IsActive.toString()
+                if (arrayList[position].IsActive!!){
+                    itemView.txtStatus.setText("Active")
+                    itemView.txtStatus.setTextColor(ContextCompat.getColor(context, R.color.button_green))
+                } else{
+                    itemView.txtStatus.setText("InActive")
+                    itemView.txtStatus.setTextColor(ContextCompat.getColor(context, R.color.colorRed))
+                }
             }
 
             itemView.setOnClickListener {

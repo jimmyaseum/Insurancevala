@@ -36,7 +36,6 @@ import com.theartofdev.edmodo.cropper.CropImageView
 import de.hdodenhof.circleimageview.CircleImageView
 import droidninja.filepicker.FilePickerConst
 import kotlinx.android.synthetic.main.activity_attachment_list.*
-import kotlinx.android.synthetic.main.activity_attachment_list.layout
 import kotlinx.android.synthetic.main.activity_attachment_list.view.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -49,11 +48,13 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.*
 
-class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerClickListener, EasyPermissions.PermissionCallbacks  {
+class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickListener,
+    EasyPermissions.PermissionCallbacks {
 
-    lateinit var adapter : AllAttachmentListAdapter
+    lateinit var adapter: AllAttachmentListAdapter
     var arrayListAttachment: ArrayList<DocumentsModel>? = ArrayList()
     var arrayListAttachmentNew: ArrayList<DocumentsModel>? = ArrayList()
+    var ID: Int? = null
     var LeadID: Int? = null
 
     val RC_FILE_PICKER_PERM = 900
@@ -62,8 +63,9 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
     var AttachmentURL: Uri? = null
     var AttachmentName: String? = null
     var DocumentType: Int? = null
-//    var ReferenceGUID: String? = null
-    var ID: Int? = null
+
+    //    var ReferenceGUID: String? = null
+    var AttachmentID: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +76,8 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
     }
 
     private fun getIntentData() {
-        LeadID = intent.getIntExtra("LeadID",0)
+        ID = intent.getIntExtra("ID", 0)
+        LeadID = intent.getIntExtra("LeadID", 0)
     }
 
     override fun initializeView() {
@@ -88,12 +91,14 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
 
     private fun SetInitListner() {
         imgBack.setOnClickListener(this)
+        imgAddAttachment.setOnClickListener(this)
 
         arrayListAttachment = ArrayList()
-        adapter = AllAttachmentListAdapter(this, arrayListAttachment!!,this@AttachmentsListActivity)
+        adapter =
+            AllAttachmentListAdapter(this, arrayListAttachment!!, this@AttachmentsListActivity)
 
         imgSearch.setOnClickListener {
-            if(searchView.isSearchOpen) {
+            if (searchView.isSearchOpen) {
                 searchView.closeSearch()
             } else {
                 searchView.showSearch()
@@ -104,26 +109,37 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
             override fun onQueryTextSubmit(query: String): Boolean {
                 return false
             }
+
             override fun onQueryTextChange(newText: String): Boolean {
                 val arrItemsFinal1: ArrayList<DocumentsModel> = ArrayList()
                 if (newText.trim().isNotEmpty()) {
                     val strSearch = newText
                     for (model in arrayListAttachment!!) {
                         try {
-                            if (model.AttachmentType!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                                model.AttachmentName!!.toLowerCase().contains(strSearch.toLowerCase())
+                            if (model.AttachmentType!!.toLowerCase()
+                                    .contains(strSearch.toLowerCase()) ||
+                                model.AttachmentName!!.toLowerCase()
+                                    .contains(strSearch.toLowerCase())
                             ) {
                                 arrItemsFinal1.add(model)
                             }
-                        } catch (e: Exception){
+                        } catch (e: Exception) {
                         }
                     }
                     arrayListAttachmentNew = arrItemsFinal1
-                    val itemAdapter = AllAttachmentListAdapter(this@AttachmentsListActivity, arrayListAttachmentNew!!,this@AttachmentsListActivity)
+                    val itemAdapter = AllAttachmentListAdapter(
+                        this@AttachmentsListActivity,
+                        arrayListAttachmentNew!!,
+                        this@AttachmentsListActivity
+                    )
                     RvAttachmentsList.adapter = itemAdapter
                 } else {
                     arrayListAttachmentNew = arrayListAttachment
-                    val itemAdapter = AllAttachmentListAdapter( this@AttachmentsListActivity, arrayListAttachmentNew!!, this@AttachmentsListActivity)
+                    val itemAdapter = AllAttachmentListAdapter(
+                        this@AttachmentsListActivity,
+                        arrayListAttachmentNew!!,
+                        this@AttachmentsListActivity
+                    )
                     RvAttachmentsList.adapter = itemAdapter
                 }
                 return false
@@ -145,22 +161,31 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
             }
 
             override fun onSearchViewClosedAnimation() {
-                AnimationUtils.loadAnimation(this@AttachmentsListActivity, R.anim.searchview_close_anim)
+                AnimationUtils.loadAnimation(
+                    this@AttachmentsListActivity,
+                    R.anim.searchview_close_anim
+                )
             }
 
             override fun onSearchViewShown() {
             }
 
             override fun onSearchViewShownAnimation() {
-                AnimationUtils.loadAnimation(this@AttachmentsListActivity, R.anim.searchview_open_anim)
+                AnimationUtils.loadAnimation(
+                    this@AttachmentsListActivity,
+                    R.anim.searchview_open_anim
+                )
             }
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@AttachmentsListActivity, refreshLayout)
+            searchView.closeSearch()
             callManageAttachment()
             refreshLayout.isRefreshing = false
         }
     }
+
     override fun onClick(v: View?) {
         hideKeyboard(this@AttachmentsListActivity, v)
         when (v?.id) {
@@ -168,17 +193,25 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
                 preventTwoClick(v)
                 finish()
             }
+            R.id.imgAddAttachment -> {
+                preventTwoClick(v)
+                val intent = Intent(this, AddAttachmentsActivity::class.java)
+                intent.putExtra("ID",ID)
+                intent.putExtra("LeadID",LeadID)
+                startActivity(intent)
+            }
         }
     }
 
     override fun onItemClickEvent(view: View, position: Int, type: Int) {
-        when(type) {
+        when (type) {
             101 -> {
                 preventTwoClick(view)
 //                ReferenceGUID = arrayListAttachmentNew!![position].ReferenceGUID!!
-                ID = arrayListAttachmentNew!![position].ID!!
+                AttachmentID = arrayListAttachmentNew!![position].ID!!
                 showAttachmentBottomSheetDialog()
             }
+
             102 -> {
                 preventTwoClick(view)
                 AwesomeDialog.build(this)
@@ -201,12 +234,17 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
         showProgress()
 
         var jsonObject = JSONObject()
+        jsonObject.put("NBInquiryTypeID", ID)
         jsonObject.put("LeadID", LeadID)
         jsonObject.put("AttachmentType", "")
 
-        val call = ApiUtils.apiInterface.ManageAttachmentList(getRequestJSONBody(jsonObject.toString()))
+        val call =
+            ApiUtils.apiInterface.ManageAttachmentList(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<DocumentsResponse> {
-            override fun onResponse(call: Call<DocumentsResponse>, response: Response<DocumentsResponse>) {
+            override fun onResponse(
+                call: Call<DocumentsResponse>,
+                response: Response<DocumentsResponse>
+            ) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
@@ -216,22 +254,36 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
                         arrayListAttachment = response.body()?.Data!!
                         arrayListAttachmentNew = arrayListAttachment
 
-                        if(arrayListAttachmentNew!!.size > 0) {
-                            adapter = AllAttachmentListAdapter(this@AttachmentsListActivity, arrayListAttachmentNew!!,this@AttachmentsListActivity)
+                        if (arrayListAttachmentNew!!.size > 0) {
+                            adapter = AllAttachmentListAdapter(
+                                this@AttachmentsListActivity,
+                                arrayListAttachmentNew!!,
+                                this@AttachmentsListActivity
+                            )
                             RvAttachmentsList.adapter = adapter
 
                             shimmer.stopShimmer()
                             shimmer.gone()
+                            FL.visible()
+                            RLNoData.gone()
 
                         } else {
-                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                layout,
+                                response.body()?.Details.toString(),
+                                Snackbar.LENGTH_LONG
+                            ).show()
                             shimmer.stopShimmer()
                             shimmer.gone()
                             FL.gone()
                             RLNoData.visible()
                         }
                     } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                         shimmer.stopShimmer()
                         shimmer.gone()
                         FL.gone()
@@ -242,29 +294,45 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
 
             override fun onFailure(call: Call<DocumentsResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         })
     }
 
-    private fun CallAttachmentDeleteAPI(ID : Int) {
+    private fun CallAttachmentDeleteAPI(ID: Int) {
 
         var jsonObject = JSONObject()
         jsonObject.put("ID", ID)
 
-        val call = ApiUtils.apiInterface.ManageAttachmentDelete(getRequestJSONBody(jsonObject.toString()))
+        val call =
+            ApiUtils.apiInterface.ManageAttachmentDelete(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<CommonResponse> {
-            override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
+            override fun onResponse(
+                call: Call<CommonResponse>,
+                response: Response<CommonResponse>
+            ) {
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                         callManageAttachment()
                     }
                 }
             }
 
             override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         })
 
@@ -283,13 +351,13 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
                     FilePickerConst.PERMISSIONS_FILE_PICKER
                 )
             }
-        } else{
+        } else {
             showBottomSheetDialogAttachments()
         }
     }
 
     private fun showBottomSheetDialogAttachments() {
-        val bottomSheetDialog = BottomSheetDialog(this,R.style.SheetDialog)
+        val bottomSheetDialog = BottomSheetDialog(this, R.style.SheetDialog)
         bottomSheetDialog.setContentView(R.layout.bottom_sheet_attachment)
 
         val Select_Image = bottomSheetDialog.findViewById<LinearLayout>(R.id.Select_Image)
@@ -319,7 +387,11 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
                     )
                 }
             } else {
-                if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (EasyPermissions.hasPermissions(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                ) {
                     if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
                         photopicker()
                     } else {
@@ -387,7 +459,7 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
                         val fileName = fullName.substringBeforeLast(".")
                         val extension = imageUri.path!!.substringAfterLast(".")
 
-                        showBottomSheetDialogRename(fullName , imageUri , 2)
+                        showBottomSheetDialogRename(fullName, imageUri, 2)
 
                     }
 
@@ -405,7 +477,7 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
                     ImagePaths = ArrayList()
 //                    ImagePaths.addAll(data.getParcelableArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)!!)
                     ImagePaths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)!!)
-                    if (!ImagePaths.isNullOrEmpty()){
+                    if (!ImagePaths.isNullOrEmpty()) {
 //                        val PassportPath = ImagePaths[0]
                         val PassportPath = Uri.fromFile(File(ImagePaths[0]))
                         CropImage.activity(PassportPath)
@@ -419,7 +491,8 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
                 val sUri = data!!.data
                 val sPath = sUri!!.path
 
-                val PassportPath = Uri.fromFile(fileFromContentUri1("passport", applicationContext, sUri))
+                val PassportPath =
+                    Uri.fromFile(fileFromContentUri1("passport", applicationContext, sUri))
                 var displayName = ""
 
                 if (sUri.toString().startsWith("content://")) {
@@ -427,7 +500,8 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
                     try {
                         cursor = getContentResolver().query(sUri, null, null, null, null)
                         if (cursor != null && cursor.moveToFirst()) {
-                            displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                            displayName =
+                                cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
                         }
                     } finally {
                         cursor!!.close()
@@ -436,14 +510,14 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
                     displayName = sPath!!
                 }
 
-                showBottomSheetDialogRename(displayName , PassportPath , 1)
+                showBottomSheetDialogRename(displayName, PassportPath, 1)
 
             }
         }
     }
 
     // attachment
-    fun fileFromContentUri1(name  :String, context: Context, contentUri: Uri): File {
+    fun fileFromContentUri1(name: String, context: Context, contentUri: Uri): File {
         // Preparing Temp file name
         val fileExtension = getFileExtension(context, contentUri)
         val fileName = "temp_file_" + name + if (fileExtension != null) ".$fileExtension" else ""
@@ -485,7 +559,11 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
     }
 
     //Permission Result
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
@@ -502,7 +580,7 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
         }
     }
 
-    private fun showBottomSheetDialogRename(name: String, fileuri : Uri, attachmenttype : Int) {
+    private fun showBottomSheetDialogRename(name: String, fileuri: Uri, attachmenttype: Int) {
         val bottomSheetDialog = BottomSheetDialog(this)
         bottomSheetDialog.setContentView(R.layout.bottom_sheet_rename_dialog)
         bottomSheetDialog.setCancelable(false)
@@ -513,7 +591,7 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
         val txtButtonCancel = bottomSheetDialog.findViewById<TextView>(R.id.txtButtonCancel)
         val txtButtonSubmit = bottomSheetDialog.findViewById<TextView>(R.id.txtButtonSubmit)
 
-        if(attachmenttype == 1) {
+        if (attachmenttype == 1) {
             img!!.setImageResource(R.drawable.pdficon)
         } else {
             img!!.setImageURI(fileuri)
@@ -523,7 +601,7 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
         edtName!!.requestFocus()
 
         txtButtonSubmit!!.setOnClickListener {
-            if(!edtName.text.toString().trim().equals("")) {
+            if (!edtName.text.toString().trim().equals("")) {
 
                 AttachmentURL = fileuri
                 DocumentType = attachmenttype
@@ -538,13 +616,7 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
         }
 
         txtButtonCancel!!.setOnClickListener {
-
-            AttachmentURL = fileuri
-            DocumentType = attachmenttype
-            AttachmentName = name
             bottomSheetDialog.dismiss()
-
-            callManageAttachmentUpdate()
         }
 
         bottomSheetDialog.show()
@@ -557,48 +629,61 @@ class AttachmentsListActivity  : BaseActivity(), View.OnClickListener, RecyclerC
         val partsList: ArrayList<MultipartBody.Part> = ArrayList()
 
         if (DocumentType == 2) {
-                    if (AttachmentURL != null) {
-                        partsList.add(CommonUtil.prepareFilePart(this, "image/*", "AttachmentURL", AttachmentURL!!))
-
-                    } else {
-                        val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
-                        partsList.add(MultipartBody.Part.createFormData("AttachmentURL", "", attachmentEmpty))
-                    }
-                }
-        else {
-                    if (AttachmentURL != null) {
-                        partsList.add(CommonUtil.prepareFilePart(this, "application/*", "AttachmentURL", AttachmentURL!!))
-
-                    } else {
-                        val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
-                        partsList.add(MultipartBody.Part.createFormData("AttachmentURL", "", attachmentEmpty))
-                    }
-                }
+            if (AttachmentURL != null) {
+                partsList.add(CommonUtil.prepareFilePart(this, "image/*", "AttachmentURL", AttachmentURL!!))
+            } else {
+                val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
+                partsList.add(MultipartBody.Part.createFormData("AttachmentURL", "", attachmentEmpty))
+            }
+        } else {
+            if (AttachmentURL != null) {
+                partsList.add(CommonUtil.prepareFilePart(this, "application/*", "AttachmentURL", AttachmentURL!!))
+            } else {
+                val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
+                partsList.add(MultipartBody.Part.createFormData("AttachmentURL", "", attachmentEmpty))
+            }
+        }
 
         val mAttachmentName = CommonUtil.createPartFromString(AttachmentName!!)
 //        val mreferenceGUID = CommonUtil.createPartFromString(ReferenceGUID!!)
 
         val call = ApiUtils.apiInterface.ManageAttachmentUpdate(
-            ID = ID,
+            ID = AttachmentID,
             AttachmentName = mAttachmentName,
             attachment = partsList
         )
         call.enqueue(object : Callback<CommonResponse> {
-            override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
+            override fun onResponse(
+                call: Call<CommonResponse>,
+                response: Response<CommonResponse>
+            ) {
                 hideProgress()
                 if (response.code() == 200) {
 
                     if (response.body()?.Status == 200) {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                         callManageAttachment()
                     } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
+
             override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         })
     }

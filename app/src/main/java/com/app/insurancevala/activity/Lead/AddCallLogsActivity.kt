@@ -25,6 +25,7 @@ import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetCallResultLis
 import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetCallTypeListAdapter
 import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetUserTypeListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
+import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.response.*
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
@@ -49,6 +50,7 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
 
     var sharedPreference: SharedPreference? = null
     var state: String? = null
+    var ID: Int? = null
     var LeadID: Int? = null
     var CallGUID: String? = null
 
@@ -104,6 +106,7 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
 
         state = intent.getStringExtra(AppConstant.STATE)
         LeadID = intent.getIntExtra("LeadID",0)
+        ID = intent.getIntExtra("ID",0)
 
         calltype = intent.getStringExtra("CALLTYPE").toString()
         if(calltype.equals("SCHEDULE")) {
@@ -182,7 +185,7 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
                     CalenderLogCallDate.get(Calendar.MONTH),
                     CalenderLogCallDate.get(Calendar.DAY_OF_MONTH)
                 )
-//                dpd.datePicker.minDate = System.currentTimeMillis() - 1000
+                dpd.datePicker.minDate = System.currentTimeMillis()
 //                dpd.datePicker.maxDate = System.currentTimeMillis() - 1000
                 dpd.show()
             }
@@ -302,9 +305,12 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
 
         showProgress()
 
+        val call: Call<CommonResponse>
+
         var isreminder = false
 
         val jsonObject = JSONObject()
+        jsonObject.put("NBInquiryTypeID", ID)
         jsonObject.put("LeadID", LeadID)
         jsonObject.put("CallTypeID", mCalltypeID)
         jsonObject.put("CallPurposeID", mCallpurposeID)
@@ -329,16 +335,18 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
             jsonObject.put("CallResultID", mCallresultID)
         }
 
-        if(state.equals(AppConstant.S_ADD)) {
-            jsonObject.put("OperationType", AppConstant.INSERT)
-        } else if(state.equals(AppConstant.S_EDIT)) {
+        if(state.equals(AppConstant.S_EDIT)) {
             jsonObject.put("CallGUID", CallGUID)
-            jsonObject.put("OperationType", AppConstant.EDIT)
         }
 
-        val call = ApiUtils.apiInterface.ManageCalls(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<CallsResponse> {
-            override fun onResponse(call: Call<CallsResponse>, response: Response<CallsResponse>) {
+        if(state.equals(AppConstant.S_ADD)) {
+            call = ApiUtils.apiInterface.ManageCallsInsert(getRequestJSONBody(jsonObject.toString()))
+        } else {
+            call = ApiUtils.apiInterface.ManageCallsUpdate(getRequestJSONBody(jsonObject.toString()))
+        }
+
+        call.enqueue(object : Callback<CommonResponse> {
+            override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 201) {
@@ -355,7 +363,7 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
                 }
             }
 
-            override fun onFailure(call: Call<CallsResponse>, t: Throwable) {
+            override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
                     layout,

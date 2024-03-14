@@ -5,6 +5,7 @@ object AppConstant {
     var TOKEN : String = ""
 
 //    val BASE_URL = "http://appapi.mitulthakkar.com/api/" //  AI005 Live URL For App
+
     val BASE_URL = "http://68.64.173.183/insurancevalaapi/api/" //  AI005 Test URL For Test App
 
     internal val PREF_NAME = "insurancevala_pref"
@@ -16,13 +17,16 @@ object AppConstant {
     val INTENT_1001 = 1001
     val INTENT_1002 = 1002
     val INTENT_1003 = 1003
+
     //Date format
+    val DATE_INPUT_FORMAT = "dd/MM/yyyy"
+    val DEFAULT_DATE_FORMAT = "yyyy-MM-dd" //Default Date Object Format
+    val DEFAULT_DATE_FORMAT2 = "yyyy/MM/dd" //Default Date Object Format
+    val MONTH_YEAR_INPUT_FORMAT = "MM/yyyy"
     val dd_MM_yyyy_HH_mm_ss = "dd-MM-yyyy HH:mm:ss" // 27-10-2023 15:30:20
     val ddMMyyyy_HHmmss = "MM/dd/yyyy HH:mm:ss" // 27-10-2023 15:30:20
     val dd_LLL_yyyy = "dd-LLL-yyyy" // 27-oct-2023
     val HH_mm_aaa = "HH:mm aaa" //  03:30 pm
-
-
     val ddmmmyyyy: String = "dd MMM yyyy"
     val ddmmmyyyy_: String = "dd MMM, yyyy"
     val dd: String = "dd"

@@ -63,6 +63,7 @@
             app:iconsTint="@color/colorWhite"
             app:backIconTint="@color/colorWhite"
             android:textColor="@color/colorWhite"
+            android:visibility="gone"
             app:hintColor="@color/white"/>
 
     </RelativeLayout>
@@ -118,6 +119,7 @@
                     android:id="@+id/RvLeadList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_margin="@dimen/_5sdp"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     android:orientation="vertical"/>
             </FrameLayout>

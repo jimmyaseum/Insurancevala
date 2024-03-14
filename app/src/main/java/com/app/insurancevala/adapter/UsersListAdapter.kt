@@ -9,18 +9,16 @@ import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.UserModel
 import com.app.insurancevala.utils.gone
-import com.app.insurancevala.utils.visible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import kotlinx.android.synthetic.main.adapter_attachment_list.view.imgFile
-import kotlinx.android.synthetic.main.adapter_lead_item.view.*
+import kotlinx.android.synthetic.main.adapter_user_item.view.*
 
 class UsersListAdapter(private val context: Context?, private val arrayList: ArrayList<UserModel>, private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<UsersListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.adapter_lead_item, parent, false)
+            .inflate(R.layout.adapter_user_item, parent, false)
         return ViewHolder(view)
     }
 
@@ -63,6 +61,9 @@ class UsersListAdapter(private val context: Context?, private val arrayList: Arr
             }
             itemView.imgDelete.setOnClickListener {
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 103)
+            }
+            itemView.imgprofile.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 104)
             }
 
             Glide.with(context)

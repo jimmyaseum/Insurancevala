@@ -44,6 +44,10 @@ class DashboardInnerListAdapter(private val context: Context?, private val array
             }
 
 
+            if(!arrayList[position].LeadName.isNullOrEmpty()) {
+                itemView.txtLeadName.text = arrayList[position].LeadName
+            }
+
             if(!arrayList[position].InquiryType.isNullOrEmpty()) {
                 itemView.txtInquiryType.text = arrayList[position].InquiryType
             }

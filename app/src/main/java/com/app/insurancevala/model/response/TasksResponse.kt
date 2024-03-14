@@ -1,11 +1,27 @@
 package com.app.insurancevala.model.response
 
+import com.app.insurancevala.model.pojo.AttachmentModel
 import com.app.insurancevala.model.pojo.DocumentsModel
 import com.google.gson.annotations.SerializedName
 
 class TasksResponse {
     @SerializedName("Data")
     var Data: ArrayList<TasksModel>? = null
+    @SerializedName("Details")
+    var Details: String? = null
+    @SerializedName("Message")
+    var Message: String? = null
+    @SerializedName("Status")
+    var Status: Int? = null
+    @SerializedName("ItemCount")
+    var ItemCount: Int? = null
+    @SerializedName("ErrorMessage")
+    var ErrorMessage: String? = null
+}
+
+class TasksByGUIDResponse {
+    @SerializedName("Data")
+    var Data: TasksModel? = null
     @SerializedName("Details")
     var Details: String? = null
     @SerializedName("Message")
@@ -61,7 +77,7 @@ data class TasksModel (
     val UpdatedOn: String? = null,
     @SerializedName("ReferenceGUID")
     val ReferenceGUID: String? = null,
-    @SerializedName("TaskAttachmentList")
-    val TaskAttachmentList: ArrayList<DocumentsModel>? = null,
+    @SerializedName("TasksAttachmentList")
+    val TasksAttachmentList: ArrayList<DocumentsModel>? = null,
 
 )

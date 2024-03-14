@@ -18,6 +18,7 @@ import retrofit2.Response
 
 class CallsDetailsActivity  : BaseActivity(), View.OnClickListener {
 
+    var ID: Int? = null
     var LeadID: Int? = null
     var CallGUID: String? = null
     var sharedPreference: SharedPreference? = null
@@ -32,6 +33,7 @@ class CallsDetailsActivity  : BaseActivity(), View.OnClickListener {
     }
 
     private fun getIntentData() {
+        ID = intent.getIntExtra("ID",0)
         LeadID = intent.getIntExtra("LeadID",0)
         CallGUID = intent.getStringExtra("CallGUID")
     }
@@ -56,24 +58,24 @@ class CallsDetailsActivity  : BaseActivity(), View.OnClickListener {
         showProgress()
 
         var jsonObject = JSONObject()
-        jsonObject.put("OperationType", AppConstant.GETBYGUID)
+        jsonObject.put("NBInquiryTypeID", ID)
         jsonObject.put("CallGUID", CallGUID)
 
-        val call = ApiUtils.apiInterface.ManageCalls(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<CallsResponse> {
-            override fun onResponse(call: Call<CallsResponse>, response: Response<CallsResponse>) {
+        val call = ApiUtils.apiInterface.ManageCallsFindByID(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<CallsByGUIDResponse> {
+            override fun onResponse(call: Call<CallsByGUIDResponse>, response: Response<CallsByGUIDResponse>) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arrayListLead = response.body()?.Data!!
-                        setAPIData(arrayListLead[0])
+                        setAPIData(arrayListLead)
                     } else {
                         Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                     }
                 }
             }
 
-            override fun onFailure(call: Call<CallsResponse>, t: Throwable) {
+            override fun onFailure(call: Call<CallsByGUIDResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
             }

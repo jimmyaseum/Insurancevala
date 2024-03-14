@@ -20,24 +20,16 @@ import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.adapter.TasksListAdapter
 import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetListAdapter
-import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetMeetingStatusListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
+import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.response.SingleSelectionModel
 import com.app.insurancevala.model.response.TasksModel
 import com.app.insurancevala.model.response.TasksResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.ferfalk.simplesearchview.SimpleSearchView
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_tasks_list.*
-import kotlinx.android.synthetic.main.activity_tasks_list.FL
-import kotlinx.android.synthetic.main.activity_tasks_list.RLNoData
-import kotlinx.android.synthetic.main.activity_tasks_list.imgBack
-import kotlinx.android.synthetic.main.activity_tasks_list.imgSearch
-import kotlinx.android.synthetic.main.activity_tasks_list.layout
-import kotlinx.android.synthetic.main.activity_tasks_list.searchView
-import kotlinx.android.synthetic.main.activity_tasks_list.shimmer
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -49,6 +41,7 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
     var arrayListTasks: ArrayList<TasksModel>? = ArrayList()
     var arrayListTasksNew: ArrayList<TasksModel>? = ArrayList()
     var LeadID: Int? = null
+    var ID: Int? = null
 
     val arrayListtaskstatus  = ArrayList<SingleSelectionModel>()
     var mTaskstatus : String = ""
@@ -65,7 +58,11 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
 
     private fun getIntentData() {
         LeadID = intent.getIntExtra("LeadID",0)
+        ID = intent.getIntExtra("ID",0)
         ClosedTask = intent.getStringExtra("ClosedTask")
+        if (!ClosedTask.isNullOrEmpty()) {
+            txtHearderText.text = "Closed Tasks"
+        }
     }
 
     override fun initializeView() {
@@ -88,6 +85,7 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
     private fun SetInitListner() {
 
         imgBack.setOnClickListener(this)
+        imgAddTasks.setOnClickListener(this)
         var manager = LinearLayoutManager(this)
         RvTaskList.layoutManager = manager
 
@@ -165,6 +163,8 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@TasksListActivity,refreshLayout)
+            searchView.closeSearch()
             callManageTasks()
             refreshLayout.isRefreshing = false
         }
@@ -176,6 +176,14 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 preventTwoClick(v)
                 finish()
             }
+            R.id.imgAddTasks -> {
+                preventTwoClick(v)
+                val intent = Intent(this, AddTaskLogsActivity::class.java)
+                intent.putExtra("ID",ID)
+                intent.putExtra("LeadID",LeadID)
+                intent.putExtra(AppConstant.STATE,AppConstant.S_ADD)
+                startActivityForResult(intent, AppConstant.INTENT_1001)
+            }
         }
     }
     override fun onItemClickEvent(view: View, position: Int, type: Int) {
@@ -184,6 +192,7 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 preventTwoClick(view)
                 val intent = Intent(this, TasksDetailsActivity::class.java)
                 intent.putExtra("LeadID",LeadID)
+                intent.putExtra("ID",ID)
                 intent.putExtra("TaskGUID",arrayListTasksNew!![position].TaskGUID)
                 startActivity(intent)
             }
@@ -192,6 +201,7 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 val intent = Intent(this, AddTaskLogsActivity::class.java)
                 intent.putExtra(AppConstant.STATE,AppConstant.S_EDIT)
                 intent.putExtra("LeadID",LeadID)
+                intent.putExtra("ID",ID)
                 intent.putExtra("TaskGUID",arrayListTasksNew!![position].TaskGUID)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
             }
@@ -221,12 +231,12 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
         var jsonObject = JSONObject()
 
         jsonObject.put("LeadID", LeadID)
-        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
+        jsonObject.put("NBInquiryTypeID", ID)
 
-        if(ClosedTask != "") {
+        if(!ClosedTask.isNullOrEmpty()) {
             jsonObject.put("TaskStatus", ClosedTask)
         }
-        val call = ApiUtils.apiInterface.ManageTask(getRequestJSONBody(jsonObject.toString()))
+        val call = ApiUtils.apiInterface.ManageTasksFindAll(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<TasksResponse> {
             override fun onResponse(call: Call<TasksResponse>, response: Response<TasksResponse>) {
                 hideProgress()
@@ -244,6 +254,8 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
 
                             shimmer.stopShimmer()
                             shimmer.gone()
+                            FL.visible()
+                            RLNoData.gone()
 
                         } else {
                             Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
@@ -326,11 +338,10 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
         var jsonObject = JSONObject()
         jsonObject.put("TaskGUID", taskGUID)
         jsonObject.put("TaskStatus", mTaskstatus)
-        jsonObject.put("OperationType", AppConstant.STATUSUPDATE)
 
-        val call = ApiUtils.apiInterface.ManageTask(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<TasksResponse> {
-            override fun onResponse(call: Call<TasksResponse>, response: Response<TasksResponse>) {
+        val call = ApiUtils.apiInterface.ManageTaskStatusUpdate(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<CommonResponse> {
+            override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
@@ -340,7 +351,7 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 }
             }
 
-            override fun onFailure(call: Call<TasksResponse>, t: Throwable) {
+            override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
             }

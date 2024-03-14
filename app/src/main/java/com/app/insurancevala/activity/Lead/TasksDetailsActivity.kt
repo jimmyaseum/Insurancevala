@@ -8,8 +8,8 @@ import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.adapter.AttachmentListAdapter
 import com.app.insurancevala.model.pojo.DocumentsModel
+import com.app.insurancevala.model.response.TasksByGUIDResponse
 import com.app.insurancevala.model.response.TasksModel
-import com.app.insurancevala.model.response.TasksResponse
 import com.app.insurancevala.model.response.UserResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
@@ -36,6 +36,7 @@ class TasksDetailsActivity  : BaseActivity(), View.OnClickListener {
     var arrayListAttachment: ArrayList<DocumentsModel>? = null
     lateinit var adapter: AttachmentListAdapter
 
+    var ID: Int? = null
     var LeadID: Int? = null
     var TaskGUID: String? = null
     var sharedPreference: SharedPreference? = null
@@ -50,6 +51,7 @@ class TasksDetailsActivity  : BaseActivity(), View.OnClickListener {
     }
 
     private fun getIntentData() {
+        ID = intent.getIntExtra("ID",0)
         LeadID = intent.getIntExtra("LeadID",0)
         TaskGUID = intent.getStringExtra("TaskGUID")
     }
@@ -82,24 +84,24 @@ class TasksDetailsActivity  : BaseActivity(), View.OnClickListener {
         showProgress()
 
         var jsonObject = JSONObject()
-        jsonObject.put("OperationType", AppConstant.GETBYGUID)
+        jsonObject.put("NBInquiryTypeID", ID)
         jsonObject.put("TaskGUID", TaskGUID)
 
-        val call = ApiUtils.apiInterface.ManageTask(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<TasksResponse> {
-            override fun onResponse(call: Call<TasksResponse>, response: Response<TasksResponse>) {
+        val call = ApiUtils.apiInterface.ManageTasksFindByID(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<TasksByGUIDResponse> {
+            override fun onResponse(call: Call<TasksByGUIDResponse>, response: Response<TasksByGUIDResponse>) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arrayListLead = response.body()?.Data!!
-                        setAPIData(arrayListLead[0])
+                        setAPIData(arrayListLead)
                     } else {
                         Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                     }
                 }
             }
 
-            override fun onFailure(call: Call<TasksResponse>, t: Throwable) {
+            override fun onFailure(call: Call<TasksByGUIDResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
             }
@@ -169,8 +171,8 @@ class TasksDetailsActivity  : BaseActivity(), View.OnClickListener {
             callManageUsers(model.TaskOwnerID)
         }
 
-        if(!model.TaskAttachmentList.isNullOrEmpty() && model.TaskAttachmentList.size > 0) {
-            val arrayListAttachment = model.TaskAttachmentList!!
+        if(!model.TasksAttachmentList.isNullOrEmpty() && model.TasksAttachmentList.size > 0) {
+            val arrayListAttachment = model.TasksAttachmentList!!
             adapter = AttachmentListAdapter(this@TasksDetailsActivity, arrayListAttachment)
             rvAttachment.adapter = adapter
 

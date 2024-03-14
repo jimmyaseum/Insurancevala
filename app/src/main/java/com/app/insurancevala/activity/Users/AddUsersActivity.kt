@@ -516,6 +516,8 @@ class AddUsersActivity : BaseActivity(), View.OnClickListener, EasyPermissions.P
 
     private fun CallUploadImage(referenceGUID: String?) {
 
+        showProgress()
+
         val partsList: java.util.ArrayList<MultipartBody.Part> = java.util.ArrayList()
 
         if (imageURI != null) {
@@ -541,12 +543,14 @@ class AddUsersActivity : BaseActivity(), View.OnClickListener, EasyPermissions.P
 
                     if (response.body()?.Status == 200) {
 
-                        val userimage = response.body()?.Data!!.UserImage
+                        hideProgress()
+
+                        /*val userimage = response.body()?.Data!!.UserImage
 
                         if (userimage != null && userimage != "") {
                             val sharedPreference = SharedPreference(this@AddUsersActivity)
                             sharedPreference.setPreference(PrefConstants.PREF_USER_IMAGE, userimage)
-                        }
+                        }*/
 
                         Snackbar.make(
                             layout,
@@ -557,6 +561,8 @@ class AddUsersActivity : BaseActivity(), View.OnClickListener, EasyPermissions.P
                         setResult(RESULT_OK, intent)
                         finish()
                     } else {
+                        hideProgress()
+
                         Snackbar.make(
                             layout,
                             response.body()?.Details.toString(),
@@ -570,6 +576,9 @@ class AddUsersActivity : BaseActivity(), View.OnClickListener, EasyPermissions.P
             }
 
             override fun onFailure(call: Call<UserImageResponse>, t: Throwable) {
+
+                hideProgress()
+
                 Snackbar.make(
                     layout,
                     getString(R.string.error_failed_to_connect),

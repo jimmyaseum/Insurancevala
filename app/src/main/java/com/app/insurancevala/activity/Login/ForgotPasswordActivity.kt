@@ -11,10 +11,9 @@ import com.app.insurancevala.utils.hideKeyboard
 import com.app.insurancevala.utils.preventTwoClick
 import com.app.insurancevala.utils.visible
 import kotlinx.android.synthetic.main.activity_forgot_password.*
-import kotlinx.android.synthetic.main.activity_forgot_password.layout
 import kotlinx.android.synthetic.main.activity_forgot_password.imgBack
 
-class ForgotpasswordActivity : AppCompatActivity(), View.OnClickListener {
+class ForgotPasswordActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +56,7 @@ class ForgotpasswordActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.txtButtonSetNewPassword -> {
                 preventTwoClick(v)
-                val intent = Intent(this@ForgotpasswordActivity, ResetNewPasswordActivity::class.java)
+                val intent = Intent(this@ForgotPasswordActivity, ResetNewPasswordActivity::class.java)
                 startActivity(intent)
                 finish()
             }

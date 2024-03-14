@@ -19,6 +19,7 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.FilePickerBuilder
@@ -27,9 +28,10 @@ import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.adapter.MultipleAttachmentListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.api.CommonResponse
-import com.app.insurancevala.model.pojo.AttachmentModel
-import com.app.insurancevala.model.response.NotesModel
-import com.app.insurancevala.model.response.NotesResponse
+import com.app.insurancevala.model.pojo.DocumentsModel
+import com.app.insurancevala.model.response.NoteByGUIDResponse
+import com.app.insurancevala.model.response.NoteModel
+import com.app.insurancevala.model.response.RefGUIDResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -39,14 +41,6 @@ import com.theartofdev.edmodo.cropper.CropImageView
 import de.hdodenhof.circleimageview.CircleImageView
 import droidninja.filepicker.FilePickerConst
 import kotlinx.android.synthetic.main.activity_add_notes_logs.*
-import kotlinx.android.synthetic.main.activity_add_notes_logs.edtAttachments
-import kotlinx.android.synthetic.main.activity_add_notes_logs.edtDescription
-import kotlinx.android.synthetic.main.activity_add_notes_logs.edtTitle
-import kotlinx.android.synthetic.main.activity_add_notes_logs.imgBack
-import kotlinx.android.synthetic.main.activity_add_notes_logs.layout
-import kotlinx.android.synthetic.main.activity_add_notes_logs.rvAttachment
-import kotlinx.android.synthetic.main.activity_add_notes_logs.txtHearderText
-import kotlinx.android.synthetic.main.activity_add_notes_logs.txtSave
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -64,12 +58,13 @@ class AddNotesActivity : BaseActivity(), View.OnClickListener,RecyclerClickListe
 
     var sharedPreference: SharedPreference? = null
     var state: String? = null
+    var ID: Int? = null
     var LeadID: Int? = null
     var NoteGUID: String? = null
     var ReferenceGUID: String? = null
 
     // attachments
-    var arrayListAttachment: ArrayList<AttachmentModel>? = null
+    var arrayListAttachment: ArrayList<DocumentsModel>? = null
     lateinit var adapter: MultipleAttachmentListAdapter
     val RC_FILE_PICKER_PERM = 900
     var ImagePaths = ArrayList<String>()
@@ -84,7 +79,9 @@ class AddNotesActivity : BaseActivity(), View.OnClickListener,RecyclerClickListe
 
     private fun getIntentData() {
         state = intent.getStringExtra(AppConstant.STATE)
+        ID = intent.getIntExtra("ID",0)
         LeadID = intent.getIntExtra("LeadID",0)
+        NoteGUID = intent.getStringExtra("NoteGUID")
     }
 
     override fun initializeView() {
@@ -93,9 +90,6 @@ class AddNotesActivity : BaseActivity(), View.OnClickListener,RecyclerClickListe
         } else if(state.equals(AppConstant.S_EDIT)) {
             txtHearderText.text = "Update Note"
             if (isOnline(this)) {
-                LeadID = intent.getIntExtra("LeadID",0)
-                NoteGUID = intent.getStringExtra("NoteGUID")
-
                 callManageNotesGUID()
             } else {
                 internetErrordialog(this@AddNotesActivity)
@@ -111,7 +105,7 @@ class AddNotesActivity : BaseActivity(), View.OnClickListener,RecyclerClickListe
         rvAttachment.isNestedScrollingEnabled = false
 
         arrayListAttachment = ArrayList()
-        adapter = MultipleAttachmentListAdapter(this, arrayListAttachment, this)
+        adapter = MultipleAttachmentListAdapter(this,true, arrayListAttachment, this)
         rvAttachment.adapter = adapter
 
         imgBack.setOnClickListener(this)
@@ -174,54 +168,83 @@ class AddNotesActivity : BaseActivity(), View.OnClickListener,RecyclerClickListe
         val jsonObject = JSONObject()
         jsonObject.put("Title", edtTitle.text.toString().trim())
         jsonObject.put("Description", edtDescription.text.toString().trim())
+        jsonObject.put("NBInquiryTypeID", ID)
         jsonObject.put("LeadID", LeadID)
         jsonObject.put("IsActive", true)
-        if(state.equals(AppConstant.S_ADD)) {
-            jsonObject.put("OperationType", AppConstant.INSERT)
-        } else if(state.equals(AppConstant.S_EDIT)) {
+
+        if(state.equals(AppConstant.S_EDIT)) {
             jsonObject.put("NoteGUID", NoteGUID)
-            jsonObject.put("OperationType", AppConstant.EDIT)
         }
 
-        val call = ApiUtils.apiInterface.ManageNotes(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<NotesResponse> {
-            override fun onResponse(call: Call<NotesResponse>, response: Response<NotesResponse>) {
-                hideProgress()
-                if (response.code() == 200) {
-                    if (response.body()?.Status == 201) {
+        if(state.equals(AppConstant.S_ADD)) {
+            val call = ApiUtils.apiInterface.ManageNoteInsert(getRequestJSONBody(jsonObject.toString()))
+            call.enqueue(object : Callback<RefGUIDResponse> {
+                override fun onResponse(call: Call<RefGUIDResponse>, response: Response<RefGUIDResponse>) {
+                    hideProgress()
+                    if (response.code() == 200) {
+                        if (response.body()?.Status == 201) {
 
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
-                        ReferenceGUID = response.body()?.Data!![0]!!.ReferenceGUID.toString()
+                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            ReferenceGUID = response.body()?.Data!!.ReferenceGUID
 
-                         if(arrayListAttachment!!.size > 0) {
-                            CallUploadDocuments(ReferenceGUID)
+                            if(arrayListAttachment!!.size > 0) {
+                                CallUploadDocuments(ReferenceGUID)
+                            } else {
+                                Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                                val intent = Intent()
+                                setResult(RESULT_OK, intent)
+                                finish()
+                            }
+
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<RefGUIDResponse>, t: Throwable) {
+                    hideProgress()
+                    Snackbar.make(
+                        layout,
+                        getString(R.string.error_failed_to_connect),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    val intent = Intent()
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+            })
+        } else {
+            val call = ApiUtils.apiInterface.ManageNoteUpdate(getRequestJSONBody(jsonObject.toString()))
+            call.enqueue(object : Callback<CommonResponse> {
+                override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
+                    hideProgress()
+                    if (response.code() == 200) {
+                        if (response.body()!!.Status == 200 && state!!.equals(AppConstant.S_EDIT)) {
+                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            val intent = Intent()
+                            setResult(RESULT_OK, intent)
+                            finish()
                         } else {
+                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                             val intent = Intent()
                             setResult(RESULT_OK, intent)
                             finish()
                         }
-
-                    } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
-                        val intent = Intent()
-                        setResult(RESULT_OK, intent)
-                        finish()
                     }
                 }
-            }
 
-            override fun onFailure(call: Call<NotesResponse>, t: Throwable) {
-                hideProgress()
-                Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
-                ).show()
-                val intent = Intent()
-                setResult(RESULT_OK, intent)
-                finish()
-            }
-        })
+                override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
+                    hideProgress()
+                    Snackbar.make(
+                        layout,
+                        getString(R.string.error_failed_to_connect),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    val intent = Intent()
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+            })
+        }
     }
 
     private fun showAttachmentBottomSheetDialog() {
@@ -500,14 +523,7 @@ class AddNotesActivity : BaseActivity(), View.OnClickListener,RecyclerClickListe
 
         txtButtonSubmit!!.setOnClickListener {
             if(!edtName.text.toString().trim().equals("")) {
-                arrayListAttachment!!.add(
-                    AttachmentModel(
-                        name = edtName.text.toString(),
-                        attachmentUri = fileuri,
-                        attachmentType = attachmenttype
-                    )
-                )
-                adapter.notifyDataSetChanged()
+                adapter.addItem(edtName.text.toString(), fileuri, attachmenttype)
                 bottomSheetDialog.dismiss()
             } else {
                 edtName.error = "Enter Name"
@@ -515,8 +531,6 @@ class AddNotesActivity : BaseActivity(), View.OnClickListener,RecyclerClickListe
         }
 
         txtButtonCancel!!.setOnClickListener {
-            arrayListAttachment!!.add(AttachmentModel(name = name, attachmentUri = fileuri, attachmentType = attachmenttype))
-            adapter.notifyDataSetChanged()
             bottomSheetDialog.dismiss()
         }
 
@@ -532,19 +546,19 @@ class AddNotesActivity : BaseActivity(), View.OnClickListener,RecyclerClickListe
 
         if(!arrayListAttachment.isNullOrEmpty()) {
             for (i in arrayListAttachment!!.indices) {
-                if (arrayListAttachment!![i].attachmentType == 2) {
-                    if (arrayListAttachment!![i].attachmentUri != null) {
-                        partsList.add(CommonUtil.prepareFilePart(this, "image/*", "AttachmentURL", arrayListAttachment!![i].attachmentUri!!))
-                        AttachmentName.add(arrayListAttachment!![i].name)
+                if (arrayListAttachment!![i].AttachmentType == "Image") {
+                    if (arrayListAttachment!![i].AttachmentURL != null) {
+                        partsList.add(CommonUtil.prepareFilePart(this, "image/*", "AttachmentURL", arrayListAttachment!![i].AttachmentURL!!.toUri()))
+                        AttachmentName.add(arrayListAttachment!![i].AttachmentName!!)
 
                     } else {
                         val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
                         partsList.add(MultipartBody.Part.createFormData("AttachmentURL", "", attachmentEmpty))
                     }
                 } else {
-                    if (arrayListAttachment!![i].attachmentUri != null) {
-                        partsList.add(CommonUtil.prepareFilePart(this, "application/*", "AttachmentURL", arrayListAttachment!![i].attachmentUri!!))
-                        AttachmentName.add(arrayListAttachment!![i].name)
+                    if (arrayListAttachment!![i].AttachmentURL != null) {
+                        partsList.add(CommonUtil.prepareFilePart(this, "application/*", "AttachmentURL", arrayListAttachment!![i].AttachmentURL!!.toUri()))
+                        AttachmentName.add(arrayListAttachment!![i].AttachmentName!!)
                     } else {
                         val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
                         partsList.add(MultipartBody.Part.createFormData("AttachmentURL", "", attachmentEmpty))
@@ -554,14 +568,16 @@ class AddNotesActivity : BaseActivity(), View.OnClickListener,RecyclerClickListe
         }
 
         val a = AttachmentName.toString().replace("[", "").replace("]", "")
-
+        LogUtil.d(TAG,"111===> "+a)
         val mAttachmentName = CommonUtil.createPartFromString(a)
         val mreferenceGUID = CommonUtil.createPartFromString(referenceGUID.toString())
+        val mID = CommonUtil.createPartFromString(ID.toString())
         val mAttachmentType = CommonUtil.createPartFromString(AppConstant.NOTE)
 
         val call = ApiUtils.apiInterface.ManageAttachment(
             LeadID = LeadID,
             ReferenceGUID = mreferenceGUID,
+            NBInquiryTypeID = mID,
             AttachmentType = mAttachmentType,
             AttachmentName = mAttachmentName,
             attachment = partsList
@@ -599,31 +615,30 @@ class AddNotesActivity : BaseActivity(), View.OnClickListener,RecyclerClickListe
         showProgress()
 
         var jsonObject = JSONObject()
-        jsonObject.put("OperationType", AppConstant.GETBYGUID)
         jsonObject.put("NoteGUID", NoteGUID)
 
-        val call = ApiUtils.apiInterface.ManageNotes(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<NotesResponse> {
-            override fun onResponse(call: Call<NotesResponse>, response: Response<NotesResponse>) {
+        val call = ApiUtils.apiInterface.ManageNoteFindByID(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<NoteByGUIDResponse> {
+            override fun onResponse(call: Call<NoteByGUIDResponse>, response: Response<NoteByGUIDResponse>) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arrayListLead = response.body()?.Data!!
-                        setAPIData(arrayListLead[0])
+                        setAPIData(arrayListLead)
                     } else {
                         Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                     }
                 }
             }
 
-            override fun onFailure(call: Call<NotesResponse>, t: Throwable) {
+            override fun onFailure(call: Call<NoteByGUIDResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
             }
         })
     }
 
-    private fun setAPIData(model: NotesModel) {
+    private fun setAPIData(model: NoteModel) {
 
         if(model.Title != null && model.Title != "") {
             edtTitle.setText(model.Title)
@@ -631,8 +646,16 @@ class AddNotesActivity : BaseActivity(), View.OnClickListener,RecyclerClickListe
         if(model.Description != null && model.Description != "") {
             edtDescription.setText(model.Description)
         }
-        if(model.NoteAttachmentList!!.size > 0) {
-            LLAttachments.gone()
+        txtAttachments.gone()
+        edtAttachments.gone()
+        viewAttachments.gone()
+        if(!model.NotesAttachmentList.isNullOrEmpty()) {
+            arrayListAttachment = ArrayList()
+            arrayListAttachment = model.NotesAttachmentList
+            adapter = MultipleAttachmentListAdapter(this,false, arrayListAttachment, this)
+
+            rvAttachment.adapter = adapter
+            txtAttachments.visible()
         }
     }
 }

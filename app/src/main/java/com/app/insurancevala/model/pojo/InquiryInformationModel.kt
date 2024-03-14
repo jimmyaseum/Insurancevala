@@ -42,6 +42,12 @@ data class InquiryInformationModel (
     @SerializedName("AllotmentTo")
     var AllotmentTo: String = "",
 
+    @SerializedName("InquiryDate")
+    var InquiryDate: String = "",
+
+    @SerializedName("mInquiryDate")
+    var mInquiryDate: String = "",
+
     //TIL Error handling
 
     @SerializedName("tilInquiryType")
@@ -64,5 +70,8 @@ data class InquiryInformationModel (
 
     @SerializedName("tilAllotmentTo")
     var tilAllotmentTo: EditText? = null,
+
+    @SerializedName("tilInquiryDate")
+    var tilInquiryDate: EditText? = null,
 
     )

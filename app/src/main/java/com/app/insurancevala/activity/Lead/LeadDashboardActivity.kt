@@ -8,23 +8,24 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.webkit.MimeTypeMap
 import android.widget.*
 import com.app.insurancevala.FilePickerBuilder
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
+import com.app.insurancevala.activity.NBInquiry.AddNBActivity
 import com.app.insurancevala.activity.NBInquiry.InquiryListActivity
+import com.app.insurancevala.adapter.FamilyMemberAdapter
+import com.app.insurancevala.interFase.RecyclerClickListener
+import com.app.insurancevala.model.response.FamilyDetailsModel
+import com.app.insurancevala.model.response.LeadByGUIDResponse
+import com.app.insurancevala.model.response.LeadImageResponse
 import com.app.insurancevala.model.response.LeadModel
-import com.app.insurancevala.model.response.LeadResponse
 import com.app.insurancevala.model.response.UserModel
 import com.app.insurancevala.model.response.UserResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.theartofdev.edmodo.cropper.CropImage
@@ -32,9 +33,9 @@ import com.theartofdev.edmodo.cropper.CropImageView
 import de.hdodenhof.circleimageview.CircleImageView
 import droidninja.filepicker.FilePickerConst
 import kotlinx.android.synthetic.main.activity_lead_dashboard.*
-import kotlinx.android.synthetic.main.activity_lead_dashboard.imgBack
-import kotlinx.android.synthetic.main.activity_lead_dashboard.layout
-import kotlinx.android.synthetic.main.activity_lead_dashboard.txtNotes
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.json.JSONObject
 import pub.devrel.easypermissions.AppSettingsDialog
 import pub.devrel.easypermissions.EasyPermissions
@@ -43,16 +44,22 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.io.*
 
-class LeadDashboardActivity : BaseActivity() , View.OnClickListener, EasyPermissions.PermissionCallbacks{
+class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerClickListener, EasyPermissions.PermissionCallbacks{
 
     // attachments
     val RC_FILE_PICKER_PERM = 900
     var ImagePaths = ArrayList<String>()
+    var imageURI: Uri? = null
+
     var LeadID: Int? = null
     var LeadGUID: String? = null
 
+    var arrayListLead: LeadModel? = null
+
     var arrayListUsers: ArrayList<UserModel>? = ArrayList()
     var mUsersName: String = ""
+
+    var arrayListFamilyMember : ArrayList<FamilyDetailsModel> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +86,8 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, EasyPermiss
         imgEdit.setOnClickListener(this)
         imgProfilePic.setOnClickListener(this)
 
+        imgInquiry.setOnClickListener(this)
+
         txtNotes.setOnClickListener(this)
         imgNotes.setOnClickListener(this)
 
@@ -101,12 +110,19 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, EasyPermiss
 
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val intent = Intent()
+        setResult(RESULT_OK, intent)
+        finish()
+    }
+
     override fun onClick(v: View?) {
         hideKeyboard(this, v)
         when (v?.id) {
             R.id.imgBack -> {
                 preventTwoClick(v)
-                finish()
+                onBackPressed()
             }
             R.id.imgEdit -> {
                 preventTwoClick(v)
@@ -160,6 +176,18 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, EasyPermiss
                     }
                 }
             }
+            R.id.imgInquiry -> {
+                preventTwoClick(v)
+                val intent = Intent(this@LeadDashboardActivity, AddNBActivity::class.java)
+                intent.putExtra(AppConstant.STATE,AppConstant.S_ADD)
+                intent.putExtra("LeadID", LeadID)
+                intent.putExtra("LeadGUID", LeadGUID)
+                intent.putExtra("LeadName", txtName.text.toString())
+                intent.putExtra("LeadType", arrayListLead!!.LeadStage)
+                intent.putExtra("ArrayListFamily", ArrayList(arrayListLead!!.FamilyDetails!!))
+                intent.putExtra("AddMore",false)
+                startActivityForResult(intent, AppConstant.INTENT_1001)
+            }
             R.id.txtNotes -> {
                 preventTwoClick(v)
                 val intent = Intent(this, NotesListActivity::class.java)
@@ -182,7 +210,7 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, EasyPermiss
             }
             R.id.imgAttachments -> {
                 preventTwoClick(v)
-                val intent = Intent(this, AddAttchmentsActivity::class.java)
+                val intent = Intent(this, AddAttachmentsActivity::class.java)
                 intent.putExtra("LeadID",LeadID)
                 startActivity(intent)
             }
@@ -288,6 +316,8 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, EasyPermiss
                         val extension = imageUri.path!!.substringAfterLast(".")
 
                         imgProfilePic.setImageURI(imageUri)
+                        imageURI = imageUri
+                        callUploadImage(LeadGUID)
                     }
 
                 } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
@@ -327,24 +357,23 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, EasyPermiss
         showProgress()
 
         var jsonObject = JSONObject()
-        jsonObject.put("OperationType", AppConstant.GETBYGUID)
         jsonObject.put("LeadGUID", LeadGUID)
 
-        val call = ApiUtils.apiInterface.ManageLead(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<LeadResponse> {
-            override fun onResponse(call: Call<LeadResponse>, response: Response<LeadResponse>) {
+        val call = ApiUtils.apiInterface.ManageLeadsFindByID(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<LeadByGUIDResponse> {
+            override fun onResponse(call: Call<LeadByGUIDResponse>, response: Response<LeadByGUIDResponse>) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
-                        val arrayListLead = response.body()?.Data!!
-                        setAPIData(arrayListLead[0])
+                        arrayListLead = response.body()?.Data!!
+                        setAPIData(arrayListLead!!)
                     } else {
                         Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                     }
                 }
             }
 
-            override fun onFailure(call: Call<LeadResponse>, t: Throwable) {
+            override fun onFailure(call: Call<LeadByGUIDResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
             }
@@ -379,6 +408,94 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, EasyPermiss
         if(model.TotalAttachment != null && model.TotalAttachment != 0) {
             imgAttachmentsCounts.text = " ("+model.TotalAttachment.toString()+") "
         }
+        if (model.LeadImage != null && model.LeadImage != "") {
+            imgProfilePic.loadUrl(model.LeadImage, R.drawable.ic_camera)
+        }
+        if (model.CategoryID != null && model.CategoryID != 0) {
+            rating_bar.rating = model.CategoryID.toFloat()
+        }
+        if(!model.FamilyDetails.isNullOrEmpty() && model.FamilyDetails!!.size > 0) {
+            arrayListFamilyMember = model.FamilyDetails!!
+            val adapter = FamilyMemberAdapter(this, arrayListFamilyMember, this@LeadDashboardActivity)
+            rvFamilyMember.adapter = adapter
+            LLFamilyMember.visible()
+        } else {
+            LLFamilyMember.gone()
+        }
+    }
+
+    private fun callUploadImage(referenceGUID: String?) {
+
+        val partsList: java.util.ArrayList<MultipartBody.Part> = java.util.ArrayList()
+
+        if (imageURI != null) {
+            partsList.add(CommonUtil.prepareFilePart(this, "image/*", "LeadImage", imageURI!!))
+        } else {
+            val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
+            partsList.add(MultipartBody.Part.createFormData("LeadImage", "", attachmentEmpty))
+        }
+
+        var mreferenceGUID = CommonUtil.createPartFromString(referenceGUID.toString())
+
+        val call = ApiUtils.apiInterface.ManageLeadImage(
+            ReferenceGUID = mreferenceGUID,
+            attachment = partsList
+        )
+        call.enqueue(object : Callback<LeadImageResponse> {
+            override fun onResponse(
+                call: Call<LeadImageResponse>,
+                response: Response<LeadImageResponse>
+            ) {
+
+                if (response.code() == 200) {
+
+                    if (response.body()?.Status == 200) {
+
+                        val sharedPreference = SharedPreference(this@LeadDashboardActivity)
+
+                        if (sharedPreference.getPreferenceString(PrefConstants.PREF_USER_GUID)!! == LeadGUID) {
+                            val leadImage = response.body()?.Data!!.LeadImage
+
+                            if (leadImage != null && leadImage != "") {
+                                sharedPreference.setPreference(
+                                    PrefConstants.PREF_USER_IMAGE,
+                                    leadImage
+                                )
+                            }
+                        }
+
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        val intent = Intent()
+                        setResult(RESULT_OK, intent)
+                        finish()
+                    } else {
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                        val intent = Intent()
+                        setResult(RESULT_OK, intent)
+                        finish()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<LeadImageResponse>, t: Throwable) {
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
+                val intent = Intent()
+                setResult(RESULT_OK, intent)
+                finish()
+            }
+        })
     }
 
     // attachment
@@ -502,6 +619,7 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, EasyPermiss
         txtButtonCancel!!.setOnClickListener {
             bottomSheetDialog.dismiss()
         }
+
         bottomSheetDialog.show()
     }
 
@@ -549,5 +667,9 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, EasyPermiss
             }
         })
 
+    }
+
+    override fun onItemClickEvent(view: View, position: Int, type: Int) {
+        TODO("Not yet implemented")
     }
 }

@@ -84,7 +84,7 @@
                             android:id="@+id/txtTaskOwner"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:textColor="@color/colorGray500"
                             android:text="Task Owner"
                             android:textSize="@dimen/_10sdp"
@@ -135,7 +135,7 @@
                             android:id="@+id/txtSubject"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:textColor="@color/colorGray500"
                             android:text="Subject"
                             android:textSize="@dimen/_10sdp"
@@ -181,7 +181,7 @@
                             android:id="@+id/txtDueDate"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:textColor="@color/colorGray500"
                             android:text="Due Date"
                             android:textSize="@dimen/_10sdp"
@@ -220,7 +220,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:gravity="center_vertical"
                     android:padding="@dimen/_5sdp">
 
                     <LinearLayout
@@ -232,7 +231,7 @@
                             android:id="@+id/txtStatus"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:textColor="@color/colorGray500"
                             android:text="Status"
                             android:textSize="@dimen/_10sdp"
@@ -284,7 +283,7 @@
                             android:id="@+id/txtPriority"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:textColor="@color/colorGray500"
                             android:text="Priority"
                             android:textSize="@dimen/_10sdp"
@@ -336,10 +335,11 @@
                             android:id="@+id/txtDescription"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:textColor="@color/colorGray500"
                             android:text="Description"
                             android:textSize="@dimen/_10sdp"
+                            android:gravity="center_vertical"
                             android:fontFamily="@font/poppins_regular"
                             android:layout_gravity="center_vertical"/>
                         <LinearLayout
@@ -565,7 +565,7 @@
                             android:id="@+id/txtAttachments"
                             android:layout_width="0dp"
                             android:layout_weight="1"
-                            android:layout_height="wrap_content"
+                            android:layout_height="match_parent"
                             android:textColor="@color/colorGray500"
                             android:text="Attachments"
                             android:textSize="@dimen/_10sdp"
@@ -592,6 +592,7 @@
                                 android:drawableRight="@drawable/ic_down"
                                 android:drawableTint="@color/colorGray500"/>
                             <View
+                                android:id="@+id/viewAttachments"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
                                 android:background="@color/colorGradish"/>

@@ -10,13 +10,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerClickListener
-import com.app.insurancevala.model.response.NotesModel
+import com.app.insurancevala.model.response.NoteModel
 import com.app.insurancevala.utils.*
 import com.devs.readmoreoption.ReadMoreOption
 import kotlinx.android.synthetic.main.adapter_notes_item.view.*
-import kotlin.time.measureTime
 
-class NotesListAdapter(private val context: Context?, private val arrayList: ArrayList<NotesModel>, private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<NotesListAdapter.ViewHolder>() {
+class NotesListAdapter(private val context: Context?, private val arrayList: ArrayList<NoteModel>, private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<NotesListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -41,7 +40,7 @@ class NotesListAdapter(private val context: Context?, private val arrayList: Arr
         fun bindItems(
             context: Context,
             position: Int,
-            arrayList : ArrayList<NotesModel>,
+            arrayList : ArrayList<NoteModel>,
             recyclerItemClickListener: RecyclerClickListener
         ) {
             this.context = context
@@ -51,7 +50,7 @@ class NotesListAdapter(private val context: Context?, private val arrayList: Arr
             }
 
             if(!arrayList[position].Description.isNullOrEmpty()) {
-                itemView.txtDescription.text = arrayList[position].Description
+                 itemView.txtDescription.text = arrayList[position].Description
             }
 
             if(arrayList[position].UpdatedBy == 0)
@@ -85,8 +84,8 @@ class NotesListAdapter(private val context: Context?, private val arrayList: Arr
             itemView.rvAttachment.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             itemView.rvAttachment.isNestedScrollingEnabled = false
 
-            if(arrayList[position].NoteAttachmentList!!.size > 0) {
-                val arrayListAttachment = arrayList[position].NoteAttachmentList!!
+            if(!arrayList[position].NotesAttachmentList.isNullOrEmpty()) {
+                val arrayListAttachment = arrayList[position].NotesAttachmentList!!
                 val adapter = AttachmentListAdapter(context, arrayListAttachment)
                 itemView.rvAttachment.adapter = adapter
 

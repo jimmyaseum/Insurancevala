@@ -23,22 +23,16 @@ import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.adapter.MeetingsListAdapter
 import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetMeetingStatusListAdapter
-import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetUserTypeListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.MeetingStatusModel
 import com.app.insurancevala.model.response.MeetingStatusResponse
 import com.app.insurancevala.model.response.MeetingsModel
 import com.app.insurancevala.model.response.MeetingsResponse
-import com.app.insurancevala.model.response.UserTypeModel
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.ferfalk.simplesearchview.SimpleSearchView
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_meetings_list.*
-import kotlinx.android.synthetic.main.activity_meetings_list.imgBack
-import kotlinx.android.synthetic.main.activity_meetings_list.layout
-import kotlinx.android.synthetic.main.activity_registration.edtUserType
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -49,6 +43,7 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
     lateinit var adapter : MeetingsListAdapter
     var arrayListMeetings: ArrayList<MeetingsModel>? = ArrayList()
     var arrayListMeetingsNew: ArrayList<MeetingsModel>? = ArrayList()
+    var ID: Int? = null
     var LeadID: Int? = null
 
     var arrayListmeetingstatus  : ArrayList<MeetingStatusModel>? = ArrayList()
@@ -67,7 +62,11 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
 
     private fun getIntentData() {
         LeadID = intent.getIntExtra("LeadID",0)
+        ID = intent.getIntExtra("ID",0)
         ClosedMeeting = intent.getIntExtra("ClosedMeeting", 0)
+        if (ClosedMeeting != 0) {
+            txtHearderText.text = "Closed Meetings"
+        }
     }
 
     override fun initializeView() {
@@ -83,11 +82,13 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
     private fun SetInitListner() {
 
         imgBack.setOnClickListener(this)
+        imgAddMeeting.setOnClickListener(this)
 
         var manager = LinearLayoutManager(this)
         RvMeetingList.layoutManager = manager
 
         arrayListMeetings = ArrayList()
+        arrayListMeetingsNew = ArrayList()
         adapter = MeetingsListAdapter(this, arrayListMeetings!!,this@MeetingsListActivity)
 
         imgSearch.setOnClickListener {
@@ -152,6 +153,8 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@MeetingsListActivity,refreshLayout)
+            searchView.closeSearch()
             callManageMeetings()
             refreshLayout.isRefreshing = false
         }
@@ -164,6 +167,14 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
                 preventTwoClick(v)
                 finish()
             }
+            R.id.imgAddMeeting -> {
+                preventTwoClick(v)
+                val intent = Intent(this, AddMeetingsActivity::class.java)
+                intent.putExtra("ID",ID)
+                intent.putExtra("LeadID",LeadID)
+                intent.putExtra(AppConstant.STATE,AppConstant.S_ADD)
+                startActivityForResult(intent, AppConstant.INTENT_1001)
+            }
         }
     }
     @Suppress("DEPRECATION")
@@ -173,6 +184,7 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
                 preventTwoClick(view)
                 val intent = Intent(this, MeetingsDetailsActivity::class.java)
                 intent.putExtra("LeadID",LeadID)
+                intent.putExtra("ID",ID)
                 intent.putExtra("MeetingGUID",arrayListMeetingsNew!![position].MeetingGUID)
                 startActivity(intent)
             }
@@ -180,6 +192,7 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
                 preventTwoClick(view)
                 val intent = Intent(this, AddMeetingsActivity::class.java)
                 intent.putExtra(AppConstant.STATE,AppConstant.S_EDIT)
+                intent.putExtra("ID",ID)
                 intent.putExtra("LeadID",LeadID)
                 intent.putExtra("MeetingGUID",arrayListMeetingsNew!![position].MeetingGUID)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
@@ -209,14 +222,14 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
 
         var jsonObject = JSONObject()
 
+        jsonObject.put("NBInquiryTypeID", ID)
         jsonObject.put("LeadID", LeadID)
-        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
 
         if(ClosedMeeting != 0) {
             jsonObject.put("MeetingStatusID", ClosedMeeting)
         }
 
-        val call = ApiUtils.apiInterface.ManageMeetings(getRequestJSONBody(jsonObject.toString()))
+        val call = ApiUtils.apiInterface.ManageMeetingFindAll(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<MeetingsResponse> {
             override fun onResponse(call: Call<MeetingsResponse>, response: Response<MeetingsResponse>) {
                 hideProgress()
@@ -234,6 +247,8 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
 
                             shimmer.stopShimmer()
                             shimmer.gone()
+                            FL.visible()
+                            RLNoData.gone()
 
                         } else {
                             Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()

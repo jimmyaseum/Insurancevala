@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/layout">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/llTop"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_40sdp"
-        android:orientation="horizontal"
         android:layout_alignParentTop="true"
-        android:padding="@dimen/_5sdp"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        android:padding="@dimen/_5sdp">
 
         <ImageView
             android:id="@+id/imgBack"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             android:padding="@dimen/_5sdp"
             android:src="@drawable/ic_back"
-            app:tint="@color/colorWhite"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"/>
+            app:tint="@color/colorWhite" />
 
         <TextView
             android:id="@+id/txtHearderText"
@@ -39,10 +40,10 @@
             android:id="@+id/imgEdit"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
+            android:layout_alignParentRight="true"
             android:padding="@dimen/_5sdp"
             android:src="@drawable/ic_edit"
-            app:tint="@color/colorWhite"
-            android:layout_alignParentRight="true"/>
+            app:tint="@color/colorWhite" />
 
     </RelativeLayout>
 
@@ -59,10 +60,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_margin="@dimen/_5sdp"
                 android:background="@drawable/bg_button"
                 android:backgroundTint="@color/colorGradish"
+                android:orientation="vertical"
                 android:padding="@dimen/_15sdp">
 
                 <LinearLayout
@@ -75,32 +76,52 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
+
                         <TextView
                             android:id="@+id/txtName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
                             android:text=""
                             android:textColor="@color/colorWhite"
-                            android:textSize="@dimen/_12sdp"
-                            android:fontFamily="@font/poppins_semibold"/>
+                            android:textSize="@dimen/_12sdp" />
+
                         <TextView
                             android:id="@+id/txtEmail"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_regular"
                             android:text=""
                             android:textColor="@color/button_primary"
-                            android:textSize="@dimen/_10sdp"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:textSize="@dimen/_10sdp" />
+
                         <TextView
                             android:id="@+id/txtMobile"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:fontFamily="@font/poppins_regular"
+                            android:gravity="center_vertical"
                             android:text=""
                             android:textColor="@color/button_primary"
-                            android:textSize="@dimen/_10sdp"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:textSize="@dimen/_10sdp" />
+
+                        <RatingBar
+                            android:id="@+id/rating_bar"
+                            style="?android:attr/ratingBarStyleSmall"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="start"
+                            android:isIndicator="true"
+                            android:layoutDirection="ltr"
+                            android:numStars="5"
+                            android:progressTint="@color/gold"
+                            android:rating="0"
+                            android:scaleX="1"
+                            android:scaleY="1"
+                            android:stepSize="1" />
 
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -110,75 +131,164 @@
                             android:id="@+id/imgProfilePic"
                             android:layout_width="@dimen/_45sdp"
                             android:layout_height="@dimen/_45sdp"
+                            android:src="@drawable/ic_camera"
                             app:civ_border_color="@color/colorWhite"
-                            app:civ_border_width="1dp"
-                            android:src="@drawable/ic_camera" />
+                            app:civ_border_width="1dp" />
 
                     </LinearLayout>
                 </LinearLayout>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:background="@color/colorGray100"
                     android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp"/>
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:background="@color/colorGray100" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="@dimen/_5sdp">
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:orientation="horizontal">
 
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:orientation="vertical">
+
                         <TextView
                             android:id="@+id/txtLeadOwerName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
                             android:text=""
                             android:textColor="@color/colorWhite"
-                            android:textSize="@dimen/_12sdp"
-                            android:fontFamily="@font/poppins_semibold"/>
+                            android:textSize="@dimen/_12sdp" />
+
                         <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:fontFamily="@font/poppins_regular"
+                            android:gravity="center_vertical"
                             android:text="Owner"
                             android:textColor="@color/colorGray400"
-                            android:textSize="@dimen/_10sdp"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:textSize="@dimen/_10sdp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1px"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:background="@color/colorGray100" />
+
+                <LinearLayout
+                    android:id="@+id/LLFamilyMember"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:text="Family Details"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/_12sdp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/ll2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/_5sdp">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/poppins_semibold"
+                                android:text="Relation"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_12sdp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/poppins_semibold"
+                                android:paddingHorizontal="@dimen/_5sdp"
+                                android:text="Name"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_12sdp" />
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:fontFamily="@font/poppins_semibold"
+                                android:text="BirthDate"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_12sdp" />
+
+                        </LinearLayout>
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1px"
+                            android:layout_marginHorizontal="@dimen/_5sdp"
+                            android:background="@color/colorGray100" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rvFamilyMember"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:paddingHorizontal="@dimen/_5sdp"
+                            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                            tools:itemCount="4"
+                            tools:listitem="@layout/adapter_family_details" />
 
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_margin="@dimen/_15sdp">
+                android:layout_margin="@dimen/_15sdp"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_margin="@dimen/_5sdp">
+                    android:layout_margin="@dimen/_5sdp"
+                    android:orientation="horizontal">
+
                     <ImageView
                         android:layout_width="@dimen/_20sdp"
                         android:layout_height="@dimen/_20sdp"
                         android:src="@drawable/ic_inquiry"
-                        app:tint="@color/button_primary"/>
+                        app:tint="@color/button_primary" />
+
                     <TextView
                         android:id="@+id/txtInquiry"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="match_parent"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:gravity="center_vertical"
                         android:text="Inquiry List"
                         android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp"
-                        android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:layout_marginLeft="@dimen/_10sdp" />
+                        android:textSize="@dimen/_12sdp" />
 
                     <TextView
                         android:id="@+id/imgInquiryCounts"
@@ -190,317 +300,373 @@
                         android:textColor="@color/colorBlack"
                         android:textSize="@dimen/_12sdp" />
 
-                </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="@color/colorGray100"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_margin="@dimen/_5sdp">
                     <ImageView
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/ic_note"
-                        app:tint="@color/button_primary"/>
-                    <TextView
-                        android:id="@+id/txtNotes"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:text="Notes"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp"
-                        android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:layout_marginLeft="@dimen/_10sdp"/>
-
-                    <TextView
-                        android:id="@+id/imgNotesCounts"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:fontFamily="@font/poppins_regular"
-                        android:gravity="right"
-                        android:text=""
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp" />
-
-                    <ImageView
-                        android:id="@+id/imgNotes"
+                        android:id="@+id/imgInquiry"
                         android:layout_width="@dimen/_40sdp"
                         android:layout_height="@dimen/_20sdp"
                         android:src="@drawable/ic_add"
-                        app:tint="@color/button_primary"/>
-                </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="@color/colorGray100"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_margin="@dimen/_5sdp">
-                    <ImageView
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/ic_attachment"
-                        app:tint="@color/button_primary"/>
-                    <TextView
-                        android:id="@+id/txtAttachments"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:text="Attachments"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp"
-                        android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:layout_marginLeft="@dimen/_10sdp"/>
-                    <TextView
-                        android:id="@+id/imgAttachmentsCounts"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:text=""
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp"
-                        android:fontFamily="@font/poppins_regular"
-                        android:gravity="right"/>
-                    <ImageView
-                        android:id="@+id/imgAttachments"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/ic_add"
-                        app:tint="@color/button_primary"/>
-                </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="@color/colorGray100"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_margin="@dimen/_5sdp">
-                    <ImageView
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/ic_call"
-                        app:tint="@color/button_primary"/>
-                    <TextView
-                        android:id="@+id/txtOpenCalls"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:text="Open Calls"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp"
-                        android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:layout_marginLeft="@dimen/_10sdp"/>
-                    <TextView
-                        android:id="@+id/imgCallsCounts"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:text=""
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp"
-                        android:fontFamily="@font/poppins_regular"
-                        android:gravity="right"/>
-                    <ImageView
-                        android:id="@+id/imgOpenCalls"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/ic_add"
-                        app:tint="@color/button_primary"/>
-                </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="@color/colorGray100"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_margin="@dimen/_5sdp">
-                    <ImageView
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/ic_meeting"
-                        app:tint="@color/button_primary"/>
-                    <TextView
-                        android:id="@+id/txtOpenMeetings"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:text="Open Meetings"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp"
-                        android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:layout_marginLeft="@dimen/_10sdp"/>
-                    <TextView
-                        android:id="@+id/imgMeetingsCounts"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:text=""
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp"
-                        android:fontFamily="@font/poppins_regular"
-                        android:gravity="right"/>
-                    <ImageView
-                        android:id="@+id/imgOpenMeetings"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/ic_add"
-                        app:tint="@color/button_primary"/>
-                </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="@color/colorGray100"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_margin="@dimen/_5sdp">
-                    <ImageView
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/ic_task"
-                        app:tint="@color/button_primary"/>
-                    <TextView
-                        android:id="@+id/txtOpenTasks"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:text="Open Tasks"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp"
-                        android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:layout_marginLeft="@dimen/_10sdp"/>
-                    <TextView
-                        android:id="@+id/imgTasksCounts"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:text=""
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp"
-                        android:fontFamily="@font/poppins_regular"
-                        android:gravity="right"/>
-                    <ImageView
-                        android:id="@+id/imgOpenTasks"
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/ic_add"
-                        app:tint="@color/button_primary"/>
-                </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="@color/colorGray100"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_margin="@dimen/_5sdp">
-                    <ImageView
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/ic_call"
-                        app:tint="@color/button_primary"/>
-                    <TextView
-                        android:id="@+id/txtClosedCalls"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:text="Closed Calls"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp"
-                        android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:layout_marginLeft="@dimen/_10sdp"/>/>
+                        app:tint="@color/button_primary" />
 
                 </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="@color/colorGray100"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp"/>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_margin="@dimen/_5sdp">
-                    <ImageView
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/ic_meeting"
-                        app:tint="@color/button_primary"/>
-                    <TextView
-                        android:id="@+id/txtClosedMeetings"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:text="Closed Meetings"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp"
-                        android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:layout_marginLeft="@dimen/_10sdp"/>/>
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:background="@color/colorGray100"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_note"
+                            app:tint="@color/button_primary" />
+
+                        <TextView
+                            android:id="@+id/txtNotes"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:gravity="center_vertical"
+                            android:text="Notes"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />
+
+                        <TextView
+                            android:id="@+id/imgNotesCounts"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:gravity="right"
+                            android:text=""
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />
+
+                        <ImageView
+                            android:id="@+id/imgNotes"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_add"
+                            app:tint="@color/button_primary" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:background="@color/colorGray100" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_attachment"
+                            app:tint="@color/button_primary" />
+
+                        <TextView
+                            android:id="@+id/txtAttachments"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:gravity="center_vertical"
+                            android:text="Attachments"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />
+
+                        <TextView
+                            android:id="@+id/imgAttachmentsCounts"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:gravity="right"
+                            android:text=""
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />
+
+                        <ImageView
+                            android:id="@+id/imgAttachments"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_add"
+                            app:tint="@color/button_primary" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:background="@color/colorGray100" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_call"
+                            app:tint="@color/button_primary" />
+
+                        <TextView
+                            android:id="@+id/txtOpenCalls"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:gravity="center_vertical"
+                            android:text="Open Calls"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />
+
+                        <TextView
+                            android:id="@+id/imgCallsCounts"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:gravity="right"
+                            android:text=""
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />
+
+                        <ImageView
+                            android:id="@+id/imgOpenCalls"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_add"
+                            app:tint="@color/button_primary" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:background="@color/colorGray100" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_meeting"
+                            app:tint="@color/button_primary" />
+
+                        <TextView
+                            android:id="@+id/txtOpenMeetings"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:gravity="center_vertical"
+                            android:text="Open Meetings"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />
+
+                        <TextView
+                            android:id="@+id/imgMeetingsCounts"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:gravity="right"
+                            android:text=""
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />
+
+                        <ImageView
+                            android:id="@+id/imgOpenMeetings"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_add"
+                            app:tint="@color/button_primary" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:background="@color/colorGray100" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_task"
+                            app:tint="@color/button_primary" />
+
+                        <TextView
+                            android:id="@+id/txtOpenTasks"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:gravity="center_vertical"
+                            android:text="Open Tasks"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />
+
+                        <TextView
+                            android:id="@+id/imgTasksCounts"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:fontFamily="@font/poppins_regular"
+                            android:gravity="right"
+                            android:text=""
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />
+
+                        <ImageView
+                            android:id="@+id/imgOpenTasks"
+                            android:layout_width="@dimen/_40sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_add"
+                            app:tint="@color/button_primary" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:background="@color/colorGray100" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_call"
+                            app:tint="@color/button_primary" />
+
+                        <TextView
+                            android:id="@+id/txtClosedCalls"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:gravity="center_vertical"
+                            android:text="Closed Calls"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:background="@color/colorGray100" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_meeting"
+                            app:tint="@color/button_primary" />
+
+                        <TextView
+                            android:id="@+id/txtClosedMeetings"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:gravity="center_vertical"
+                            android:text="Closed Meetings"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:background="@color/colorGray100" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_5sdp"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="@dimen/_20sdp"
+                            android:layout_height="@dimen/_20sdp"
+                            android:src="@drawable/ic_task"
+                            app:tint="@color/button_primary" />
+
+                        <TextView
+                            android:id="@+id/txtClosedTasks"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginLeft="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:gravity="center_vertical"
+                            android:text="Closed Tasks"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />/>
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_marginBottom="@dimen/_5sdp"
+                        android:background="@color/colorGray100" />
 
                 </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="@color/colorGray100"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp"/>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_margin="@dimen/_5sdp">
-                    <ImageView
-                        android:layout_width="@dimen/_20sdp"
-                        android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/ic_task"
-                        app:tint="@color/button_primary"/>
-                    <TextView
-                        android:id="@+id/txtClosedTasks"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:text="Closed Tasks"
-                        android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp"
-                        android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:layout_marginLeft="@dimen/_10sdp"/>/>
-
-                </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1px"
-                    android:background="@color/colorGray100"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp"/>
 
             </LinearLayout>
         </LinearLayout>

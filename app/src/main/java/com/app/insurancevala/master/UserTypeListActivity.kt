@@ -151,6 +151,8 @@ class UserTypeListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@UserTypeListActivity,refreshLayout)
+            searchView.closeSearch()
             callManageUserType()
             refreshLayout.isRefreshing = false
         }

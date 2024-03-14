@@ -31,7 +31,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_home.*
-import kotlinx.android.synthetic.main.fragment_home.layout
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -194,7 +193,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
             R.id.llOpenLead -> {
                 preventTwoClick(v)
                 val intent = Intent(requireActivity(), HomeInnerListActivity::class.java)
-                intent.putExtra("Header", "Lead Status Wise List")
+                intent.putExtra("Header", "Total Open Lead List")
                 intent.putExtra("LeadStatusID", 2)
                 intent.putExtra("OperationType", AppConstant.LeadStatus)
                 intent.putExtra("FromDate", FromDate)

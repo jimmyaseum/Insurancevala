@@ -12,9 +12,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerItemClickListener
 import com.app.insurancevala.model.pojo.InquiryInformationModel
+import com.app.insurancevala.utils.LogUtil
+import com.app.insurancevala.utils.TAG
+import com.app.insurancevala.utils.gone
+import com.app.insurancevala.utils.visible
 import kotlinx.android.synthetic.main.adapter_add_more_inquiry.view.*
 
-class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?, val recyclerItemClickListener: RecyclerItemClickListener) : RecyclerView.Adapter<AddMoreInquiryAdapter .ViewHolder>()
+class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?, val  AddMore: Boolean, val recyclerItemClickListener: RecyclerItemClickListener) : RecyclerView.Adapter<AddMoreInquiryAdapter .ViewHolder>()
 {
     var context: Context? = null
     var views: View? = null
@@ -28,6 +32,7 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         holder.bindItems(context!!, position, arrayList!!, recyclerItemClickListener)
 
         arrayList[position].tilInquiryType = holder.itemView.edtInquiryType
@@ -37,18 +42,24 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
         arrayList[position].tilLeadtype = holder.itemView.edtLeadType
         arrayList[position].tilLeadstatus = holder.itemView.edtLeadStatus
         arrayList[position].tilAllotmentTo = holder.itemView.edtAllotmentTo
+        arrayList[position].tilInquiryDate = holder.itemView.edtInquiryDate
 
-        if (position == 0 && position == arrayList.size - 1) {
-            holder.itemView.imgDelete.visibility = View.GONE
-            holder.itemView.tvAddMore.visibility = View.VISIBLE
-        }
-        else if (position == arrayList.size - 1) {
-            holder.itemView.imgDelete.visibility = View.VISIBLE
-            holder.itemView.tvAddMore.visibility = View.VISIBLE
-        }
-        else {
-            holder.itemView.imgDelete.visibility = View.VISIBLE
-            holder.itemView.tvAddMore.visibility = View.GONE
+        if (AddMore){
+            if (position == 0 && position == arrayList.size - 1) {
+                holder.itemView.imgDelete.visibility = View.GONE
+                holder.itemView.tvAddMore.visibility = View.VISIBLE
+            }
+            else if (position == arrayList.size - 1) {
+                holder.itemView.imgDelete.visibility = View.VISIBLE
+                holder.itemView.tvAddMore.visibility = View.VISIBLE
+            }
+            else {
+                holder.itemView.imgDelete.visibility = View.VISIBLE
+                holder.itemView.tvAddMore.visibility = View.GONE
+            }
+        } else {
+            holder.itemView.tvAddMore.gone()
+            holder.itemView.imgDelete.gone()
         }
     }
 
@@ -74,6 +85,7 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
             itemView.edtLeadType.setText(arrayList!![position].Leadtype)
             itemView.edtLeadStatus.setText(arrayList!![position].Leadstatus)
             itemView.edtAllotmentTo.setText(arrayList!![position].AllotmentTo)
+            itemView.edtInquiryDate.setText(arrayList!![position].InquiryDate)
 
             itemView.edtInquiryType.setOnClickListener {
                 if(!arrayList[adapterPosition].Inquirytype!!.isEmpty()) {
@@ -96,6 +108,14 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
                     recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 3, arrayList[adapterPosition].Frequency)
                 } else{
                     recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 3, arrayList[adapterPosition].Frequency)
+                }
+            }
+
+            itemView.edtInquiryDate.setOnClickListener {
+                if(!arrayList[adapterPosition].InquiryDate!!.isEmpty()) {
+                    recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 6, arrayList[adapterPosition].InquiryDate)
+                } else{
+                    recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 6, arrayList[adapterPosition].InquiryDate)
                 }
             }
 
@@ -133,22 +153,46 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
 
             itemView.edtInquiryType.setSimpleListener {
                 arrayList[adapterPosition].Inquirytype = it.toString()
+                if (!arrayList[adapterPosition].Inquirytype.isNullOrEmpty()) {
+                    itemView.edtInquiryType.setError(null)
+                }
             }
             itemView.edtInquirySub.setSimpleListener {
                 arrayList[adapterPosition].Inquirysubtype = it.toString()
+                if (!arrayList[adapterPosition].Inquirysubtype.isNullOrEmpty()) {
+                    itemView.edtInquirySub.setError(null)
+                }
             }
             itemView.edtFrequency.setSimpleListener {
-                arrayList[adapterPosition].Frequency = it.toString()
+                if (!arrayList[adapterPosition].Frequency.isNullOrEmpty()) {
+                    arrayList[adapterPosition].Frequency = it.toString()
+                    itemView.edtFrequency.setError(null)
+                }
+            }
+            itemView.edtInquiryDate.setSimpleListener {
+                if (!arrayList[adapterPosition].InquiryDate.isNullOrEmpty()) {
+                    arrayList[adapterPosition].InquiryDate = it.toString()
+                    itemView.edtInquiryDate.setError(null)
+                }
             }
             itemView.edtLeadType.setSimpleListener {
-                arrayList[adapterPosition].Leadtype = it.toString()
+                if (!arrayList[adapterPosition].Leadtype.isNullOrEmpty()) {
+                    arrayList[adapterPosition].Leadtype = it.toString()
+                    itemView.edtLeadType.setError(null)
+                }
             }
             itemView.edtLeadStatus.setSimpleListener {
-                arrayList[adapterPosition].Leadstatus = it.toString()
+                if (!arrayList[adapterPosition].Leadstatus.isNullOrEmpty()) {
+                    arrayList[adapterPosition].Leadstatus = it.toString()
+                    itemView.edtLeadStatus.setError(null)
+                }
             }
 
             itemView.edtAllotmentTo.setSimpleListener {
-                arrayList[adapterPosition].AllotmentTo = it.toString()
+                if (!arrayList[adapterPosition].AllotmentTo.isNullOrEmpty()) {
+                    arrayList[adapterPosition].AllotmentTo = it.toString()
+                    itemView.edtAllotmentTo.setError(null)
+                }
             }
             itemView.edtProposedAmount.setSimpleListener {
                 arrayList[adapterPosition].Proposed = it.toString()
@@ -207,6 +251,14 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
         var emptyBox = true
         if (!arrayList.isNullOrEmpty()) {
             for (model in arrayList) {
+                LogUtil.d(TAG,"===>111 = "+model.tilInquiryType?.text!!.trim())
+                LogUtil.d(TAG,"===>222 = "+model.tilInquirysubtype?.text!!.trim())
+                LogUtil.d(TAG,"===>333 = "+model.tilLeadstatus?.text!!.trim())
+                LogUtil.d(TAG,"===>444 = "+model.tilLeadtype?.text!!.trim())
+                LogUtil.d(TAG,"===>555 = "+model.tilAllotmentTo?.text!!.trim())
+                LogUtil.d(TAG,"===>666 = "+model.tilFrequency?.text!!.trim())
+                LogUtil.d(TAG,"===>777 = "+model.tilProposed?.text!!.trim())
+                LogUtil.d(TAG,"===>888 = "+model.tilInquiryDate?.text!!.trim())
                 if (TextUtils.isEmpty(model.tilInquiryType?.text!!.trim())) {
                     model.tilInquiryType?.error = "Select Inquiry Type"
                     emptyBox = false
@@ -233,6 +285,10 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
                 }
                 if (TextUtils.isEmpty(model.tilProposed?.text!!.trim())) {
                     model.tilProposed?.error = "Enter Proposed Amount"
+                    emptyBox = false
+                }
+                if (TextUtils.isEmpty(model.tilInquiryDate?.text!!.trim())) {
+                    model.tilInquiryDate?.error = "Select Inquiry Date"
                     emptyBox = false
                 }
             }
@@ -279,6 +335,12 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
         arrayList!![position].AllotmentToId = id
         arrayList!![position].tilAllotmentTo?.setText(name)
     }
+    fun updateInquiryDateItem(position: Int , date: String , mdate: String) {
+        arrayList!![position].InquiryDate = date
+        arrayList!![position].mInquiryDate = mdate
+        arrayList!![position].tilInquiryDate?.setText(date)
+    }
+
     private fun hideErrorTIL(position: Int) {
         if (!arrayList.isNullOrEmpty()) {
             for (i in arrayList.indices) {

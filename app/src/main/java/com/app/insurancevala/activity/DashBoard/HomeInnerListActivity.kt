@@ -159,6 +159,8 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
         })
 
         refreshLayout.setOnRefreshListener {
+            hideKeyboard(this@HomeInnerListActivity, refreshLayout)
+            searchView.closeSearch()
             callManageDashboardInnerList()
             refreshLayout.isRefreshing = false
         }

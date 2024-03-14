@@ -20,15 +20,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
-
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgFile"
                 android:layout_width="@dimen/_70sdp"
                 android:layout_height="@dimen/_60sdp"
-                android:src="@drawable/rose"
-                app:civ_border_width="@dimen/_1sdp"
-                app:civ_border_color="@color/colorGradish"
-                android:layout_gravity="center" />
+                app:civ_border_color="@color/colorBlack"
+                app:civ_border_width="1dp"
+                android:src="@drawable/rose"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

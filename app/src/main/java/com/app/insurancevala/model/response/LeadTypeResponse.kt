@@ -18,6 +18,21 @@ class LeadTypeResponse {
 
 }
 
+class LeadTypeByGUIDResponse {
+    @SerializedName("Data")
+    var Data: LeadTypeModel? = null
+    @SerializedName("Details")
+    var Details: String? = null
+    @SerializedName("Message")
+    var Message: String? = null
+    @SerializedName("Status")
+    var Status: Int? = null
+    @SerializedName("ItemCount")
+    var ItemCount: Int? = null
+    @SerializedName("ErrorMessage")
+    var ErrorMessage: String? = null
+}
+
 data class LeadTypeModel (
     @SerializedName("ID")
     val ID: Int? = null,

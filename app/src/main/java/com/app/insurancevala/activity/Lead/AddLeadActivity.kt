@@ -1,12 +1,15 @@
 package com.app.insurancevala.activity.Lead
 
+import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.Window
@@ -15,26 +18,36 @@ import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
+import com.app.insurancevala.adapter.AddMoreFamilyMemberAdapter
 import com.app.insurancevala.adapter.bottomsheetadapter.*
 import com.app.insurancevala.interFase.RecyclerClickListener
+import com.app.insurancevala.interFase.RecyclerItemClickListener
+import com.app.insurancevala.model.api.CommonResponse
+import com.app.insurancevala.model.api.LeadCountResponse
+import com.app.insurancevala.model.pojo.FamilyMemberInfoModel
+import com.app.insurancevala.model.pojo.InquiryInformationModel
 import com.app.insurancevala.model.response.*
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
+import com.example.awesomedialog.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_add_lead.*
-import kotlinx.android.synthetic.main.activity_add_lead.imgBack
-import kotlinx.android.synthetic.main.activity_add_lead.layout
-import kotlinx.android.synthetic.main.activity_add_lead.txtSave
+import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
-class AddLeadActivity : BaseActivity(), View.OnClickListener {
+class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickListener {
 
     var isShow: Int = 0
     var sharedPreference: SharedPreference? = null
@@ -42,9 +55,24 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
     var LeadID: Int? = null
     var LeadGUID: String? = null
 
-    var arrayListinitial: ArrayList<InitialModel>? = ArrayList()
+    var arrayListInitial: ArrayList<InitialModel>? = ArrayList()
     var mInitial: String = ""
     var mInitialID: Int = 0
+    var mInitialItem: String = ""
+    var mInitialItemID: Int = 0
+    var mInitialItemPostion: Int = 0
+
+    var arrayListRelation: ArrayList<RelationModel>? = ArrayList()
+    var mRelation: String = ""
+    var mRelationID: Int = 0
+    var mRelationItemPostion: Int = 0
+
+    var arrayListFamilyInfo: ArrayList<FamilyMemberInfoModel>? = ArrayList()
+    lateinit var adapter: AddMoreFamilyMemberAdapter
+
+    var arrayListOccupation: ArrayList<OccupationModel>? = ArrayList()
+    var mOccupationName: String = ""
+    var mOccupationID: Int = 0
 
     var arrayListUsers: ArrayList<UserModel>? = ArrayList()
     var mUsers: String = ""
@@ -54,13 +82,19 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
     var mLeadsource: String = ""
     var mLeadsourceID: Int = 0
 
-    var arrayListCity: ArrayList<CitiesModel>? = ArrayList()
+    var arrayListCity: ArrayList<CityModel>? = ArrayList()
     var mCity: String = ""
     var mCityID: Int = 0
     var mState: String = ""
     var mStateID: Int = 0
     var mCountry: String = ""
     var mCountryID: Int = 0
+
+    var calendarNow: Calendar? = null
+    var mDOBItemPostion: Int = 0
+    var year = 0
+    var month = 0
+    var day = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,21 +120,24 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun setMasterData() {
-        if(state.equals(AppConstant.S_ADD)) {
+        if (state.equals(AppConstant.S_ADD)) {
 
             txtHearderText.text = "Create Client"
             if (isOnline(this)) {
-                callManageInitial(0)
+                callManageLeadCount()
+                callManageInitial(0, "Activity")
+                callManageOccupation(0)
+                callRelation(0)
                 callManageUsers(0)
                 callManageLeadSource(0)
                 callManageCity(0)
             } else {
                 internetErrordialog(this@AddLeadActivity)
             }
-        } else if(state.equals(AppConstant.S_EDIT)) {
+        } else if (state.equals(AppConstant.S_EDIT)) {
             txtHearderText.text = "Update Client"
             if (isOnline(this)) {
-                LeadID = intent.getIntExtra("LeadID",0)
+                LeadID = intent.getIntExtra("LeadID", 0)
                 LeadGUID = intent.getStringExtra("GUID")
                 callManageLeadGUID()
             } else {
@@ -112,12 +149,22 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
     private fun SetInitListner() {
         imgBack.setOnClickListener(this)
         txtShowAllFiels.setOnClickListener(this)
+        tvAddMore.setOnClickListener(this)
         txtSave.setOnClickListener(this)
 
         edtInitial.setOnClickListener(this)
+        edtOccupation.setOnClickListener(this)
+        rbForExisting.setOnClickListener(this)
+        rbForProspect.setOnClickListener(this)
         edtLeadOwner.setOnClickListener(this)
         edtLeadSource.setOnClickListener(this)
+        edtDateOfBirth.setOnClickListener(this)
+        edtMarriage.setOnClickListener(this)
         edtCity.setOnClickListener(this)
+
+        rvFamilyMember.layoutManager =
+            LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
+        rvFamilyMember.isNestedScrollingEnabled = false
     }
 
     override fun onClick(v: View?) {
@@ -127,6 +174,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                 preventTwoClick(v)
                 finish()
             }
+
             R.id.txtShowAllFiels -> {
                 if (isShow % 2 == 0) {
                     txtShowAllFiels.setCompoundDrawablesWithIntrinsicBounds(
@@ -149,18 +197,60 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                 }
                 isShow = isShow + 1
             }
+
             R.id.txtSave -> {
                 preventTwoClick(v)
                 validation()
             }
-            R.id.edtInitial -> {
+
+            R.id.tvAddMore -> {
                 preventTwoClick(v)
-                if (arrayListinitial.isNullOrEmpty()) {
-                    callManageInitial(1)
+                if (::adapter.isInitialized) {
+                    if (adapter.getAdapterArrayList()!!.size > 0) {
+                        adapter.addItem(FamilyMemberInfoModel(), 1)
+                    } else {
+                        setDefaultData()
+                    }
                 } else {
-                    selectInitialDialog()
+                    setDefaultData()
+                }
+                rvFamilyMember.scrollToPosition(adapter.itemCount - 1)
+
+                // For scrolling the ScrollView to the bottom
+                scrollview.post {
+                    scrollview.fullScroll(View.FOCUS_DOWN)
                 }
             }
+
+            R.id.edtInitial -> {
+                preventTwoClick(v)
+                if (arrayListInitial.isNullOrEmpty()) {
+                    callManageInitial(1, "Activity")
+                } else {
+                    selectInitialDialog(0)
+                }
+            }
+
+            R.id.edtOccupation -> {
+                preventTwoClick(v)
+                if (arrayListOccupation.isNullOrEmpty()) {
+                    callManageOccupation(1)
+                } else {
+                    selectOccupationDialog()
+                }
+            }
+
+            R.id.rbForExisting -> {
+                preventTwoClick(v)
+                rating_bar.progressTintList = ColorStateList.valueOf(getColor(R.color.gold))
+            }
+
+            R.id.rbForProspect -> {
+                preventTwoClick(v)
+                rating_bar.progressTintList = ColorStateList.valueOf(getColor(R.color.silver))
+            }
+
+
             R.id.edtLeadOwner -> {
                 preventTwoClick(v)
                 if (arrayListUsers.isNullOrEmpty()) {
@@ -169,6 +259,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                     selectUsersDialog()
                 }
             }
+
             R.id.edtLeadSource -> {
                 preventTwoClick(v)
                 if (arrayListleadsource.isNullOrEmpty()) {
@@ -177,6 +268,15 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                     selectLeadSourceDialog()
                 }
             }
+
+            R.id.edtDateOfBirth -> {
+                showDatePickerDialog(1, edtDateOfBirth.text.toString())
+            }
+
+            R.id.edtMarriage -> {
+                showDatePickerDialog(2, edtMarriage.text.toString())
+            }
+
             R.id.edtCity -> {
                 preventTwoClick(v)
                 if (arrayListCity.isNullOrEmpty()) {
@@ -188,7 +288,20 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
         }
     }
 
-    private fun callManageInitial(mode: Int) {
+    private fun setDefaultData() {
+        arrayListFamilyInfo = ArrayList()
+        arrayListFamilyInfo?.add(FamilyMemberInfoModel())
+        setAdapterData(arrayListFamilyInfo)
+    }
+
+    private fun setAdapterData(arrayList: ArrayList<FamilyMemberInfoModel>?) {
+        adapter = AddMoreFamilyMemberAdapter(arrayList, this@AddLeadActivity)
+        rvFamilyMember.adapter = adapter
+
+        rvFamilyMember.smoothScrollToPosition(adapter.getItemCount() - 1)
+    }
+
+    private fun callManageInitial(mode: Int, flag: String) {
         if (mode == 1) {
             showProgress()
         }
@@ -203,15 +316,15 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
-                        arrayListinitial = response.body()?.Data!!
+                        arrayListInitial = response.body()?.Data!!
 
-                        if(arrayListinitial!!.size > 0) {
-                            for(i in 0 until arrayListinitial!!.size) {
-                                if(state.equals(AppConstant.S_EDIT)) {
-                                    if(arrayListinitial!![i].ID == mInitialID) {
-                                        arrayListinitial!![i].IsSelected = true
-                                        mInitialID = arrayListinitial!![i].ID!!
-                                        mInitial = arrayListinitial!![i].Initial!!
+                        if (arrayListInitial!!.size > 0) {
+                            for (i in 0 until arrayListInitial!!.size) {
+                                if (state.equals(AppConstant.S_EDIT)) {
+                                    if (arrayListInitial!![i].ID == mInitialID) {
+                                        arrayListInitial!![i].IsSelected = true
+                                        mInitialID = arrayListInitial!![i].ID!!
+                                        mInitial = arrayListInitial!![i].Initial!!
                                         edtInitial.setText(mInitial)
                                         edtInitial.setError(null)
                                     }
@@ -219,8 +332,10 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                             }
                         }
 
-                        if (mode == 1) {
-                            selectInitialDialog()
+                        if (mode == 1 && flag == "Activity") {
+                            selectInitialDialog(0)
+                        } else if (mode == 1 && flag == "Adapter") {
+                            selectInitialDialog(1)
                         }
                     } else {
                         Snackbar.make(
@@ -242,8 +357,9 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
             }
         })
     }
-    private fun selectInitialDialog() {
-        var dialogSelectInitial = Dialog(this)
+
+    private fun selectInitialDialog(mode: Int) {
+        val dialogSelectInitial = Dialog(this)
         dialogSelectInitial.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         val dialogView = layoutInflater.inflate(R.layout.dialog_select, null)
@@ -256,12 +372,16 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
         dialogSelectInitial.setCancelable(true)
         dialogSelectInitial.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectInitial.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectInitial.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectInitial.window!!.setGravity(Gravity.CENTER)
 
-        val rvDialogCustomer = dialogSelectInitial.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val rvDialogCustomer =
+            dialogSelectInitial.findViewById(R.id.rvDialogCustomer) as RecyclerView
         val edtSearchCustomer = dialogSelectInitial.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectInitial.findViewById(R.id.txtid) as TextView
+        val txtid = dialogSelectInitial.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectInitial.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -270,25 +390,32 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
 
         txtid.text = "Select Initial"
 
-        val itemAdapter = BottomSheetInitialListAdapter(this, arrayListinitial!!)
+        val itemAdapter = BottomSheetInitialListAdapter(this, arrayListInitial!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(view: View, position: Int, type: Int) {
 
-                itemAdapter.updateItem(pos)
-                mInitialID = arrayListinitial!![pos].ID!!
-                mInitial = arrayListinitial!![pos].Initial!!
-                edtInitial.setText(mInitial)
-                edtInitial.setError(null)
-                dialogSelectInitial!!.dismiss()
+                if (mode == 1) {
+                    itemAdapter.updateItem(position)
+                    mInitialItem = arrayListInitial!![position].Initial!!
+                    mInitialItemID = arrayListInitial!![position].ID!!
+                    adapter.updateInitialItem(mInitialItemPostion, mInitialItem, mInitialItemID)
+                    dialogSelectInitial.dismiss()
+                } else {
+                    itemAdapter.updateItem(position)
+                    mInitialID = arrayListInitial!![position].ID!!
+                    mInitial = arrayListInitial!![position].Initial!!
+                    edtInitial.setText(mInitial)
+                    edtInitial.setError(null)
+                    dialogSelectInitial.dismiss()
+                }
             }
         })
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListinitial!!.size > 6) {
+        if (arrayListInitial!!.size > 6) {
             edtSearchCustomer.visible()
-        }
-        else {
+        } else {
             edtSearchCustomer.gone()
         }
 
@@ -303,43 +430,345 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                 val arrItemsFinal1: ArrayList<InitialModel> = ArrayList()
                 if (char.toString().trim().isNotEmpty()) {
                     val strSearch = char.toString()
-                    for (model in arrayListinitial!!) {
+                    for (model in arrayListInitial!!) {
                         if (model.Initial!!.toLowerCase().contains(strSearch.toLowerCase())) {
                             arrItemsFinal1.add(model)
                         }
                     }
 
-                    val itemAdapter = BottomSheetInitialListAdapter(this@AddLeadActivity, arrItemsFinal1)
+                    val itemAdapter =
+                        BottomSheetInitialListAdapter(this@AddLeadActivity, arrItemsFinal1)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+                        override fun onItemClickEvent(view: View, position: Int, type: Int) {
 
-                            itemAdapter.updateItem(pos)
-                            mInitialID = arrItemsFinal1!![pos].ID!!
-                            mInitial = arrItemsFinal1!![pos].Initial!!
-                            edtInitial.setText(mInitial)
-                            edtInitial.setError(null)
-                            dialogSelectInitial!!.dismiss()
+                            mInitial = arrItemsFinal1[position].Initial!!
+                            mInitialID = arrItemsFinal1[position].ID!!
+                            adapter.updateInitialItem(mInitialItemPostion, mRelation, mRelationID)
+                            dialogSelectInitial.dismiss()
                         }
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter = BottomSheetInitialListAdapter(this@AddLeadActivity, arrayListinitial!!)
+                    val itemAdapter =
+                        BottomSheetInitialListAdapter(this@AddLeadActivity, arrayListInitial!!)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+                        override fun onItemClickEvent(view: View, position: Int, type: Int) {
 
-                            itemAdapter.updateItem(pos)
-                            mInitialID = arrayListinitial!![pos].ID!!
-                            mInitial = arrayListinitial!![pos].Initial!!
-                            edtInitial.setText(mInitial)
-                            edtInitial.setError(null)
-                            dialogSelectInitial!!.dismiss()
+                            mInitial = arrayListInitial!![position].Initial!!
+                            mInitialID = arrayListInitial!![position].ID!!
+                            adapter.updateInitialItem(mInitialItemPostion, mRelation, mRelationID)
+                            dialogSelectInitial.dismiss()
                         }
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 }
             }
         })
-        dialogSelectInitial!!.show()
+        dialogSelectInitial.show()
+    }
+
+    private fun callRelation(mode: Int) {
+        if (mode == 1) {
+            showProgress()
+        }
+        val call = ApiUtils.apiInterface.getRelationAllActive()
+        call.enqueue(object : Callback<RelationResponse> {
+            override fun onResponse(
+                call: Call<RelationResponse>,
+                response: Response<RelationResponse>
+            ) {
+                hideProgress()
+                if (response.code() == 200) {
+                    if (response.body()?.Status == 200) {
+                        arrayListRelation = response.body()?.Data!!
+
+                        if (mode == 1) {
+                            selectRelationDialog()
+                        }
+                    } else {
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<RelationResponse>, t: Throwable) {
+                hideProgress()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        })
+    }
+
+    private fun selectRelationDialog() {
+        val dialogSelectRelation = Dialog(this)
+        dialogSelectRelation.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_select, null)
+        dialogSelectRelation.setContentView(dialogView)
+
+        val lp = WindowManager.LayoutParams()
+        lp.copyFrom(dialogSelectRelation.window!!.attributes)
+
+        dialogSelectRelation.window!!.attributes = lp
+        dialogSelectRelation.setCancelable(true)
+        dialogSelectRelation.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialogSelectRelation.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        dialogSelectRelation.window!!.setGravity(Gravity.CENTER)
+
+        val rvDialogCustomer =
+            dialogSelectRelation.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectRelation.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectRelation.findViewById(R.id.txtid) as TextView
+        val imgClear = dialogSelectRelation.findViewById(R.id.imgClear) as ImageView
+
+        imgClear.setOnClickListener {
+            dialogSelectRelation.dismiss()
+        }
+
+        txtid.text = "Select Relation"
+
+        val itemAdapter = BottomSheetRelationListAdapter(this, arrayListRelation!!)
+        itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+
+                itemAdapter.updateItem(pos)
+                mRelation = arrayListRelation!![pos].RelationName!!
+                mRelationID = arrayListRelation!![pos].ID!!
+                adapter.updateRelationItem(mRelationItemPostion, mRelation, mRelationID)
+                dialogSelectRelation!!.dismiss()
+            }
+        })
+
+        rvDialogCustomer.adapter = itemAdapter
+
+        if (arrayListRelation!!.size > 6) {
+            edtSearchCustomer.visible()
+        } else {
+            edtSearchCustomer.gone()
+        }
+
+        edtSearchCustomer.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(char: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                val arrItemsFinal1: ArrayList<RelationModel> = ArrayList()
+                if (char.toString().trim().isNotEmpty()) {
+                    val strSearch = char.toString()
+                    for (model in arrayListRelation!!) {
+                        if (model.RelationName!!.toLowerCase().contains(strSearch.toLowerCase())) {
+                            arrItemsFinal1.add(model)
+                        }
+                    }
+
+                    val itemAdapter =
+                        BottomSheetRelationListAdapter(this@AddLeadActivity, arrItemsFinal1)
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+
+                            mRelation = arrItemsFinal1!![pos].RelationName!!
+                            mRelationID = arrItemsFinal1!![pos].ID!!
+                            adapter.updateRelationItem(mRelationItemPostion, mRelation, mRelationID)
+                            dialogSelectRelation!!.dismiss()
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                } else {
+                    val itemAdapter =
+                        BottomSheetRelationListAdapter(this@AddLeadActivity, arrayListRelation!!)
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+
+                            mRelation = arrayListRelation!![pos].RelationName!!
+                            mRelationID = arrayListRelation!![pos].ID!!
+                            adapter.updateRelationItem(mRelationItemPostion, mRelation, mRelationID)
+                            dialogSelectRelation!!.dismiss()
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                }
+            }
+        })
+        dialogSelectRelation!!.show()
+    }
+
+    private fun callManageOccupation(mode: Int) {
+        if (mode == 1) {
+            showProgress()
+        }
+        val call = ApiUtils.apiInterface.getOccupationAllActive()
+        call.enqueue(object : Callback<OccupationResponse> {
+            override fun onResponse(
+                call: Call<OccupationResponse>,
+                response: Response<OccupationResponse>
+            ) {
+                hideProgress()
+                if (response.code() == 200) {
+                    if (response.body()?.Status == 200) {
+                        arrayListOccupation = response.body()?.Data!!
+
+                        if (arrayListOccupation!!.size > 0) {
+                            for (i in 0 until arrayListOccupation!!.size) {
+                                if (state.equals(AppConstant.S_EDIT)) {
+                                    if (arrayListOccupation!![i].ID == mOccupationID) {
+                                        arrayListOccupation!![i].IsSelected = true
+                                        mOccupationID = arrayListOccupation!![i].ID!!
+                                        mOccupationName = arrayListOccupation!![i].OccupationName!!
+                                        edtOccupation.setText(mOccupationName)
+                                        edtOccupation.setError(null)
+                                    }
+                                }
+                            }
+                        }
+
+                        if (mode == 1) {
+                            selectOccupationDialog()
+                        }
+                    } else {
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<OccupationResponse>, t: Throwable) {
+                hideProgress()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        })
+    }
+
+    private fun selectOccupationDialog() {
+        var dialogSelectOccupation = Dialog(this)
+        dialogSelectOccupation.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_select, null)
+        dialogSelectOccupation.setContentView(dialogView)
+
+        val lp = WindowManager.LayoutParams()
+        lp.copyFrom(dialogSelectOccupation.window!!.attributes)
+
+        dialogSelectOccupation.window!!.attributes = lp
+        dialogSelectOccupation.setCancelable(true)
+        dialogSelectOccupation.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialogSelectOccupation.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        dialogSelectOccupation.window!!.setGravity(Gravity.CENTER)
+
+        val rvDialogCustomer =
+            dialogSelectOccupation.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectOccupation.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectOccupation.findViewById(R.id.txtid) as TextView
+        val imgClear = dialogSelectOccupation.findViewById(R.id.imgClear) as ImageView
+
+        imgClear.setOnClickListener {
+            dialogSelectOccupation.dismiss()
+        }
+
+        txtid.text = "Select Occupation"
+
+        val itemAdapter = BottomSheetOccupationListAdapter(this, arrayListOccupation!!)
+        itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+
+                itemAdapter.updateItem(pos)
+                mOccupationID = arrayListOccupation!![pos].ID!!
+                mOccupationName = arrayListOccupation!![pos].OccupationName!!
+                edtOccupation.setText(mOccupationName)
+                edtOccupation.setError(null)
+                dialogSelectOccupation!!.dismiss()
+            }
+        })
+
+        rvDialogCustomer.adapter = itemAdapter
+
+        if (arrayListOccupation!!.size > 6) {
+            edtSearchCustomer.visible()
+        } else {
+            edtSearchCustomer.gone()
+        }
+
+        edtSearchCustomer.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(char: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                val arrItemsFinal1: ArrayList<OccupationModel> = ArrayList()
+                if (char.toString().trim().isNotEmpty()) {
+                    val strSearch = char.toString()
+                    for (model in arrayListOccupation!!) {
+                        if (model.OccupationName!!.toLowerCase()
+                                .contains(strSearch.toLowerCase())
+                        ) {
+                            arrItemsFinal1.add(model)
+                        }
+                    }
+
+                    val itemAdapter =
+                        BottomSheetOccupationListAdapter(this@AddLeadActivity, arrItemsFinal1)
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+
+                            itemAdapter.updateItem(pos)
+                            mOccupationID = arrItemsFinal1!![pos].ID!!
+                            mOccupationName = arrItemsFinal1!![pos].OccupationName!!
+                            edtOccupation.setText(mOccupationName)
+                            edtOccupation.setError(null)
+                            dialogSelectOccupation!!.dismiss()
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                } else {
+                    val itemAdapter =
+                        BottomSheetOccupationListAdapter(
+                            this@AddLeadActivity,
+                            arrayListOccupation!!
+                        )
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+
+                            itemAdapter.updateItem(pos)
+                            mOccupationID = arrayListOccupation!![pos].ID!!
+                            mOccupationName = arrayListOccupation!![pos].OccupationName!!
+                            edtOccupation.setText(mOccupationName)
+                            edtOccupation.setError(null)
+                            dialogSelectOccupation!!.dismiss()
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                }
+            }
+        })
+        dialogSelectOccupation!!.show()
     }
 
     private fun callManageUsers(mode: Int) {
@@ -365,22 +794,23 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                     if (response.body()?.Status == 200) {
                         arrayListUsers = response.body()?.Data!!
 
-                        if(arrayListUsers!!.size > 0) {
-                            for(i in 0 until arrayListUsers!!.size) {
-                                if(state.equals(AppConstant.S_ADD)) {
+                        if (arrayListUsers!!.size > 0) {
+                            for (i in 0 until arrayListUsers!!.size) {
+                                if (state.equals(AppConstant.S_ADD)) {
                                     if (arrayListUsers!![i].ID == Userid.toInt()) {
                                         arrayListUsers!![i].IsSelected = true
                                         mUsersID = arrayListUsers!![i].ID!!
-                                        mUsers = arrayListUsers!![i].FirstName!! + " " + arrayListUsers!![i].LastName!!
+                                        mUsers =
+                                            arrayListUsers!![i].FirstName!! + " " + arrayListUsers!![i].LastName!!
                                         edtLeadOwner.setText(mUsers)
                                         edtLeadOwner.setError(null)
                                     }
-                                }
-                                else if(state.equals(AppConstant.S_EDIT)) {
-                                    if(arrayListUsers!![i].ID == mUsersID) {
+                                } else if (state.equals(AppConstant.S_EDIT)) {
+                                    if (arrayListUsers!![i].ID == mUsersID) {
                                         arrayListUsers!![i].IsSelected = true
                                         mUsersID = arrayListUsers!![i].ID!!
-                                        mUsers = arrayListUsers!![i].FirstName!! + " "+ arrayListUsers!![i].LastName!!
+                                        mUsers =
+                                            arrayListUsers!![i].FirstName!! + " " + arrayListUsers!![i].LastName!!
                                         edtLeadOwner.setText(mUsers)
                                         edtLeadOwner.setError(null)
                                     }
@@ -411,6 +841,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
             }
         })
     }
+
     private fun selectUsersDialog() {
         var dialogSelectUsers = Dialog(this)
         dialogSelectUsers.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -425,12 +856,15 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
         dialogSelectUsers.setCancelable(true)
         dialogSelectUsers.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectUsers.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectUsers.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectUsers.window!!.setGravity(Gravity.CENTER)
 
         val rvDialogCustomer = dialogSelectUsers.findViewById(R.id.rvDialogCustomer) as RecyclerView
         val edtSearchCustomer = dialogSelectUsers.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectUsers.findViewById(R.id.txtid) as TextView
+        val txtid = dialogSelectUsers.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectUsers.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -441,11 +875,11 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
 
         val itemAdapter = BottomSheetUsersListAdapter(this, arrayListUsers!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                 itemAdapter.updateItem(pos)
                 mUsersID = arrayListUsers!![pos].ID!!
-                mUsers = arrayListUsers!![pos].FirstName!! + " "+ arrayListUsers!![pos].LastName!!
+                mUsers = arrayListUsers!![pos].FirstName!! + " " + arrayListUsers!![pos].LastName!!
                 edtLeadOwner.setText(mUsers)
                 edtLeadOwner.setError(null)
                 dialogSelectUsers!!.dismiss()
@@ -454,10 +888,9 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListUsers!!.size > 6) {
+        if (arrayListUsers!!.size > 6) {
             edtSearchCustomer.visible()
-        }
-        else {
+        } else {
             edtSearchCustomer.gone()
         }
 
@@ -474,18 +907,21 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                     val strSearch = char.toString()
                     for (model in arrayListUsers!!) {
                         if (model.FirstName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                            model.LastName!!.toLowerCase().contains(strSearch.toLowerCase())) {
+                            model.LastName!!.toLowerCase().contains(strSearch.toLowerCase())
+                        ) {
                             arrItemsFinal1.add(model)
                         }
                     }
 
-                    val itemAdapter = BottomSheetUsersListAdapter(this@AddLeadActivity, arrItemsFinal1)
+                    val itemAdapter =
+                        BottomSheetUsersListAdapter(this@AddLeadActivity, arrItemsFinal1)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                             itemAdapter.updateItem(pos)
                             mUsersID = arrItemsFinal1!![pos].ID!!
-                            mUsers = arrItemsFinal1!![pos].FirstName!! + " "+ arrItemsFinal1!![pos].LastName!!
+                            mUsers =
+                                arrItemsFinal1!![pos].FirstName!! + " " + arrItemsFinal1!![pos].LastName!!
                             edtLeadOwner.setText(mUsers)
                             edtLeadOwner.setError(null)
                             dialogSelectUsers!!.dismiss()
@@ -493,13 +929,15 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter = BottomSheetUsersListAdapter(this@AddLeadActivity, arrayListUsers!!)
+                    val itemAdapter =
+                        BottomSheetUsersListAdapter(this@AddLeadActivity, arrayListUsers!!)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                             itemAdapter.updateItem(pos)
                             mUsersID = arrayListUsers!![pos].ID!!
-                            mUsers = arrayListUsers!![pos].FirstName!! + " "+ arrayListUsers!![pos].LastName!!
+                            mUsers =
+                                arrayListUsers!![pos].FirstName!! + " " + arrayListUsers!![pos].LastName!!
                             edtLeadOwner.setText(mUsers)
                             edtLeadOwner.setError(null)
                             dialogSelectUsers!!.dismiss()
@@ -529,10 +967,10 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                     if (response.body()?.Status == 200) {
                         arrayListleadsource = response.body()?.Data!!
 
-                        if(arrayListleadsource!!.size > 0) {
-                            for(i in 0 until arrayListleadsource!!.size) {
-                                if(state.equals(AppConstant.S_EDIT)) {
-                                    if(arrayListleadsource!![i].ID == mLeadsourceID) {
+                        if (arrayListleadsource!!.size > 0) {
+                            for (i in 0 until arrayListleadsource!!.size) {
+                                if (state.equals(AppConstant.S_EDIT)) {
+                                    if (arrayListleadsource!![i].ID == mLeadsourceID) {
                                         arrayListleadsource!![i].IsSelected = true
                                         mLeadsourceID = arrayListleadsource!![i].ID!!
                                         mLeadsource = arrayListleadsource!![i].LeadSource!!
@@ -566,6 +1004,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
             }
         })
     }
+
     private fun selectLeadSourceDialog() {
         var dialogSelectLeadSource = Dialog(this)
         dialogSelectLeadSource.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -580,12 +1019,17 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
         dialogSelectLeadSource.setCancelable(true)
         dialogSelectLeadSource.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectLeadSource.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectLeadSource.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectLeadSource.window!!.setGravity(Gravity.CENTER)
 
-        val rvDialogCustomer = dialogSelectLeadSource.findViewById(R.id.rvDialogCustomer) as RecyclerView
-        val edtSearchCustomer = dialogSelectLeadSource.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectLeadSource.findViewById(R.id.txtid) as TextView
+        val rvDialogCustomer =
+            dialogSelectLeadSource.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectLeadSource.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectLeadSource.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectLeadSource.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -596,7 +1040,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
 
         val itemAdapter = BottomSheetLeadSourceListAdapter(this, arrayListleadsource!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                 itemAdapter.updateItem(pos)
                 mLeadsource = arrayListleadsource!![pos].LeadSource!!
@@ -609,10 +1053,9 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListleadsource!!.size > 6) {
+        if (arrayListleadsource!!.size > 6) {
             edtSearchCustomer.visible()
-        }
-        else {
+        } else {
             edtSearchCustomer.gone()
         }
 
@@ -633,7 +1076,8 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                         }
                     }
 
-                    val itemAdapter = BottomSheetLeadSourceListAdapter(this@AddLeadActivity, arrItemsFinal1)
+                    val itemAdapter =
+                        BottomSheetLeadSourceListAdapter(this@AddLeadActivity, arrItemsFinal1)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
@@ -647,7 +1091,11 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter = BottomSheetLeadSourceListAdapter(this@AddLeadActivity, arrayListleadsource!!)
+                    val itemAdapter =
+                        BottomSheetLeadSourceListAdapter(
+                            this@AddLeadActivity,
+                            arrayListleadsource!!
+                        )
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
@@ -672,21 +1120,21 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
         }
         var jsonObject = JSONObject()
         jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
-        val call = ApiUtils.apiInterface.ManageCities(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<CitiesResponse> {
+        val call = ApiUtils.apiInterface.ManageCityFindAll(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<CityResponse> {
             override fun onResponse(
-                call: Call<CitiesResponse>,
-                response: Response<CitiesResponse>
+                call: Call<CityResponse>,
+                response: Response<CityResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         arrayListCity = response.body()?.Data!!
 
-                        if(arrayListCity!!.size > 0) {
-                            for(i in 0 until arrayListCity!!.size) {
-                                if(state.equals(AppConstant.S_EDIT)) {
-                                    if(arrayListCity!![i].ID == mCityID) {
+                        if (arrayListCity!!.size > 0) {
+                            for (i in 0 until arrayListCity!!.size) {
+                                if (state.equals(AppConstant.S_EDIT)) {
+                                    if (arrayListCity!![i].ID == mCityID) {
                                         arrayListCity!![i].IsSelected = true
 
                                         mCityID = arrayListCity!![i].ID!!
@@ -721,7 +1169,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                 }
             }
 
-            override fun onFailure(call: Call<CitiesResponse>, t: Throwable) {
+            override fun onFailure(call: Call<CityResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
                     layout,
@@ -731,6 +1179,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
             }
         })
     }
+
     private fun selectCityDialog() {
         var dialogSelectCity = Dialog(this)
         dialogSelectCity.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -745,12 +1194,15 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
         dialogSelectCity.setCancelable(true)
         dialogSelectCity.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectCity.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectCity.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectCity.window!!.setGravity(Gravity.CENTER)
 
         val rvDialogCustomer = dialogSelectCity.findViewById(R.id.rvDialogCustomer) as RecyclerView
         val edtSearchCustomer = dialogSelectCity.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectCity.findViewById(R.id.txtid) as TextView
+        val txtid = dialogSelectCity.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectCity.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -761,7 +1213,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
 
         val itemAdapter = BottomSheetCitiesListAdapter(this, arrayListCity!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                 itemAdapter.updateItem(pos)
                 mCity = arrayListCity!![pos].CityName!!
@@ -785,10 +1237,9 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListCity!!.size > 6) {
+        if (arrayListCity!!.size > 6) {
             edtSearchCustomer.visible()
-        }
-        else {
+        } else {
             edtSearchCustomer.gone()
         }
 
@@ -800,7 +1251,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
             }
 
             override fun onTextChanged(char: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                val arrItemsFinal1: ArrayList<CitiesModel> = ArrayList()
+                val arrItemsFinal1: ArrayList<CityModel> = ArrayList()
                 if (char.toString().trim().isNotEmpty()) {
                     val strSearch = char.toString()
                     for (model in arrayListCity!!) {
@@ -809,7 +1260,8 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                         }
                     }
 
-                    val itemAdapter = BottomSheetCitiesListAdapter(this@AddLeadActivity, arrItemsFinal1)
+                    val itemAdapter =
+                        BottomSheetCitiesListAdapter(this@AddLeadActivity, arrItemsFinal1)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
@@ -834,7 +1286,8 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter = BottomSheetCitiesListAdapter(this@AddLeadActivity, arrayListCity!!)
+                    val itemAdapter =
+                        BottomSheetCitiesListAdapter(this@AddLeadActivity, arrayListCity!!)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
@@ -865,6 +1318,126 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
         dialogSelectCity!!.show()
     }
 
+    private fun callDeleteFamilyMember(ID: Int, position: Int) {
+
+        showProgress()
+
+        var jsonObject = JSONObject()
+        jsonObject.put("ID", ID)
+        val call = ApiUtils.apiInterface.deleteFamilyDetail(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<CommonResponse> {
+            override fun onResponse(
+                call: Call<CommonResponse>,
+                response: Response<CommonResponse>
+            ) {
+                hideProgress()
+                if (response.code() == 200) {
+                    if (response.body()?.Status == 200) {
+                        adapter.remove(position)
+                    } else {
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
+                hideProgress()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        })
+    }
+
+    private fun showDatePickerDialog(mode: Int, strDate: String) {
+
+        if (year == 0 || month == 0 || day == 0 || strDate.isNullOrEmpty()) {
+            calendarNow = Calendar.getInstance()
+            year = calendarNow!!.get(Calendar.YEAR)
+            month = calendarNow!!.get(Calendar.MONTH)
+            day = calendarNow!!.get(Calendar.DAY_OF_MONTH)
+        } else {
+            val parts = strDate.split("/")
+            day = parts[0].toInt()
+            month = parts[1].toInt() - 1
+            year = parts[2].toInt()
+        }
+
+        val dpd = DatePickerDialog(
+            this,
+            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+
+                val selectDate = convertDateStringToString(
+                    "$dayOfMonth/${monthOfYear + 1}/$year",
+                    AppConstant.DATE_INPUT_FORMAT
+                )!!
+
+                /*  Date of Birth  */
+                if (mode == 1) {
+                    edtDateOfBirth.text = selectDate.toEditable()
+
+                    /*  Marriage Date  */
+                } else if (mode == 2) {
+                    edtMarriage.text = selectDate.toEditable()
+                }
+
+
+                this.year = year
+                this.month = monthOfYear
+                this.day = dayOfMonth
+
+            },
+            year,
+            month,
+            day
+        )
+        dpd.datePicker.maxDate = System.currentTimeMillis()
+        dpd.show()
+    }
+
+    private fun showDatePickerDialog() {
+
+        calendarNow = Calendar.getInstance()
+
+        val dpd = DatePickerDialog(
+            this,
+            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                calendarNow!!.set(Calendar.YEAR, year)
+                calendarNow!!.set(Calendar.MONTH, monthOfYear)
+                calendarNow!!.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                val mdate = SimpleDateFormat(
+                    AppConstant.yyyy_MM_dd_Dash,
+                    Locale.US
+                ).format(calendarNow!!.time)
+
+                val selecteddate = SimpleDateFormat(
+                    AppConstant.dd_MM_yyyy_HH_mm_ss,
+                    Locale.US
+                ).format(calendarNow!!.time)
+                val date = convertDateStringToString(
+                    selecteddate,
+                    AppConstant.dd_MM_yyyy_HH_mm_ss,
+                    AppConstant.dd_LLL_yyyy
+                )
+
+                adapter.updateDOBItem(mDOBItemPostion, date!!, mdate)
+            },
+            calendarNow!!.get(Calendar.YEAR),
+            calendarNow!!.get(Calendar.MONTH),
+            calendarNow!!.get(Calendar.DAY_OF_MONTH)
+        )
+//                dpd.datePicker.minDate = System.currentTimeMillis() - 1000
+        dpd.datePicker.maxDate = System.currentTimeMillis()
+        dpd.show()
+    }
+
     private fun validation() {
 
         when (isValidate()) {
@@ -883,36 +1456,33 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
         var isValidate = true
 
         if (edtInitial.text.isEmpty()) {
-            edtInitial.setError("Select Initial",errortint(this))
+            edtInitial.setError("Select Initial", errortint(this))
             isValidate = false
         }
         if (edtFirstName.text.isEmpty()) {
-            edtFirstName.setError("Enter FirstName",errortint(this))
+            edtFirstName.setError("Enter FirstName", errortint(this))
             isValidate = false
         }
         if (edtLastName.text.isEmpty()) {
-            edtLastName.setError("Enter LastName",errortint(this))
+            edtLastName.setError("Enter LastName", errortint(this))
             isValidate = false
         }
         if (edtMobileNo.text.isEmpty()) {
-            edtMobileNo.setError("Enter MobileNo",errortint(this))
+            edtMobileNo.setError("Enter MobileNo", errortint(this))
             isValidate = false
         }
         if (edtMobileNo.text.toString().trim().length < 10) {
             edtMobileNo.setError(getString(R.string.error_valid_mobile_number), errortint(this))
-            isValidate =  false
-        }
-        if (edtEmailAddress.text.isEmpty()) {
-            edtEmailAddress.setError("Enter Email Address",errortint(this))
             isValidate = false
-        }
-        if (!edtEmailAddress.text.toString().trim().isValidEmail()) {
-            edtEmailAddress.setError(getString(R.string.error_valid_email), errortint(this))
-            isValidate =  false
         }
         if (edtGroupCode.text.isEmpty()) {
-            edtGroupCode.setError("Enter GroupCode",errortint(this))
+            edtGroupCode.setError("Enter GroupCode", errortint(this))
             isValidate = false
+        }
+        if (::adapter.isInitialized) {
+            if (!adapter.isValidateItem()) {
+                isValidate = false
+            }
         }
 
         return isValidate
@@ -922,6 +1492,17 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
 
         showProgress()
 
+        val birDate = convertDateStringToString(
+            edtDateOfBirth.text.toString().trim(),
+            AppConstant.DATE_INPUT_FORMAT,
+            AppConstant.DEFAULT_DATE_FORMAT
+        )
+        val mrgDate = convertDateStringToString(
+            edtMarriage.text.toString().trim(),
+            AppConstant.DATE_INPUT_FORMAT,
+            AppConstant.DEFAULT_DATE_FORMAT
+        )
+
         var mLeadStage = 0
         if (rbForExisting.isChecked) {
             mLeadStage = 1
@@ -929,9 +1510,31 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
             mLeadStage = 2
         }
 
+        val jsonArrayFamilyMember = JSONArray()
+        if (::adapter.isInitialized) {
+            val arrayList = adapter.getAdapterArrayList()
+            if (!arrayList.isNullOrEmpty()) {
+                for (i in 0 until arrayList!!.size) {
+                    val jsonObjectFamilyMember = JSONObject()
+                    jsonObjectFamilyMember.put("ID", arrayList[i].ID)
+                    jsonObjectFamilyMember.put("InitialID", arrayList[i].InitialID)
+                    jsonObjectFamilyMember.put("RelationID", arrayList[i].RelationId)
+                    jsonObjectFamilyMember.put("FirstName", arrayList[i].FirstName)
+                    jsonObjectFamilyMember.put("LastName", arrayList[i].LastName)
+                    jsonObjectFamilyMember.put("MobileNo", arrayList[i].MobileNo)
+                    if (arrayList[i].mDateOfBirth != "") {
+                        jsonObjectFamilyMember.put("BirthDate", arrayList[i].mDateOfBirth)
+                    }
+                    jsonArrayFamilyMember.put(jsonObjectFamilyMember)
+                }
+            }
+        }
+
         val jsonObject = JSONObject()
         jsonObject.put("LeadStage", mLeadStage)
         jsonObject.put("InitialID", mInitialID)
+        jsonObject.put("CategoryID", rating_bar.rating)
+        jsonObject.put("OccupationID", mOccupationID)
         jsonObject.put("FirstName", edtFirstName.text.toString().trim())
         jsonObject.put("LastName", edtLastName.text.toString().trim())
         jsonObject.put("MobileNo", edtMobileNo.text.toString().trim())
@@ -954,46 +1557,104 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
         jsonObject.put("CountryID", mCountryID)
         jsonObject.put("PinCode", edtZipcode.text.toString().trim())
         jsonObject.put("Notes", edtNotes.text.toString().trim())
+        if (birDate != "") {
+            jsonObject.put("BirthDate", birDate)
+        }
+        if (mrgDate != "") {
+            jsonObject.put("MarriageDate", mrgDate)
+        }
         jsonObject.put("IsActive", true)
+        jsonObject.put("FamilysDetails", jsonArrayFamilyMember)
 
-        if(state.equals(AppConstant.S_ADD)) {
-            jsonObject.put("OperationType", AppConstant.INSERT)
-        } else if(state.equals(AppConstant.S_EDIT)) {
+        if (state.equals(AppConstant.S_EDIT)) {
             jsonObject.put("LeadGUID", LeadGUID)
-            jsonObject.put("OperationType", AppConstant.EDIT)
         }
 
-        val call = ApiUtils.apiInterface.ManageLead(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<LeadResponse> {
-            override fun onResponse(call: Call<LeadResponse>, response: Response<LeadResponse>) {
-                hideProgress()
-                if (response.code() == 200) {
-                    if (response.body()?.Status == 201) {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
-                        val intent = Intent()
-                        setResult(RESULT_OK, intent)
-                        finish()
-                    } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
-                        val intent = Intent()
-                        setResult(RESULT_OK, intent)
-                        finish()
+        if (state.equals(AppConstant.S_ADD)) {
+            val call = ApiUtils.apiInterface.ManageLeadsInsert(getRequestJSONBody(jsonObject.toString()))
+            call.enqueue(object : Callback<RefGUIDResponse> {
+                override fun onResponse(call: Call<RefGUIDResponse>, response: Response<RefGUIDResponse>) {
+                    hideProgress()
+                    if (response.code() == 200) {
+                        if (response.body()?.Status == 201) {
+                            Snackbar.make(
+                                layout,
+                                response.body()?.Details.toString(),
+                                Snackbar.LENGTH_LONG
+                            )
+                                .show()
+                            val intent = Intent()
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        } else {
+                            Snackbar.make(
+                                layout,
+                                response.body()?.Details.toString(),
+                                Snackbar.LENGTH_LONG
+                            )
+                                .show()
+                            val intent = Intent()
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        }
                     }
                 }
-            }
 
-            override fun onFailure(call: Call<LeadResponse>, t: Throwable) {
-                hideProgress()
-                Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
-                ).show()
-                val intent = Intent()
-                setResult(RESULT_OK, intent)
-                finish()
-            }
-        })
+                override fun onFailure(call: Call<RefGUIDResponse>, t: Throwable) {
+                    hideProgress()
+                    Snackbar.make(
+                        layout,
+                        getString(R.string.error_failed_to_connect),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    val intent = Intent()
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+            })
+        } else {
+            val call = ApiUtils.apiInterface.ManageLeadsUpdate(getRequestJSONBody(jsonObject.toString()))
+            call.enqueue(object : Callback<CommonResponse> {
+                override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
+                    hideProgress()
+                    if (response.code() == 200) {
+                        if (response.body()?.Status == 201) {
+                            Snackbar.make(
+                                layout,
+                                response.body()?.Details.toString(),
+                                Snackbar.LENGTH_LONG
+                            )
+                                .show()
+                            val intent = Intent()
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        } else {
+                            Snackbar.make(
+                                layout,
+                                response.body()?.Details.toString(),
+                                Snackbar.LENGTH_LONG
+                            )
+                                .show()
+                            val intent = Intent()
+                            setResult(RESULT_OK, intent)
+                            finish()
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
+                    hideProgress()
+                    Snackbar.make(
+                        layout,
+                        getString(R.string.error_failed_to_connect),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    val intent = Intent()
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+            })
+        }
     }
 
     private fun callManageLeadGUID() {
@@ -1001,106 +1662,243 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener {
         showProgress()
 
         var jsonObject = JSONObject()
-        jsonObject.put("OperationType", AppConstant.GETBYGUID)
         jsonObject.put("LeadGUID", LeadGUID)
 
-        val call = ApiUtils.apiInterface.ManageLead(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<LeadResponse> {
-            override fun onResponse(call: Call<LeadResponse>, response: Response<LeadResponse>) {
-                hideProgress()
+        val call = ApiUtils.apiInterface.ManageLeadsFindByID(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<LeadByGUIDResponse> {
+            override fun onResponse(call: Call<LeadByGUIDResponse>, response: Response<LeadByGUIDResponse>) {
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arrayListLead = response.body()?.Data!!
-                        setAPIData(arrayListLead[0])
+                        setAPIData(arrayListLead)
+                        hideProgress()
                     } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        )
+                            .show()
                     }
                 }
             }
 
-            override fun onFailure(call: Call<LeadResponse>, t: Throwable) {
+            override fun onFailure(call: Call<LeadByGUIDResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                )
+                    .show()
             }
         })
     }
 
     private fun setAPIData(model: LeadModel) {
 
-        if(model.LeadStage != null && model.LeadStage != 0) {
+        if (model.LeadStage != null && model.LeadStage != 0) {
             if (model.LeadStage == 1) {
                 rbForExisting.isChecked = true
+                rating_bar.progressTintList = ColorStateList.valueOf(getColor(R.color.gold))
             } else if (model.LeadStage == 2) {
                 rbForProspect.isChecked = true
+                rating_bar.progressTintList = ColorStateList.valueOf(getColor(R.color.silver))
             }
             callManageUsers(0)
         }
-        if(model.InitialID != null && model.InitialID != 0) {
+        if (model.InitialID != null && model.InitialID != 0) {
             mInitialID = model.InitialID
-            callManageInitial(0)
+            callManageInitial(0, "Activity")
         }
-        if(!model.FirstName.isNullOrEmpty()) {
+        if (model.CategoryID != null && model.CategoryID != 0) {
+            rating_bar.rating = model.CategoryID.toFloat()
+        }
+        if (model.OccupationID != null && model.OccupationID != 0) {
+            mOccupationID = model.OccupationID
+            callManageOccupation(0)
+        }
+        if (!model.FirstName.isNullOrEmpty()) {
             edtFirstName.setText(model.FirstName)
         }
-        if(!model.LastName.isNullOrEmpty()) {
+        if (!model.LastName.isNullOrEmpty()) {
             edtLastName.setText(model.LastName)
         }
-        if(!model.EmailID.isNullOrEmpty()) {
+        if (!model.EmailID.isNullOrEmpty()) {
             edtEmailAddress.setText(model.EmailID)
         }
-        if(!model.MobileNo.isNullOrEmpty()) {
+        if (!model.MobileNo.isNullOrEmpty()) {
             edtMobileNo.setText(model.MobileNo)
         }
-        if(!model.GroupCode.isNullOrEmpty()) {
+        if (!model.GroupCode.isNullOrEmpty()) {
             edtGroupCode.setText(model.GroupCode)
         }
-        if(model.LeadOwnerID != null && model.LeadOwnerID != "") {
+        if (model.LeadOwnerID != null && model.LeadOwnerID != "") {
             mUsersID = model.LeadOwnerID.toInt()
         }
-        if(model.CompanyName != null && model.CompanyName != "") {
+        if (model.CompanyName != null && model.CompanyName != "") {
             edtCompanyName.setText(model.CompanyName)
         }
-        if(model.Title != null && model.Title != "") {
+        if (model.Title != null && model.Title != "") {
             edtTitle.setText(model.Title)
         }
-        if(model.PhoneNo != null && model.PhoneNo != "") {
+        if (model.PhoneNo != null && model.PhoneNo != "") {
             edtPhoneNo.setText(model.PhoneNo)
         }
-        if(model.Website != null && model.Website != "") {
+        if (model.Website != null && model.Website != "") {
             edtWebsite.setText(model.Website)
         }
-        if(model.LeadSourceID != null && model.LeadSourceID != 0) {
+        if (model.LeadSourceID != null && model.LeadSourceID != 0) {
             mLeadsourceID = model.LeadSourceID
             callManageLeadSource(0)
         }
-        if(model.RefName != null && model.RefName != "") {
+        if (model.RefName != null && model.RefName != "") {
             edtReferenceName.setText(model.RefName)
         }
-        if(model.RefMobileNo != null && model.RefMobileNo != "") {
+        if (model.RefMobileNo != null && model.RefMobileNo != "") {
             edtReferenceMobileNo.setText(model.RefMobileNo)
         }
-        if(model.Industry != null && model.Industry != "") {
+        if (model.Industry != null && model.Industry != "") {
             edtIndustry.setText(model.Industry)
         }
-        if(model.NoofEmp != null && model.NoofEmp != "") {
+        if (model.NoofEmp != null && model.NoofEmp != "") {
             edtNoOfEmp.setText(model.NoofEmp)
         }
-        if(model.AnnualRevenue != null && model.AnnualRevenue != "") {
+        if (model.AnnualRevenue != null && model.AnnualRevenue != "") {
             edtAnnualRevenue.setText(model.AnnualRevenue)
         }
-        if(model.Address != null && model.Address != "") {
+        if (model.Address != null && model.Address != "") {
             edtAddress.setText(model.Address)
         }
-        if(model.PinCode != null && model.PinCode != "") {
+        if (model.PinCode != null && model.PinCode != "") {
             edtZipcode.setText(model.PinCode)
         }
-        if(model.Notes != null && model.Notes != "") {
+        if (model.Notes != null && model.Notes != "") {
             edtNotes.setText(model.Notes)
         }
-
-        if(model.CityID != null && model.CityID != 0) {
+        if (!model.BirthDate.isNullOrEmpty()) {
+            edtDateOfBirth.setText(model.BirthDate)
+        }
+        if (!model.MarriageDate.isNullOrEmpty()) {
+            edtMarriage.setText(model.MarriageDate)
+        }
+        if (model.CityID != null && model.CityID != 0) {
             mCityID = model.CityID
             callManageCity(0)
         }
+
+        if(!model.FamilyDetails!!.isNullOrEmpty()) {
+            arrayListFamilyInfo = ArrayList()
+
+            for(i in 0 until model.FamilyDetails.size) {
+
+                val mDate = convertDateStringToString(model.FamilyDetails[i].BirthDate!! , AppConstant.DATE_INPUT_FORMAT,AppConstant.DEFAULT_DATE_FORMAT)
+
+                arrayListFamilyInfo?.add(
+                    FamilyMemberInfoModel(
+                        ID = model.FamilyDetails[i].ID!!,
+                        RelationId = model.FamilyDetails[i].RelationID!!,
+                        Relation = model.FamilyDetails[i].RelationName!!,
+                        InitialID = model.FamilyDetails[i].InitialID!!,
+                        Initial = model.FamilyDetails[i].InitialName.toString(),
+                        FirstName = model.FamilyDetails[i].FirstName!!,
+                        LastName = model.FamilyDetails[i].LastName!!,
+                        MobileNo = model.FamilyDetails[i].MobileNo!!,
+                        DateOfBirth = model.FamilyDetails[i].BirthDate!!,
+                        mDateOfBirth = mDate!!
+                    )
+                )
+            }
+            setAdapterData(arrayListFamilyInfo)
+        }
     }
+
+    override fun onItemClickEvent(view: View, position: Int, type: Int, name: String) {
+        hideKeyboard(applicationContext, view)
+        when (view.id) {
+
+            R.id.edtRelation -> {
+                preventTwoClick(view)
+                mRelationItemPostion = position
+                if (isOnline(this)) {
+                    if (arrayListRelation.isNullOrEmpty()) {
+                        callRelation(1)
+                    } else {
+                        selectRelationDialog()
+                    }
+                } else {
+                    internetErrordialog(this@AddLeadActivity)
+                }
+            }
+
+            R.id.edtInitialItem -> {
+                preventTwoClick(view)
+                mInitialItemPostion = position
+                if (isOnline(this)) {
+                    if (arrayListInitial.isNullOrEmpty()) {
+                        callManageInitial(1, "Adapter")
+                    } else {
+                        selectInitialDialog(1)
+                    }
+                } else {
+                    internetErrordialog(this@AddLeadActivity)
+                }
+            }
+
+            R.id.edtInquiryDate -> {
+                preventTwoClick(view)
+            }
+
+            R.id.edtDOB -> {
+                preventTwoClick(view)
+                mDOBItemPostion = position
+                showDatePickerDialog()
+            }
+
+            R.id.imgDelete -> {
+                if (::adapter.isInitialized) {
+                    AwesomeDialog.build(this).title("Warning !!!")
+                        .body("Are you sure want to delete this Family Member?")
+                        .icon(R.drawable.ic_delete).position(AwesomeDialog.POSITIONS.CENTER)
+                        .onNegative("No") {
+
+                        }.onPositive("Yes") {
+                            if (adapter.arrayList!!.get(position).ID == 0) {
+                                adapter.remove(position)
+                            } else{
+                                callDeleteFamilyMember(adapter.arrayList!!.get(position).ID, position)
+                            }
+                        }
+                }
+            }
+
+        }
+    }
+
+    private fun callManageLeadCount() {
+
+        val call = ApiUtils.apiInterface.ManageLeadCount()
+        call.enqueue(object : Callback<LeadCountResponse> {
+            override fun onResponse(call: Call<LeadCountResponse>, response: Response<LeadCountResponse>) {
+                if (response.code() == 200) {
+                    if (response.body()?.Status == 200) {
+                        val arrayListLead = response.body()?.Data!!
+                        if(arrayListLead.LeadCount != 0) {
+                            txtClientNo.setText("Client No : "+ arrayListLead.LeadCount)
+                            txtClientNo.visible()
+                        }
+                    } else {
+                        Snackbar.make(
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<LeadCountResponse>, t: Throwable) {
+                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+            }
+        })
+    }
+
 }

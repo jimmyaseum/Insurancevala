@@ -1,73 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:id="@+id/layout">
+    android:orientation="vertical">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_5sdp"
+        android:elevation="@dimen/_3sdp"
         app:cardBackgroundColor="@color/colorWhite"
         app:cardCornerRadius="@dimen/_5sdp"
-        app:contentPadding="@dimen/_5sdp"
-        android:elevation="@dimen/_3sdp"
-        android:layout_marginBottom="@dimen/_5sdp">
+        app:contentPadding="@dimen/_5sdp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:gravity="center"
-            android:layout_margin="@dimen/_10sdp">
+            android:orientation="horizontal">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/imgprofile"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
                 android:src="@drawable/ic_profile" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/_10sdp"
                 android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:layout_marginLeft="@dimen/_10sdp">
+                android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/txtName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text=""
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Name"
                     android:textColor="@color/button_primary"
-                    android:textSize="@dimen/_11sdp"
-                    android:fontFamily="@font/poppins_semibold"/>
+                    android:textSize="@dimen/_10sdp" />
+
+                <TextView
+                    android:id="@+id/txtMobileNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="9999999999"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/_9sdp" />
 
                 <TextView
                     android:id="@+id/txtEmail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/poppins_medium"
-                    android:text=""
-                    android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/_10sdp" />
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Email@gmail.com"
+                    android:textColor="@color/colorGray500"
+                    android:textSize="@dimen/_8sdp" />
+
+                <RatingBar
+                    android:id="@+id/rating_bar"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:progressTint="@color/gold"
+                    android:rating="0"
+                    android:scaleX="1"
+                    android:scaleY="1"
+                    android:stepSize="1" />
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/imgFamilyMember"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:padding="@dimen/_5sdp"
+                android:src="@drawable/family_cancel" />
+
             <ImageView
                 android:id="@+id/imgEdit"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:padding="@dimen/_5sdp"
-                android:src="@drawable/ic_edit1"
-                android:layout_alignParentRight="true"/>
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:padding="@dimen/_3sdp"
+                android:src="@drawable/ic_edit1" />
+
             <ImageView
                 android:id="@+id/imgDelete"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
                 android:padding="@dimen/_5sdp"
                 android:src="@drawable/ic_delete"
-                app:tint="@color/colorRed"
                 android:visibility="gone"
-                android:layout_alignParentRight="true"/>
+                app:tint="@color/colorRed" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

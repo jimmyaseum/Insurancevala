@@ -8,11 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.CitiesModel
+import com.app.insurancevala.model.response.CityModel
 import com.app.insurancevala.utils.gone
 import com.app.insurancevala.utils.visible
 import kotlinx.android.synthetic.main.row_select.view.*
 
-class BottomSheetCitiesListAdapter(val context: Context?, private val arrayList : ArrayList<CitiesModel>) : RecyclerView.Adapter<BottomSheetCitiesListAdapter.ViewHolder>() {
+class BottomSheetCitiesListAdapter(val context: Context?, private val arrayList : ArrayList<CityModel>) : RecyclerView.Adapter<BottomSheetCitiesListAdapter.ViewHolder>() {
 
     private var recyclerItemClickListener: RecyclerClickListener? = null
 
@@ -38,7 +39,7 @@ class BottomSheetCitiesListAdapter(val context: Context?, private val arrayList 
             context: Context,
             position: Int,
             recyclerItemClickListener: RecyclerClickListener,
-            arrayList : CitiesModel
+            arrayList : CityModel
         ) {
             this.context = context
 

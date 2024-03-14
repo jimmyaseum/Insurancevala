@@ -1,6 +1,7 @@
 package com.app.insurancevala.fragment
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,7 +10,6 @@ import android.view.animation.AnimationUtils
 import com.app.insurancevala.R
 import kotlinx.android.synthetic.main.fragment_lead.view.*
 import kotlinx.android.synthetic.main.fragment_lead.*
-import kotlinx.android.synthetic.main.fragment_lead.layout
 import com.app.insurancevala.activity.Lead.AddLeadActivity
 import com.app.insurancevala.activity.Lead.LeadDashboardActivity
 import com.app.insurancevala.adapter.LeadListAdapter
@@ -20,18 +20,21 @@ import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.ferfalk.simplesearchview.SimpleSearchView
 import com.google.android.material.snackbar.Snackbar
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class LeadFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener {
+class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener {
 
     private var views: View? = null
-    var arrayListLead : ArrayList<LeadModel>? = ArrayList()
-    var arrayListLeadNew : ArrayList<LeadModel>? = ArrayList()
+    var arrayListLead: ArrayList<LeadModel>? = ArrayList()
+    var arrayListLeadNew: ArrayList<LeadModel>? = ArrayList()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         views = inflater.inflate(R.layout.fragment_lead, container, false)
         initializeView()
 
@@ -57,7 +60,7 @@ class LeadFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListene
         }
 
         views!!.imgSearch.setOnClickListener {
-            if(searchView.isSearchOpen) {
+            if (searchView.isSearchOpen) {
                 searchView.closeSearch()
             } else {
                 searchView.showSearch()
@@ -68,6 +71,7 @@ class LeadFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListene
             override fun onQueryTextSubmit(query: String): Boolean {
                 return false
             }
+
             override fun onQueryTextChange(newText: String): Boolean {
                 val arrItemsFinal1: ArrayList<LeadModel> = ArrayList()
                 if (newText.trim().isNotEmpty()) {
@@ -78,18 +82,22 @@ class LeadFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListene
                                 model.LastName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
                                 model.EmailID!!.toLowerCase().contains(strSearch.toLowerCase()) ||
                                 model.CompanyName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                                model.MobileNo!!.toLowerCase().contains(strSearch.toLowerCase())) {
+                                model.MobileNo!!.toLowerCase().contains(strSearch.toLowerCase())
+                            ) {
                                 arrItemsFinal1.add(model)
                             }
-                        } catch (e: Exception){
+                        } catch (e: Exception) {
+                            LogUtil.d(TAG,""+e)
                         }
                     }
                     arrayListLeadNew = arrItemsFinal1
-                    val itemAdapter = LeadListAdapter(activity, arrayListLeadNew!!,this@LeadFragment)
+                    val itemAdapter =
+                        LeadListAdapter(activity, arrayListLeadNew!!, this@LeadFragment)
                     views!!.RvLeadList.adapter = itemAdapter
                 } else {
                     arrayListLeadNew = arrayListLead
-                    val itemAdapter = LeadListAdapter(activity, arrayListLeadNew!!, this@LeadFragment)
+                    val itemAdapter =
+                        LeadListAdapter(activity, arrayListLeadNew!!, this@LeadFragment)
                     views!!.RvLeadList.adapter = itemAdapter
                 }
                 return false
@@ -120,6 +128,8 @@ class LeadFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListene
         })
 
         views!!.refreshLayout.setOnRefreshListener {
+            hideKeyboard(requireContext(),refreshLayout)
+            searchView.closeSearch()
             callManageLead()
             views!!.refreshLayout.isRefreshing = false
         }
@@ -131,12 +141,13 @@ class LeadFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListene
             R.id.imgAddLead -> {
                 preventTwoClick(v)
                 val intent = Intent(getActivity(), AddLeadActivity::class.java)
-                intent.putExtra(AppConstant.STATE,AppConstant.S_ADD)
+                intent.putExtra(AppConstant.STATE, AppConstant.S_ADD)
                 requireActivity().startActivityForResult(intent, AppConstant.INTENT_1001)
             }
+
             R.id.imgSortBy -> {
                 preventTwoClick(v)
-                if(arrayListLeadNew!!.size > 0) {
+                if (arrayListLeadNew!!.size > 0) {
                     arrayListLeadNew!!.reverse()
                     views!!.RvLeadList.adapter?.notifyDataSetChanged()
                 }
@@ -149,10 +160,7 @@ class LeadFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListene
 
         showProgress()
 
-        var jsonObject = JSONObject()
-        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
-
-        val call = ApiUtils.apiInterface.ManageLead(getRequestJSONBody(jsonObject.toString()))
+        val call = ApiUtils.apiInterface.getLeadsFindAllActive()
         call.enqueue(object : Callback<LeadResponse> {
             override fun onResponse(call: Call<LeadResponse>, response: Response<LeadResponse>) {
                 hideProgress()
@@ -164,15 +172,18 @@ class LeadFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListene
                         arrayListLead = response.body()?.Data!!
                         arrayListLeadNew = arrayListLead
 
-                        if(arrayListLeadNew!!.size > 0) {
-
-                            val myAdapter = LeadListAdapter(activity, arrayListLeadNew!!,this@LeadFragment)
+                        if (arrayListLeadNew!!.size > 0) {
+                            val myAdapter = LeadListAdapter(activity, arrayListLeadNew!!, this@LeadFragment)
                             views!!.RvLeadList.adapter = myAdapter
                             views!!.shimmer.stopShimmer()
                             views!!.shimmer.gone()
 
                         } else {
-                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                layout,
+                                response.body()?.Details.toString(),
+                                Snackbar.LENGTH_LONG
+                            ).show()
                             views!!.shimmer.stopShimmer()
                             views!!.shimmer.gone()
                             views!!.FL.gone()
@@ -189,28 +200,44 @@ class LeadFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListene
 
             override fun onFailure(call: Call<LeadResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         })
 
     }
 
     override fun onItemClickEvent(view: View, position: Int, type: Int) {
-        when(type) {
+        when (type) {
             101 -> {
                 preventTwoClick(view)
                 val intent = Intent(getActivity(), LeadDashboardActivity::class.java)
-                intent.putExtra("LeadID",arrayListLeadNew!![position].ID)
-                intent.putExtra("GUID",arrayListLeadNew!![position].LeadGUID)
-                startActivity(intent)
+                intent.putExtra("LeadID", arrayListLeadNew!![position].ID)
+                intent.putExtra("GUID", arrayListLeadNew!![position].LeadGUID)
+                startActivityForResult(intent, AppConstant.INTENT_1001)
             }
+
             102 -> {
                 preventTwoClick(view)
                 val intent = Intent(getActivity(), AddLeadActivity::class.java)
-                intent.putExtra(AppConstant.STATE,AppConstant.S_EDIT)
-                intent.putExtra("LeadID",arrayListLeadNew!![position].ID)
-                intent.putExtra("GUID",arrayListLeadNew!![position].LeadGUID)
+                intent.putExtra(AppConstant.STATE, AppConstant.S_EDIT)
+                intent.putExtra("LeadID", arrayListLeadNew!![position].ID)
+                intent.putExtra("GUID", arrayListLeadNew!![position].LeadGUID)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
+            }
+
+            103 -> {
+                preventTwoClick(view)
+                if (!arrayListLeadNew!![position].LeadImage.isNullOrEmpty()) {
+                    val browserIntent = Intent(
+                        Intent.ACTION_VIEW,
+                        Uri.parse(arrayListLeadNew!![position].LeadImage)
+                    )
+                    startActivity(browserIntent)
+                }
             }
         }
     }

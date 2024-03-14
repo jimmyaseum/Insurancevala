@@ -82,8 +82,8 @@ class AddInitialTypeActivity : BaseActivity(), View.OnClickListener {
 
         SetInitListner()
 
-        arrayListStatus?.add(SingleSelectionModel(0, "true", true))
-        arrayListStatus?.add(SingleSelectionModel(1, "false", false))
+        arrayListStatus?.add(SingleSelectionModel(0, "Active", true))
+        arrayListStatus?.add(SingleSelectionModel(1, "InActive", false))
     }
 
     private fun setMasterData() {
@@ -95,7 +95,7 @@ class AddInitialTypeActivity : BaseActivity(), View.OnClickListener {
 
     private fun SetInitListner() {
         imgBack.setOnClickListener(this)
-        edtIsActive.setOnClickListener(this)
+        edtStatus.setOnClickListener(this)
         txtButtonCancel.setOnClickListener(this)
         txtButtonSubmit.setOnClickListener(this)
     }
@@ -108,7 +108,7 @@ class AddInitialTypeActivity : BaseActivity(), View.OnClickListener {
                 onBackPressed()
             }
 
-            R.id.edtIsActive -> {
+            R.id.edtStatus -> {
                 preventTwoClick(v)
                 if (!arrayListStatus.isNullOrEmpty()) {
                     selectInitialDialog()
@@ -151,8 +151,8 @@ class AddInitialTypeActivity : BaseActivity(), View.OnClickListener {
             edtInitial.setError(getString(R.string.error_empty_initial_type), errortint(this))
             isvalidate = false
         }
-        if (edtIsActive.text.toString().trim().isEmpty()) {
-            edtIsActive.setError(getString(R.string.error_empty_type), errortint(this))
+        if (edtStatus.text.toString().trim().isEmpty()) {
+            edtStatus.setError(getString(R.string.error_empty_type), errortint(this))
             isvalidate = false
         }
 
@@ -166,7 +166,7 @@ class AddInitialTypeActivity : BaseActivity(), View.OnClickListener {
         val jsonObject = JSONObject()
         jsonObject.put("Initial", edtInitial.text.toString().trim())
 
-        if (edtIsActive.text.toString().trim() == "true") {
+        if (edtStatus.text.toString().trim() == "Active") {
             jsonObject.put("IsActive", true)
         } else {
             jsonObject.put("IsActive", false)
@@ -293,7 +293,7 @@ class AddInitialTypeActivity : BaseActivity(), View.OnClickListener {
 
                 itemAdapter.updateItem(position)
                 mInitial = arrayListStatus!![position].Name.toString()
-                edtIsActive.setText(mInitial)
+                edtStatus.setText(mInitial)
                 dialogSelectInitial.dismiss()
             }
         })
@@ -309,7 +309,11 @@ class AddInitialTypeActivity : BaseActivity(), View.OnClickListener {
             edtInitial.setText(model.Initial)
         }
         if (model.IsActive != null) {
-            edtIsActive.setText(model.IsActive.toString())
+            if (model.IsActive) {
+                edtStatus.setText("Active")
+            } else {
+                edtStatus.setText("InActive")
+            }
         }
     }
 

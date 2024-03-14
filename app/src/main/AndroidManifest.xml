@@ -34,6 +34,7 @@
             android:name="org.apache.http.legacy"
             android:required="false" />
 
+        <!--Splash Activity-->
         <activity
             android:name="com.app.insurancevala.activity.SplashActivity"
             android:exported="true"
@@ -44,93 +45,129 @@
             </intent-filter>
         </activity>
 
+        <!--Welcome Activity-->
         <activity
             android:name=".activity.Login.WelcomeActivity"
             android:exported="true" />
+
+        <!--Login Activity-->
         <activity
             android:name=".activity.Login.LoginActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:exported="true"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <!--Registration Activity-->
         <activity
             android:name=".activity.Login.RegistrationActivity"
             android:exported="true" />
+
+        <!--Forgot Password Activity-->
         <activity
-            android:name=".activity.Login.ForgotpasswordActivity"
+            android:name=".activity.Login.ForgotPasswordActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize" />
+
+        <!--Reset New Password Activity-->
         <activity
             android:name=".activity.Login.ResetNewPasswordActivity"
             android:exported="true" />
 
+        <!--Home Activity-->
         <activity
             android:name=".activity.DashBoard.HomeActivity"
             android:exported="true"
-            android:theme="@style/AppThemeHome"></activity>
+            android:theme="@style/AppThemeHome" />
 
+        <!--Home Inner List Activity-->
         <activity
             android:name=".activity.DashBoard.HomeInnerListActivity"
             android:exported="true" />
 
+        <!--Lead Dashboard Activity-->
         <activity
             android:name=".activity.Lead.LeadDashboardActivity"
             android:exported="true"
             android:theme="@style/AppThemeHome" />
 
+        <!--Add Lead List Activity-->
         <activity
             android:name=".activity.Lead.AddLeadActivity"
             android:exported="true" />
 
+        <!--Note List Activity-->
         <activity
             android:name=".activity.Lead.NotesListActivity"
             android:exported="true" />
+
+        <!--Add Note Log Activity-->
         <activity
             android:name=".activity.Lead.AddNotesActivity"
             android:exported="true" />
 
+        <!--Add Attachment Activity-->
         <activity
-            android:name=".activity.Lead.AddAttchmentsActivity"
+            android:name=".activity.Lead.AddAttachmentsActivity"
             android:exported="true" />
+
+        <!--Attachment List Activity-->
         <activity
             android:name=".activity.Lead.AttachmentsListActivity"
             android:exported="true" />
 
+        <!--Calls List Activity-->
         <activity
             android:name=".activity.Lead.CallsListActivity"
             android:exported="true" />
+
+        <!--Add Calls Log Activity-->
         <activity
             android:name=".activity.Lead.AddCallLogsActivity"
             android:exported="true" />
+
+        <!--Calls Detail Activity-->
         <activity
             android:name=".activity.Lead.CallsDetailsActivity"
             android:exported="true" />
 
+        <!--Meeting List Activity-->
         <activity
             android:name=".activity.Lead.MeetingsListActivity"
             android:exported="true" />
+
+        <!--Add Meeting Activity-->
         <activity
             android:name=".activity.Lead.AddMeetingsActivity"
             android:exported="true" />
+
+        <!--Meeting Detail Activity-->
         <activity
             android:name=".activity.Lead.MeetingsDetailsActivity"
             android:exported="true" />
 
+        <!--Add Task Activity-->
         <activity
             android:name=".activity.Lead.AddTaskLogsActivity"
             android:exported="true" />
+
+        <!--Task List Activity-->
         <activity
             android:name=".activity.Lead.TasksListActivity"
             android:exported="true" />
+
+        <!--Task Details Activity-->
         <activity
             android:name=".activity.Lead.TasksDetailsActivity"
             android:exported="true" />
 
+        <!--Add NBInquiry Activity-->
         <activity
             android:name=".activity.NBInquiry.AddNBActivity"
             android:exported="true"
             android:windowSoftInputMode="stateHidden|adjustPan" />
 
+        <!--NBInquiry List Activity-->
         <activity
             android:name=".activity.NBInquiry.InquiryListActivity"
             android:exported="true" />
@@ -138,6 +175,7 @@
             android:name=".activity.NBInquiry.InquiryEditActivity"
             android:exported="true" />
 
+        <!--UsersList Activity-->
         <activity
             android:name=".activity.Users.UsersListActivity"
             android:exported="true" />
@@ -145,42 +183,107 @@
             android:name=".activity.Users.AddUsersActivity"
             android:exported="true" />
 
-        <activity android:name=".master.InquiryTypeListActivity"
-            android:exported="true" />
-        <activity android:name=".master.AddInquiryTypeActivity"
-            android:exported="true" />
+        <!--Master List-->
+        <activity android:name=".master.MastersListActivity"
+            android:exported="true"/>
 
-        <activity android:name=".master.InquirySubTypeListActivity"
+        <!--InquiryType Masters-->
+        <activity
+            android:name=".master.InquiryTypeListActivity"
             android:exported="true" />
-        <activity android:name=".master.AddInquirySubTypeActivity"
-            android:exported="true" />
-
-        <activity android:name=".master.LeadTypeListActivity"
-            android:exported="true" />
-        <activity android:name=".master.AddLeadTypeActivity"
+        <activity
+            android:name=".master.AddInquiryTypeActivity"
             android:exported="true" />
 
-        <activity android:name=".master.LeadStatusListActivity"
+        <!--InquirySubType Masters-->
+        <activity
+            android:name=".master.InquirySubTypeListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".master.AddInquirySubTypeActivity"
+            android:exported="true" />
+
+        <!--LeadType Masters-->
+        <activity
+            android:name=".master.LeadTypeListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".master.AddLeadTypeActivity"
+            android:exported="true" />
+
+        <!--LeadStatus Masters-->
+        <activity
+            android:name=".master.LeadStatusListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".master.AddLeadStatusActivity"
+            android:exported="true" />
+
+        <!--UserType Masters-->
+        <activity
+            android:name=".master.UserTypeListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".master.AddUserTypeActivity"
+            android:exported="true" />
+
+        <!--InitialType Masters-->
+        <activity
+            android:name=".master.InitialTypeListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".master.AddInitialTypeActivity"
+            android:exported="true" />
+
+        <!--LeadSource Masters-->
+        <activity
+            android:name=".master.LeadSourceListActivity"
+            android:exported="true" />
+        <activity
+            android:name=".master.AddLeadSourceActivity"
+            android:exported="true" />
+
+        <!--CategoryType Masters-->
+        <activity android:name=".master.CategoryTypeListActivity"
             android:exported="true"/>
-        <activity android:name=".master.AddLeadStatusActivity"
+        <activity android:name=".master.AddCategoryTypeActivity"
             android:exported="true"/>
 
-        <activity android:name=".master.UserTypeListActivity"
+        <!--OccupationType Masters-->
+        <activity android:name=".master.OccupationTypeListActivity"
             android:exported="true"/>
-        <activity android:name=".master.AddUserTypeActivity"
-            android:exported="true"/>
-
-        <activity android:name=".master.InitialTypeListActivity"
-            android:exported="true"/>
-        <activity android:name=".master.AddInitialTypeActivity"
+        <activity android:name=".master.AddOccupationTypeActivity"
             android:exported="true"/>
 
-        <activity android:name=".master.LeadSourceListActivity"
+        <!--RelationType Masters-->
+        <activity android:name=".master.RelationTypeListActivity"
             android:exported="true"/>
-        <activity android:name=".master.AddLeadSourceActivity"
+        <activity android:name=".master.AddRelationTypeActivity"
             android:exported="true"/>
 
-        <!-- filepicker -->
+        <!--Country Masters-->
+        <activity android:name=".master.CountryListActivity"
+            android:exported="true"/>
+        <activity android:name=".master.AddCountryActivity"
+            android:exported="true"/>
+
+        <!--State Masters-->
+        <activity android:name=".master.StateListActivity"
+            android:exported="true"/>
+        <activity android:name=".master.AddStateActivity"
+            android:exported="true"/>
+
+        <!--City Masters-->
+        <activity android:name=".master.CityListActivity"
+            android:exported="true"/>
+        <activity android:name=".master.AddCityActivity"
+            android:exported="true"/>
+
+        <!--Recording List-->
+        <activity android:name=".activity.Lead.RecordingsListActivity"
+            android:exported="true"/>
+
+        <!-- FilePicker -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.app.insurancevala"
@@ -189,12 +292,13 @@
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
-        </provider> <!-- Crop Image -->
+        </provider>
+
+        <!-- Crop Image -->
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:exported="true"
             android:theme="@style/Base.Theme.AppCompat" />
-        <activity android:name=".master.MastersListActivity" />
     </application>
 
 </manifest>

@@ -8,6 +8,7 @@ import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.adapter.AttachmentListAdapter
 import com.app.insurancevala.model.pojo.DocumentsModel
+import com.app.insurancevala.model.response.MeetingsByGUIDResponse
 import com.app.insurancevala.model.response.MeetingsModel
 import com.app.insurancevala.model.response.MeetingsResponse
 import com.app.insurancevala.retrofit.ApiUtils
@@ -28,6 +29,7 @@ class MeetingsDetailsActivity  : BaseActivity(), View.OnClickListener {
     lateinit var adapter: AttachmentListAdapter
 
     var LeadID: Int? = null
+    var ID: Int? = null
     var MeetingGUID: String? = null
     var sharedPreference: SharedPreference? = null
 
@@ -42,6 +44,7 @@ class MeetingsDetailsActivity  : BaseActivity(), View.OnClickListener {
 
     private fun getIntentData() {
         LeadID = intent.getIntExtra("LeadID",0)
+        ID = intent.getIntExtra("ID",0)
         MeetingGUID = intent.getStringExtra("MeetingGUID")
     }
 
@@ -72,24 +75,24 @@ class MeetingsDetailsActivity  : BaseActivity(), View.OnClickListener {
         showProgress()
 
         var jsonObject = JSONObject()
-        jsonObject.put("OperationType", AppConstant.GETBYGUID)
+        jsonObject.put("NBInquiryTypeID", ID)
         jsonObject.put("MeetingGUID", MeetingGUID)
 
-        val call = ApiUtils.apiInterface.ManageMeetings(getRequestJSONBody(jsonObject.toString()))
-        call.enqueue(object : Callback<MeetingsResponse> {
-            override fun onResponse(call: Call<MeetingsResponse>, response: Response<MeetingsResponse>) {
+        val call = ApiUtils.apiInterface.ManageMeetingFindByID(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<MeetingsByGUIDResponse> {
+            override fun onResponse(call: Call<MeetingsByGUIDResponse>, response: Response<MeetingsByGUIDResponse>) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arrayListLead = response.body()?.Data!!
-                        setAPIData(arrayListLead[0])
+                        setAPIData(arrayListLead)
                     } else {
                         Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                     }
                 }
             }
 
-            override fun onFailure(call: Call<MeetingsResponse>, t: Throwable) {
+            override fun onFailure(call: Call<MeetingsByGUIDResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
             }

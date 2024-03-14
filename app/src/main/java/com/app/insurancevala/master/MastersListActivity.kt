@@ -11,7 +11,6 @@ import com.app.insurancevala.utils.SharedPreference
 import com.app.insurancevala.utils.hideKeyboard
 import com.app.insurancevala.utils.preventTwoClick
 import kotlinx.android.synthetic.main.activity_masters_list.*
-import kotlinx.android.synthetic.main.activity_masters_list.view.*
 
 class MastersListActivity : BaseActivity(), View.OnClickListener {
 
@@ -42,6 +41,12 @@ class MastersListActivity : BaseActivity(), View.OnClickListener {
         LLUserType.setOnClickListener(this)
         LLInitialType.setOnClickListener(this)
         LLLeadSource.setOnClickListener(this)
+        LLCategoryType.setOnClickListener(this)
+        LLOccupation.setOnClickListener(this)
+        LLRelation.setOnClickListener(this)
+        LLCountry.setOnClickListener(this)
+        LLState.setOnClickListener(this)
+        LLCity.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -94,6 +99,48 @@ class MastersListActivity : BaseActivity(), View.OnClickListener {
             R.id.LLLeadSource -> {
                 preventTwoClick(v)
                 val intent = Intent(this, LeadSourceListActivity::class.java)
+                startActivity(intent)
+
+            }
+
+            R.id.LLCategoryType -> {
+                preventTwoClick(v)
+                val intent = Intent(this, CategoryTypeListActivity::class.java)
+                startActivity(intent)
+
+            }
+
+            R.id.LLOccupation -> {
+                preventTwoClick(v)
+                val intent = Intent(this, OccupationTypeListActivity::class.java)
+                startActivity(intent)
+
+            }
+
+            R.id.LLRelation -> {
+                preventTwoClick(v)
+                val intent = Intent(this, RelationTypeListActivity::class.java)
+                startActivity(intent)
+
+            }
+
+            R.id.LLCountry -> {
+                preventTwoClick(v)
+                val intent = Intent(this, CountryListActivity::class.java)
+                startActivity(intent)
+
+            }
+
+            R.id.LLState -> {
+                preventTwoClick(v)
+                val intent = Intent(this, StateListActivity::class.java)
+                startActivity(intent)
+
+            }
+
+            R.id.LLCity -> {
+                preventTwoClick(v)
+                val intent = Intent(this, CityListActivity::class.java)
                 startActivity(intent)
 
             }

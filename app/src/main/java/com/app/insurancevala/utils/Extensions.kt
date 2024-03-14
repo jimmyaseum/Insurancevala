@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.net.Uri
+import android.text.Editable
 import android.util.Patterns
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -116,6 +117,11 @@ fun AppCompatActivity.replaceFragment(fragment: Fragment, frameId: Int, tag: Str
         if (addToBackStack) addToBackStack(fragment.javaClass.name)
     }
 }
+
+/*
+* Convert in String for EditText value
+*/
+fun String.toEditable(): Editable = Editable.Factory.getInstance().newEditable(this)
 
 inline fun <T> justTry(block: () -> T) = try {
     block()
