@@ -62,6 +62,8 @@ data class CallsModel (
     val IsFollowup: Boolean? = null,
     @SerializedName("FollowupDate")
     val FollowupDate: String? = null,
+    @SerializedName("FollowupTime")
+    val FollowupTime: String? = null,
     @SerializedName("FollowupNotes")
     val FollowupNotes: String? = null,
     @SerializedName("Agenda")

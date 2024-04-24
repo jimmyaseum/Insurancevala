@@ -14,6 +14,7 @@ import com.app.insurancevala.interFase.RecyclerItemClickListener
 import com.app.insurancevala.model.pojo.InquiryInformationModel
 import com.app.insurancevala.utils.LogUtil
 import com.app.insurancevala.utils.TAG
+import com.app.insurancevala.utils.errortint
 import com.app.insurancevala.utils.gone
 import com.app.insurancevala.utils.visible
 import kotlinx.android.synthetic.main.adapter_add_more_inquiry.view.*
@@ -35,6 +36,7 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
 
         holder.bindItems(context!!, position, arrayList!!, recyclerItemClickListener)
 
+        arrayList[position].tilFamilyMember = holder.itemView.edtFamilyMember
         arrayList[position].tilInquiryType = holder.itemView.edtInquiryType
         arrayList[position].tilInquirysubtype = holder.itemView.edtInquirySub
         arrayList[position].tilProposed = holder.itemView.edtProposedAmount
@@ -78,6 +80,7 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
 
             itemView.edtAllotmentTo.setText(arrayList!![position].AllotmentTo)
 
+            itemView.edtFamilyMember.setText(arrayList!![position].FamilyMember)
             itemView.edtInquiryType.setText(arrayList!![position].Inquirytype)
             itemView.edtInquirySub.setText(arrayList!![position].Inquirysubtype)
             itemView.edtProposedAmount.setText(arrayList!![position].Proposed.toString())
@@ -86,6 +89,14 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
             itemView.edtLeadStatus.setText(arrayList!![position].Leadstatus)
             itemView.edtAllotmentTo.setText(arrayList!![position].AllotmentTo)
             itemView.edtInquiryDate.setText(arrayList!![position].InquiryDate)
+
+            itemView.edtFamilyMember.setOnClickListener {
+                if(!arrayList[adapterPosition].FamilyMember!!.isEmpty()) {
+                    recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 1, arrayList[adapterPosition].FamilyMember)
+                } else{
+                    recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 1, arrayList[adapterPosition].FamilyMember)
+                }
+            }
 
             itemView.edtInquiryType.setOnClickListener {
                 if(!arrayList[adapterPosition].Inquirytype!!.isEmpty()) {
@@ -151,6 +162,12 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 1, "")
             }
 
+            itemView.edtFamilyMember.setSimpleListener {
+                arrayList[adapterPosition].FamilyMember = it.toString()
+                if (!arrayList[adapterPosition].FamilyMember.isNullOrEmpty()) {
+                    itemView.edtFamilyMember.setError(null)
+                }
+            }
             itemView.edtInquiryType.setSimpleListener {
                 arrayList[adapterPosition].Inquirytype = it.toString()
                 if (!arrayList[adapterPosition].Inquirytype.isNullOrEmpty()) {
@@ -251,6 +268,7 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
         var emptyBox = true
         if (!arrayList.isNullOrEmpty()) {
             for (model in arrayList) {
+                LogUtil.d(TAG,"===>111 = "+model.tilFamilyMember?.text!!.trim())
                 LogUtil.d(TAG,"===>111 = "+model.tilInquiryType?.text!!.trim())
                 LogUtil.d(TAG,"===>222 = "+model.tilInquirysubtype?.text!!.trim())
                 LogUtil.d(TAG,"===>333 = "+model.tilLeadstatus?.text!!.trim())
@@ -259,42 +277,54 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
                 LogUtil.d(TAG,"===>666 = "+model.tilFrequency?.text!!.trim())
                 LogUtil.d(TAG,"===>777 = "+model.tilProposed?.text!!.trim())
                 LogUtil.d(TAG,"===>888 = "+model.tilInquiryDate?.text!!.trim())
+                if (TextUtils.isEmpty(model.tilFamilyMember?.text!!.trim())) {
+                    model.tilFamilyMember?.setError("Select Family Member", errortint(context!!))
+                    emptyBox = false
+                }
                 if (TextUtils.isEmpty(model.tilInquiryType?.text!!.trim())) {
-                    model.tilInquiryType?.error = "Select Inquiry Type"
+                    model.tilInquiryType?.setError("Select Inquiry Type", errortint(context!!))
                     emptyBox = false
                 }
                 if (TextUtils.isEmpty(model.tilInquirysubtype?.text!!.trim())) {
-                    model.tilInquirysubtype?.error = "Select Inquiry Sub Type"
+                    model.tilInquirysubtype?.setError("Select Inquiry Sub Type", errortint(context!!))
                     emptyBox = false
                 }
                 if (TextUtils.isEmpty(model.tilLeadstatus?.text!!.trim())) {
-                    model.tilLeadstatus?.error = "Select Lead Status"
+                    model.tilLeadstatus?.setError("Select Lead Status", errortint(context!!))
                     emptyBox = false
                 }
                 if (TextUtils.isEmpty(model.tilLeadtype?.text!!.trim())) {
-                    model.tilLeadtype?.error = "Select Lead Type"
+                    model.tilLeadtype?.setError("Select Lead Type", errortint(context!!))
                     emptyBox = false
                 }
                 if (TextUtils.isEmpty(model.tilAllotmentTo?.text!!.trim())) {
-                    model.tilAllotmentTo?.error = "Select Allotment To"
+                    model.tilAllotmentTo?.setError("Select Allotment To", errortint(context!!))
                     emptyBox = false
                 }
                 if (TextUtils.isEmpty(model.tilFrequency?.text!!.trim())) {
-                    model.tilFrequency?.error = "Select Frequency"
+                    model.tilFrequency?.setError("Select Frequency", errortint(context!!))
                     emptyBox = false
                 }
                 if (TextUtils.isEmpty(model.tilProposed?.text!!.trim())) {
-                    model.tilProposed?.error = "Enter Proposed Amount"
+                    model.tilProposed?.setError("Enter Proposed Amount", errortint(context!!))
                     emptyBox = false
                 }
                 if (TextUtils.isEmpty(model.tilInquiryDate?.text!!.trim())) {
-                    model.tilInquiryDate?.error = "Select Inquiry Date"
+                    model.tilInquiryDate?.setError("Select Inquiry Date", errortint(context!!))
                     emptyBox = false
                 }
             }
         }
 
         return emptyBox
+    }
+
+    fun clearAllFamilyMembers() {
+        for (item in arrayList.orEmpty()) {
+            item.FamilyMember = ""
+            item.tilFamilyMember?.setText("")
+        }
+        notifyDataSetChanged()
     }
 
     fun remove(position: Int) {
@@ -305,6 +335,11 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
         }
     }
 
+    fun updateFamilyMemberItem(position: Int , name: String , id: Int) {
+        arrayList!![position].FamilyMember = name
+        arrayList!![position].FamilyMemberId = id
+        arrayList!![position].tilFamilyMember?.setText(name)
+    }
     fun updateInquiryTypeItem(position: Int , name: String , id: Int) {
         arrayList!![position].Inquirytype = name
         arrayList!![position].InquirytypeId = id
@@ -344,13 +379,13 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
     private fun hideErrorTIL(position: Int) {
         if (!arrayList.isNullOrEmpty()) {
             for (i in arrayList.indices) {
-                arrayList[i].tilInquiryType?.error = null
-                arrayList[i].tilInquirysubtype?.error = null
-                arrayList[i].tilLeadtype?.error = null
-                arrayList[i].tilLeadstatus?.error = null
-                arrayList[i].tilFrequency?.error = null
-                arrayList[i].tilAllotmentTo?.error = null
-                arrayList[i].tilProposed?.error = null
+                arrayList[i].tilInquiryType?.setError(null)
+                arrayList[i].tilInquirysubtype?.setError(null)
+                arrayList[i].tilLeadtype?.setError(null)
+                arrayList[i].tilLeadstatus?.setError(null)
+                arrayList[i].tilFrequency?.setError(null)
+                arrayList[i].tilAllotmentTo?.setError(null)
+                arrayList[i].tilProposed?.setError(null)
             }
         }
     }

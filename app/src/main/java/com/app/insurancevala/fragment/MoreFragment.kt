@@ -8,21 +8,31 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.app.insurancevala.R
+import com.app.insurancevala.activity.BrochureListActivity
 import com.app.insurancevala.activity.Login.LoginActivity
+import com.app.insurancevala.activity.Login.ChangePasswordActivity
 import com.app.insurancevala.activity.Users.AddUsersActivity
 import com.app.insurancevala.activity.Users.UsersListActivity
 import com.app.insurancevala.master.MastersListActivity
+import com.app.insurancevala.model.api.CommonResponse
+import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.AppConstant
 import com.app.insurancevala.utils.PrefConstants
 import com.app.insurancevala.utils.SharedPreference
+import com.app.insurancevala.utils.getRequestJSONBody
 import com.app.insurancevala.utils.gone
 import com.app.insurancevala.utils.preventTwoClick
 import com.app.insurancevala.utils.visible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_more_new.view.*
 import kotlinx.android.synthetic.main.fragment_more_new.*
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MoreFragment : BaseFragment() {
 
@@ -72,6 +82,11 @@ class MoreFragment : BaseFragment() {
             )
             .into(views!!.imgprofileimage)
 
+        views!!.imgNotification.setOnClickListener {
+            preventTwoClick(it)
+
+        }
+
         views!!.LLManageUser.setOnClickListener {
             preventTwoClick(it)
             val intent = Intent(requireActivity(), UsersListActivity::class.java)
@@ -86,10 +101,25 @@ class MoreFragment : BaseFragment() {
 
         }
 
+        views!!.LLChangePassword.setOnClickListener {
+            preventTwoClick(it)
+            val intent = Intent(requireActivity(), ChangePasswordActivity::class.java)
+            startActivity(intent)
+
+        }
+
+        views!!.LLBrochure.setOnClickListener {
+            preventTwoClick(it)
+            val intent = Intent(requireActivity(), BrochureListActivity::class.java)
+            startActivity(intent)
+
+        }
+
         views!!.txtLogout.setOnClickListener {
             preventTwoClick(it)
             val sharedPreference = SharedPreference(requireContext())
             if (sharedPreference.getPreferenceString(PrefConstants.PREF_IS_LOGIN).equals("1")) {
+                CallLogoutAPI()
                 sharedPreference.clearSharedPreference()
                 val intent = Intent(requireActivity(), LoginActivity::class.java)
                 startActivity(intent)
@@ -107,6 +137,30 @@ class MoreFragment : BaseFragment() {
         }
     }
 
+    private fun CallLogoutAPI() {
+
+        showProgress()
+
+        var jsonObject = JSONObject()
+        jsonObject.put("UserName", sharedPreference!!.getPreferenceString(PrefConstants.PREF_USER_EMAIL)!!)
+
+        val call = ApiUtils.apiInterface.ManageUserLogout(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<CommonResponse> {
+            override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
+                hideProgress()
+                if (response.code() == 200) {
+                    if (response.body()?.Status == 200) {
+                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                    }
+                }
+            }
+            override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
+                hideProgress()
+                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+            }
+        })
+    }
+
     @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
     @SuppressLint("Range")
@@ -116,6 +170,8 @@ class MoreFragment : BaseFragment() {
 
             val sharedPreference = SharedPreference(requireContext())
             if (sharedPreference.getPreferenceString(PrefConstants.PREF_IS_LOGIN).equals("1")) {
+                CallLogoutAPI()
+                sharedPreference.clearSharedPreference()
                 val intent = Intent(requireActivity(), LoginActivity::class.java)
                 startActivity(intent)
                 requireActivity().finishAffinity()

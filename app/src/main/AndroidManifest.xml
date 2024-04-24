@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:name="com.app.insurancevala.App"
@@ -71,14 +72,15 @@
 
         <!--Reset New Password Activity-->
         <activity
-            android:name=".activity.Login.ResetNewPasswordActivity"
+            android:name=".activity.Login.ChangePasswordActivity"
             android:exported="true" />
 
         <!--Home Activity-->
         <activity
             android:name=".activity.DashBoard.HomeActivity"
             android:exported="true"
-            android:theme="@style/AppThemeHome" />
+            android:theme="@style/AppThemeHome"
+            android:windowSoftInputMode="adjustPan"/>
 
         <!--Home Inner List Activity-->
         <activity
@@ -249,6 +251,12 @@
         <activity android:name=".master.AddCategoryTypeActivity"
             android:exported="true"/>
 
+        <!--Company Masters-->
+        <activity android:name=".master.CompanyListActivity"
+            android:exported="true"/>
+        <activity android:name=".master.AddCompanyActivity"
+            android:exported="true"/>
+
         <!--OccupationType Masters-->
         <activity android:name=".master.OccupationTypeListActivity"
             android:exported="true"/>
@@ -286,7 +294,7 @@
         <!-- FilePicker -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.app.insurancevala"
+            android:authorities="com.app.insurancevala.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -299,6 +307,29 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:exported="true"
             android:theme="@style/Base.Theme.AppCompat" />
+
+        <!--Brochure Activity-->
+        <activity android:name=".activity.BrochureListActivity"
+            android:exported="true"/>
+        <activity android:name=".activity.AddBrochureActivity"
+            android:exported="true"/>
+
+        <!-- FCM -->
+        <service
+            android:name=".fcm.MyFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service> <!-- Firebase -->
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/icon" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/colorAccent" />
     </application>
 
 </manifest>

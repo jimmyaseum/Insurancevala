@@ -56,7 +56,7 @@ class ForgotPasswordActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.txtButtonSetNewPassword -> {
                 preventTwoClick(v)
-                val intent = Intent(this@ForgotPasswordActivity, ResetNewPasswordActivity::class.java)
+                val intent = Intent(this@ForgotPasswordActivity, ChangePasswordActivity::class.java)
                 startActivity(intent)
                 finish()
             }

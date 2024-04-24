@@ -632,6 +632,58 @@
 
                 </LinearLayout>
                 <LinearLayout
+                    android:id="@+id/LLFollowUpTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:visibility="gone"
+                    android:padding="@dimen/_5sdp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/txtFollowUpTime"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="match_parent"
+                            android:textColor="@color/colorGray500"
+                            android:text="Follow Up Time"
+                            android:textSize="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_regular"/>
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+                            <EditText
+                                android:id="@+id/edtFollowupTime"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp"
+                                android:fontFamily="@font/poppins_regular"
+                                android:background="@null"
+                                android:singleLine="true"
+                                android:clickable="true"
+                                android:editable="false"
+                                android:focusable="false"
+                                android:drawableRight="@drawable/ic_time"
+                                android:drawableTint="@color/colorGray500"/>
+                            <View
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_1sdp"
+                                android:background="@color/colorGradish"/>
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+                <LinearLayout
                     android:id="@+id/LLFollowupNotes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -30,6 +30,7 @@ import com.app.insurancevala.activity.DashBoard.HomeActivity
 import com.app.insurancevala.activity.Login.LoginActivity
 import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetUserTypeListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
+import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.response.UserImageResponse
 import com.app.insurancevala.model.response.UserModel
 import com.app.insurancevala.model.response.UserResponse
@@ -53,13 +54,19 @@ import com.app.insurancevala.utils.visible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.example.awesomedialog.AwesomeDialog
+import com.example.awesomedialog.body
+import com.example.awesomedialog.icon
+import com.example.awesomedialog.onNegative
+import com.example.awesomedialog.onPositive
+import com.example.awesomedialog.position
+import com.example.awesomedialog.title
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import droidninja.filepicker.FilePickerConst
 import kotlinx.android.synthetic.main.activity_add_user.*
-import kotlinx.android.synthetic.main.activity_add_user.layout
 import kotlinx.android.synthetic.main.activity_add_user.view.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -87,6 +94,8 @@ class AddUsersActivity : BaseActivity(), View.OnClickListener, EasyPermissions.P
     var ImagePaths = ArrayList<String>()
     var imageURI: Uri? = null
 
+    var ID: Int? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_user)
@@ -113,8 +122,11 @@ class AddUsersActivity : BaseActivity(), View.OnClickListener, EasyPermissions.P
         if (state.equals(AppConstant.S_ADD)) {
             txtHearderText.text = "Add User"
             setMasterData()
+            txtResetPassword.gone()
         } else if (state.equals(AppConstant.S_EDIT)) {
             txtHearderText.text = "Update User"
+
+            txtResetPassword.visible()
 
             LLPassword.gone()
             LLConfirmPassword.gone()
@@ -141,6 +153,7 @@ class AddUsersActivity : BaseActivity(), View.OnClickListener, EasyPermissions.P
         imgBack.setOnClickListener(this)
         cbshowpassword.setOnClickListener(this)
         imgProfilePic.setOnClickListener(this)
+        txtResetPassword.setOnClickListener(this)
 
         edtUserType.setOnClickListener(this)
         txtSave.setOnClickListener(this)
@@ -181,6 +194,18 @@ class AddUsersActivity : BaseActivity(), View.OnClickListener, EasyPermissions.P
             R.id.txtSave -> {
                 preventTwoClick(v)
                 validation()
+            }
+
+            R.id.txtResetPassword -> {
+                preventTwoClick(v)
+                AwesomeDialog.build(this).title("Warning !!!")
+                    .body("Are you sure want to Reset this Password?")
+                    .icon(R.drawable.ic_delete).position(AwesomeDialog.POSITIONS.CENTER)
+                    .onNegative("No") {
+
+                    }.onPositive("Yes") {
+                        callResetPassword(ID!!)
+                    }
             }
         }
     }
@@ -628,8 +653,53 @@ class AddUsersActivity : BaseActivity(), View.OnClickListener, EasyPermissions.P
         })
     }
 
+    private fun callResetPassword(ID: Int) {
+
+        showProgress()
+
+        var jsonObject = JSONObject()
+        jsonObject.put("ID", ID)
+        val call =
+            ApiUtils.apiInterface.ManageUserResetPassword(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<CommonResponse> {
+            override fun onResponse(
+                call: Call<CommonResponse>,
+                response: Response<CommonResponse>
+            ) {
+                hideProgress()
+                if (response.code() == 200) {
+                    if (response.body()?.Status == 200) {
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    } else {
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
+                hideProgress()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        })
+    }
+
     private fun setAPIData(model: UserModel) {
 
+        if (model.ID != null && model.ID != 0) {
+            ID = model.ID
+        }
         if (model.FirstName != null && model.FirstName != "") {
             edtFirstName.setText(model.FirstName)
         }

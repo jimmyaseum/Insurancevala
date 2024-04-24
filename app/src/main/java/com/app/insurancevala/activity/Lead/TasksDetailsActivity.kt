@@ -1,11 +1,13 @@
 package com.app.insurancevala.activity.Lead
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
+import com.app.insurancevala.activity.DashBoard.HomeActivity
 import com.app.insurancevala.adapter.AttachmentListAdapter
 import com.app.insurancevala.model.pojo.DocumentsModel
 import com.app.insurancevala.model.response.TasksByGUIDResponse
@@ -15,17 +17,6 @@ import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_task_details.*
-import kotlinx.android.synthetic.main.activity_task_details.LLAttachments
-import kotlinx.android.synthetic.main.activity_task_details.imgBack
-import kotlinx.android.synthetic.main.activity_task_details.layout
-import kotlinx.android.synthetic.main.activity_task_details.rvAttachment
-import kotlinx.android.synthetic.main.activity_task_details.txtDescription
-import kotlinx.android.synthetic.main.activity_task_details.txtDueDate
-import kotlinx.android.synthetic.main.activity_task_details.txtNotifyvia
-import kotlinx.android.synthetic.main.activity_task_details.txtPriority
-import kotlinx.android.synthetic.main.activity_task_details.txtReminderDate
-import kotlinx.android.synthetic.main.activity_task_details.txtSubject
-import kotlinx.android.synthetic.main.activity_task_details.txtTaskOwner
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -36,9 +27,10 @@ class TasksDetailsActivity  : BaseActivity(), View.OnClickListener {
     var arrayListAttachment: ArrayList<DocumentsModel>? = null
     lateinit var adapter: AttachmentListAdapter
 
-    var ID: Int? = null
-    var LeadID: Int? = null
-    var TaskGUID: String? = null
+    var ID: Int? = 0
+    var LeadID: Int? = 0
+    var TaskGUID: String? = ""
+    var Type: String? = ""
     var sharedPreference: SharedPreference? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,13 +43,32 @@ class TasksDetailsActivity  : BaseActivity(), View.OnClickListener {
     }
 
     private fun getIntentData() {
+        if (intent.hasExtra("Type")) {
+            Type = intent.getStringExtra("Type")
+        }
         ID = intent.getIntExtra("ID",0)
         LeadID = intent.getIntExtra("LeadID",0)
         TaskGUID = intent.getStringExtra("TaskGUID")
+
+        if (sharedPreference == null) {
+            sharedPreference = SharedPreference(applicationContext)
+        }
+        AppConstant.TOKEN =
+            sharedPreference?.getPreferenceString(PrefConstants.PREF_TOKEN).toString()
     }
 
     override fun initializeView() {
         SetInitListner()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if(Type == ""){
+            finish()
+        } else {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun SetInitListner() {
@@ -188,7 +199,7 @@ class TasksDetailsActivity  : BaseActivity(), View.OnClickListener {
         when (v?.id) {
             R.id.imgBack -> {
                 preventTwoClick(v)
-                finish()
+                onBackPressed()
             }
         }
     }

@@ -9,12 +9,13 @@ import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.CategoryModel
 import com.app.insurancevala.model.response.FamilyDetailsModel
+import com.app.insurancevala.model.response.FamilyModel
 import com.app.insurancevala.model.response.InitialModel
 import com.app.insurancevala.utils.gone
 import com.app.insurancevala.utils.visible
 import kotlinx.android.synthetic.main.row_select.view.*
 
-class BottomSheetFamilyMemberListAdapter(val context: Context?, private val arrayList : ArrayList<FamilyDetailsModel>) : RecyclerView.Adapter<BottomSheetFamilyMemberListAdapter.ViewHolder>() {
+class BottomSheetFamilyMemberListAdapter(val context: Context?, private val arrayList : ArrayList<FamilyModel>) : RecyclerView.Adapter<BottomSheetFamilyMemberListAdapter.ViewHolder>() {
 
     private var recyclerItemClickListener: RecyclerClickListener? = null
 
@@ -40,7 +41,7 @@ class BottomSheetFamilyMemberListAdapter(val context: Context?, private val arra
             context: Context,
             position: Int,
             recyclerItemClickListener: RecyclerClickListener,
-            arrayList : FamilyDetailsModel
+            arrayList : FamilyModel
         ) {
             this.context = context
 

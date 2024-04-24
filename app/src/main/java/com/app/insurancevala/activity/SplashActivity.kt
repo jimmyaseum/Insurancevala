@@ -1,8 +1,15 @@
 package com.app.insurancevala.activity
 
 import android.app.AlertDialog
-import android.app.Dialog
+import android.app.ProgressDialog
+import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.view.WindowManager
@@ -12,29 +19,25 @@ import com.app.insurancevala.R
 import com.app.insurancevala.activity.DashBoard.HomeActivity
 import com.app.insurancevala.activity.Login.LoginActivity
 import com.app.insurancevala.activity.Login.WelcomeActivity
+import com.app.insurancevala.model.api.AppVersion
 import com.app.insurancevala.retrofit.ApiUtils
+import com.app.insurancevala.utils.LogUtil
+import com.app.insurancevala.utils.PrefConstants
 import com.app.insurancevala.utils.PrefConstants.PREF_IS_LOGIN
 import com.app.insurancevala.utils.PrefConstants.PREF_IS_WELCOME
 import com.app.insurancevala.utils.SharedPreference
+import com.app.insurancevala.utils.TAG
 import com.app.insurancevala.utils.getRequestJSONBody
 import com.app.insurancevala.utils.internetErrordialog
 import com.app.insurancevala.utils.isOnline
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_splash.*
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import android.app.ProgressDialog
-import android.content.Context
-import android.content.DialogInterface
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
-import android.net.Uri
-import com.app.insurancevala.model.api.AppVersion
-import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_splash.layout
 
 class SplashActivity : AppCompatActivity() {
 
@@ -42,7 +45,7 @@ class SplashActivity : AppCompatActivity() {
     var LatestVersion = ""
     private var progressDialog: ProgressDialog? = null
     var sharedPreference: SharedPreference? = null
-    var dialog: Dialog? = null
+    var dialog: AlertDialog? = null
 
     // commit by jimmy jatin patel
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,37 +68,33 @@ class SplashActivity : AppCompatActivity() {
 
         getCurrentVersion()
 
-            Handler().postDelayed({
-                if (!isFinishing) {
-                    val sharedPreference = SharedPreference(applicationContext)
-                    if (sharedPreference.getPreferenceString(PREF_IS_WELCOME).equals("1")) {
-                        if (sharedPreference.getPreferenceString(PREF_IS_LOGIN).equals("1")) {
-                            val intent = Intent(applicationContext, HomeActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        } else {
-                            val intent = Intent(applicationContext, LoginActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }
-                    } else {
-                        val intent = Intent(applicationContext, WelcomeActivity::class.java)
+        Handler().postDelayed({
+            if (!isFinishing) {
+                val sharedPreference = SharedPreference(applicationContext)
+                if (sharedPreference.getPreferenceString(PREF_IS_WELCOME) == "1") {
+                    if (sharedPreference.getPreferenceString(PREF_IS_LOGIN) == "1") {
+                        val intent = Intent(applicationContext, HomeActivity::class.java)
                         startActivity(intent)
-                        finish()
+                    } else {
+                        val intent = Intent(applicationContext, LoginActivity::class.java)
+                        startActivity(intent)
                     }
+                } else {
+                    val intent = Intent(applicationContext, WelcomeActivity::class.java)
+                    startActivity(intent)
                 }
+                finish()
+            }
+        }, 3000)
 
-            }, 3000)
-
-       /* if (isOnline(this)) {
-            getLatestVersion()
-        } else {
-            internetErrordialog(this@SplashActivity)
-        }*/
+        /* if (isOnline(this)) {
+             getLatestVersion()
+         } else {
+             internetErrordialog(this@SplashActivity)
+         }*/
     }
 
     private fun getLatestVersion() {
-
         showProgress()
 
         val jsonObject = JSONObject()
@@ -159,8 +158,7 @@ class SplashActivity : AppCompatActivity() {
                             sharedPreference?.clearSharedPreference()
                             showUpdateDialog()
                         }
-                    }
-                    else {
+                    } else {
                         hideProgress()
                         Snackbar.make(
                             layout,
@@ -235,5 +233,4 @@ class SplashActivity : AppCompatActivity() {
             return it
         }
     }
-
 }

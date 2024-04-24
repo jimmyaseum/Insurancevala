@@ -66,6 +66,7 @@ class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
 
     //    var ReferenceGUID: String? = null
     var AttachmentID: Int? = null
+    var NBInquiryTypeID: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -198,7 +199,7 @@ class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
                 val intent = Intent(this, AddAttachmentsActivity::class.java)
                 intent.putExtra("ID",ID)
                 intent.putExtra("LeadID",LeadID)
-                startActivity(intent)
+                startActivityForResult(intent, AppConstant.INTENT_1001)
             }
         }
     }
@@ -209,6 +210,7 @@ class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
                 preventTwoClick(view)
 //                ReferenceGUID = arrayListAttachmentNew!![position].ReferenceGUID!!
                 AttachmentID = arrayListAttachmentNew!![position].ID!!
+                NBInquiryTypeID = arrayListAttachmentNew!![position].NBInquiryTypeID!!
                 showAttachmentBottomSheetDialog()
             }
 
@@ -416,7 +418,7 @@ class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
         }
         Select_Doc!!.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "application/*"
+            intent.type = "application/pdf"
             startActivityForResult(intent, 101)
             bottomSheetDialog.dismiss()
         }
@@ -440,9 +442,9 @@ class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
     }
 
     // attachment
+    @SuppressLint("Range")
     @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
-    @SuppressLint("Range")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -498,10 +500,9 @@ class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
                 if (sUri.toString().startsWith("content://")) {
                     var cursor: Cursor? = null
                     try {
-                        cursor = getContentResolver().query(sUri, null, null, null, null)
+                        cursor = contentResolver.query(sUri, null, null, null, null)
                         if (cursor != null && cursor.moveToFirst()) {
-                            displayName =
-                                cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                            displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
                         }
                     } finally {
                         cursor!!.close()
@@ -512,6 +513,14 @@ class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
 
                 showBottomSheetDialogRename(displayName, PassportPath, 1)
 
+            }
+
+            AppConstant.INTENT_1001 -> {
+                if (isOnline(this)) {
+                    callManageAttachment()
+                } else {
+                    internetErrordialog(this)
+                }
             }
         }
     }
@@ -611,7 +620,7 @@ class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
                 callManageAttachmentUpdate()
 
             } else {
-                edtName.error = "Enter Name"
+                edtName.setError("Enter Name", errortint(this))
             }
         }
 
@@ -649,6 +658,7 @@ class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
 
         val call = ApiUtils.apiInterface.ManageAttachmentUpdate(
             ID = AttachmentID,
+            NBInquiryTypeID = NBInquiryTypeID,
             AttachmentName = mAttachmentName,
             attachment = partsList
         )

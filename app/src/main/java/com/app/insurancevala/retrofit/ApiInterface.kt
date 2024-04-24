@@ -41,10 +41,13 @@ interface ApiInterface {
     @POST("Master/ManageLeadStatus")
     fun ManageLeadStatus(@Body body: RequestBody?): retrofit2.Call<LeadStatusResponse>
 
+    @POST("Leads/ClientListById")
+    fun ManageFamilyList(@Body body: RequestBody?): retrofit2.Call<FamilyResponse>
+
     @POST("Master/ManageInitial")
     fun ManageInitial(@Body body: RequestBody?): retrofit2.Call<InitialResponse>
 
-    @POST("MasterSub/LeadFamilyDetailsDelete")
+    @POST("Leads/LeadFamilyDetailsDelete")
     fun deleteFamilyDetail(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
 
     @POST("Master/ManageUsers")
@@ -113,6 +116,7 @@ interface ApiInterface {
     @POST("MasterSub/UpdateAttachment")
     fun ManageAttachmentUpdate(
         @Part("ID")ID: Int?,
+        @Part("NBInquiryTypeID")NBInquiryTypeID: Int?,
         @Part("AttachmentName") AttachmentName: RequestBody?,
         @Part attachment: ArrayList<MultipartBody.Part>?
     ): retrofit2.Call<CommonResponse>
@@ -147,9 +151,6 @@ interface ApiInterface {
     @POST("Category/CategoryFindAll")
     fun ManageCategoryFindAll(@Body body: RequestBody?): retrofit2.Call<CategoryTypeResponse>
 
-    @GET("Category/CategoryFindAllActive")
-    fun getCategoryAllActive(): Call<CategoryResponse>
-
     @POST("Category/CategoryDelete")
     fun ManageCategoryDelete(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
 
@@ -161,6 +162,38 @@ interface ApiInterface {
 
     @POST("Category/CategoryFindByID")
     fun ManageCategoryFindByID(@Body body: RequestBody?): retrofit2.Call<CategoryTypeByGUIDResponse>
+
+    @POST("Company/CompanyFindAll")
+    fun ManageCompanyFindAll(@Body body: RequestBody?): retrofit2.Call<CompanyResponse>
+
+    @POST("Company/CompanyDelete")
+    fun ManageCompanyDelete(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
+
+    @POST("Company/CompanyInsert")
+    fun ManageCompanyInsert(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
+
+    @POST("Company/CompanyUpdate")
+    fun ManageCompanyUpdate(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
+
+    @GET("Company/CompanyFindAllActive")
+    fun getCompanyAllActive(): Call<CompanyResponse>
+
+    @POST("Company/CompanyFindByID")
+    fun ManageCompanyFindByID(@Body body: RequestBody?): retrofit2.Call<CompanyByGUIDResponse>
+
+    @POST("PlanBrochure/FindAllCompanyIdByPlan")
+    fun ManagePlanBrochure(@Body body: RequestBody?): retrofit2.Call<PlanResponse>
+
+    @POST("BrochureAttachments/BrochureAttachmentsDelete")
+    fun ManageBrochureDelete(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
+
+    @Multipart
+    @POST("BrochureAttachments/InsertBrochureAttachments")
+    fun ManageBrochureAttachments(
+        @Part("PlanBrochureID")PlanBrochureID: Int?,
+        @Part("AttachmentName") AttachmentName: RequestBody?,
+        @Part attachment: ArrayList<MultipartBody.Part>?
+    ): retrofit2.Call<CommonResponse>
 
     @POST("Occupation/OccupationFindAll")
     fun ManageOccupationFindAll(@Body body: RequestBody?): retrofit2.Call<OccupationTypeResponse>
@@ -345,8 +378,8 @@ interface ApiInterface {
     @POST("Leads/LeadsFindAll")
     fun ManageLeadsFindAll(@Body body: RequestBody?): retrofit2.Call<LeadResponse>
 
-    @GET("Leads/LeadsFindAllActive")
-    fun getLeadsFindAllActive(): Call<LeadResponse>
+    @POST("Leads/LeadsFindAllActive")
+    fun LeadsFindAllActive(@Body body: RequestBody?): retrofit2.Call<LeadResponse>
 
     @POST("Leads/LeadsDelete")
     fun ManageLeadsDelete(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
@@ -360,10 +393,35 @@ interface ApiInterface {
     @POST("Leads/LeadsFindByID")
     fun ManageLeadsFindByID(@Body body: RequestBody?): retrofit2.Call<LeadByGUIDResponse>
 
+    @GET("PlanBrochure/PlanBrochureFindAllActive")
+    fun getPlanBrochureAllActive(): Call<PlanBrochuresResponse>
+
+    @POST("PlanBrochure/PlanBrochureDelete")
+    fun ManagePlanBrochureDelete(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
+
+    @POST("PlanBrochure/PlanBrochureInsert")
+    fun ManagePlanBrochureInsert(@Body body: RequestBody?): retrofit2.Call<RefIDResponse>
+
+    @POST("PlanBrochure/PlanBrochureFindByID")
+    fun ManagePlanBrochureFindByID(@Body body: RequestBody?): retrofit2.Call<PlanBrochureByIDResponse>
+
+    @POST("PlanBrochure/PlanBrochureUpdate")
+    fun ManagePlanBrochureUpdate(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
+
+    @POST("Master/ManageUserChangePassword")
+    fun ManageUserChangePassword(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
+
+    @POST("Master/ManageUserResetPassword")
+    fun ManageUserResetPassword(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
+
+    @POST("Master/ManageUserLogout")
+    fun ManageUserLogout(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
+
     @Multipart
     @POST("RecodingFiles/RecodingFilesInsert")
     fun ManageRecordingInsert(
         @Part("NBInquiryTypeID") NBInquiryTypeID: Int?,
+        @Part("Title") Title: String?,
         @Part attachment: ArrayList<MultipartBody.Part>?
 
     ): retrofit2.Call<CommonResponse>
@@ -373,6 +431,7 @@ interface ApiInterface {
     fun ManageRecordingUpdate(
         @Part("ID")ID: Int?,
         @Part("NBInquiryTypeID")NBInquiryTypeID: Int?,
+        @Part("Title") Title: String?,
         @Part attachment: ArrayList<MultipartBody.Part>?
     ): retrofit2.Call<CommonResponse>
 

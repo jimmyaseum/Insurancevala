@@ -57,6 +57,8 @@ data class TasksModel (
     val IsReminder: Boolean? = null,
     @SerializedName("ReminderDate")
     val ReminderDate: String? = null,
+    @SerializedName("ReminderTime")
+    val ReminderTime: String? = null,
     @SerializedName("Repeat")
     val Repeat: Int? = null,
     @SerializedName("NotifyVia")

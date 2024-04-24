@@ -13,17 +13,24 @@ import kotlinx.android.synthetic.main.adapter_nb_item.view.*
 
 class NBListAdapter(private val context: Context?,private val arrayList: ArrayList<NBModel>?,private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<NBListAdapter.ViewHolder>() {
 
+    var adapterPositionGet: Int = -1
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.adapter_nb_item, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        adapterPositionGet = position
         holder.bindItems(context!!, position, arrayList!![position], recyclerItemClickListener)
     }
 
     override fun getItemCount(): Int {
         return arrayList!!.size
+    }
+
+    fun getAdapterPosition(): Int {
+        return adapterPositionGet
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -72,6 +79,10 @@ class NBListAdapter(private val context: Context?,private val arrayList: ArrayLi
 
             itemView.imgEdit.setOnClickListener {
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 102)
+            }
+
+            itemView.imgList.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 103)
             }
         }
     }

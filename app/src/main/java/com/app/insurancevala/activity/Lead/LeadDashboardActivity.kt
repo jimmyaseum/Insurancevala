@@ -5,12 +5,14 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.webkit.MimeTypeMap
 import android.widget.*
+import androidx.core.content.ContextCompat
 import com.app.insurancevala.FilePickerBuilder
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
@@ -53,6 +55,9 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
 
     var LeadID: Int? = null
     var LeadGUID: String? = null
+
+    var LeadOwnerID: Int? = null
+    var LeadOwnerName: String? = null
 
     var arrayListLead: LeadModel? = null
 
@@ -184,7 +189,8 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
                 intent.putExtra("LeadGUID", LeadGUID)
                 intent.putExtra("LeadName", txtName.text.toString())
                 intent.putExtra("LeadType", arrayListLead!!.LeadStage)
-                intent.putExtra("ArrayListFamily", ArrayList(arrayListLead!!.FamilyDetails!!))
+                intent.putExtra("LeadOwnerID", LeadOwnerID)
+                intent.putExtra("LeadOwnerName", LeadOwnerName)
                 intent.putExtra("AddMore",false)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
             }
@@ -386,12 +392,19 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
         }
         if(!model.EmailID.isNullOrEmpty()) {
             txtEmail.text = model.EmailID
+            txtEmail.visible()
+        } else {
+            txtEmail.gone()
         }
         if(!model.MobileNo.isNullOrEmpty()) {
             txtMobile.text = model.MobileNo
         }
-        if(!model.LeadOwnerID.isNullOrEmpty()) {
-            callManageUsers(model.LeadOwnerID)
+        if(model.LeadOwnerID != 0 && model.LeadOwnerID != null) {
+            LeadOwnerID = model.LeadOwnerID
+            callManageUsers(LeadOwnerID!!)
+        }
+        if(!model.LeadOwnerName.isNullOrEmpty()) {
+            LeadOwnerName = model.LeadOwnerName
         }
         if(model.TotalNote != null && model.TotalNote != 0) {
             imgNotesCounts.text = " ("+model.TotalNote.toString()+") "
@@ -412,7 +425,14 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
             imgProfilePic.loadUrl(model.LeadImage, R.drawable.ic_camera)
         }
         if (model.CategoryID != null && model.CategoryID != 0) {
-            rating_bar.rating = model.CategoryID.toFloat()
+            rating_bar.rating = model.CategoryID!!.toFloat()
+            if (model.LeadStage != null && model.LeadStage != 0){
+                if (model.LeadStage == 1) {
+                    rating_bar.progressTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.gold))
+                } else if (model.LeadStage == 2) {
+                    rating_bar.progressTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.silver))
+                }
+            }
         }
         if(!model.FamilyDetails.isNullOrEmpty() && model.FamilyDetails!!.size > 0) {
             arrayListFamilyMember = model.FamilyDetails!!
@@ -623,7 +643,7 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
         bottomSheetDialog.show()
     }
 
-    private fun callManageUsers(leadownerID: String) {
+    private fun callManageUsers(leadownerID: Int) {
 
         var jsonObject = JSONObject()
         jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
@@ -639,7 +659,7 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
 
                         if(arrayListUsers!!.size > 0) {
                             for(i in 0 until arrayListUsers!!.size) {
-                                if(arrayListUsers!![i].ID == leadownerID.toInt()) {
+                                if(arrayListUsers!![i].ID == leadownerID) {
                                     arrayListUsers!![i].IsSelected = true
 
                                     mUsersName = arrayListUsers!![i].FirstName!! + " "+ arrayListUsers!![i].LastName!!

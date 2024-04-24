@@ -45,7 +45,9 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
 
     private fun getIntentData() {
         LeadID = intent.getIntExtra("LeadID",0)
+        LogUtil.d(TAG,""+LeadID)
         LeadGUID = intent.getStringExtra("GUID")
+        LogUtil.d(TAG,""+LeadGUID)
     }
 
     override fun initializeView() {
@@ -213,6 +215,7 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                 preventTwoClick(view)
                 val intent = Intent(this, InquiryEditActivity::class.java)
                 intent.putExtra(AppConstant.STATE, AppConstant.S_EDIT)
+                intent.putExtra("LeadID",LeadID)
                 intent.putExtra("NBInquiryTypeGUID",arrayListInquiryNew!![position].NBInquiryTypeGUID)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
             }

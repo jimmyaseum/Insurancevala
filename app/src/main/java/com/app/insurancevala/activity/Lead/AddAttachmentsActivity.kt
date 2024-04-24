@@ -205,7 +205,7 @@ class AddAttachmentsActivity : BaseActivity(), View.OnClickListener, RecyclerCli
         }
         Select_Doc!!.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "application/*"
+            intent.type = "application/pdf"
             startActivityForResult(intent, 101)
             bottomSheetDialog.dismiss()
         }
@@ -410,7 +410,7 @@ class AddAttachmentsActivity : BaseActivity(), View.OnClickListener, RecyclerCli
                 adapter.addItem(edtName.text.toString(), fileuri, attachmenttype)
                 bottomSheetDialog.dismiss()
             } else {
-                edtName.error = "Enter Name"
+                edtName.setError("Enter Name", errortint(this))
             }
         }
 

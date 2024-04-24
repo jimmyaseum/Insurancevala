@@ -66,7 +66,9 @@ data class LeadModel (
     @SerializedName("OccupationID")
     val OccupationID: Int? = null,
     @SerializedName("LeadOwnerID")
-    val LeadOwnerID: String? = null,
+    val LeadOwnerID: Int? = null,
+    @SerializedName("LeadOwnerName")
+    val LeadOwnerName: String? = null,
     @SerializedName("LeadSourceID")
     val LeadSourceID: Int? = null,
     @SerializedName("CityID")

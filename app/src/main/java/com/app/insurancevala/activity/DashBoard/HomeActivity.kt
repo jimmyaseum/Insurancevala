@@ -1,24 +1,32 @@
 package com.app.insurancevala.activity.DashBoard
 
+import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings
 import android.util.Log
 import android.view.View
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.app.insurancevala.R
-import com.app.insurancevala.fragment.*
-import com.app.insurancevala.utils.AppConstant
-import com.app.insurancevala.utils.PrefConstants
-import com.app.insurancevala.utils.SharedPreference
-import com.app.insurancevala.utils.hideKeyboard
+import com.app.insurancevala.fragment.HomeFragment
+import com.app.insurancevala.fragment.LeadFragment
+import com.app.insurancevala.fragment.MoreFragment
+import com.app.insurancevala.fragment.NBFragment
+import com.app.insurancevala.utils.*
 import com.example.awesomedialog.*
 import io.ak1.OnBubbleClickListener
 import kotlinx.android.synthetic.main.activity_home.*
-import kotlinx.android.synthetic.main.activity_home.layout
 
 class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -27,19 +35,37 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     private var isNavigationEnabled = true
     private val handler = Handler()
 
+    private val PERMISSION_REQUEST_CODE = 1001
+    private var permissionDeniedDialog: AlertDialog? = null // Dialog to show permission denied message
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
         overridePendingTransition(R.anim.fadein, R.anim.fadeout)
 
+        // Initialize shared preferences
         if (sharedPreference == null) {
             sharedPreference = SharedPreference(applicationContext)
         }
-        AppConstant.TOKEN =
-            sharedPreference?.getPreferenceString(PrefConstants.PREF_TOKEN).toString()
+        AppConstant.TOKEN = sharedPreference?.getPreferenceString(PrefConstants.PREF_TOKEN).toString()
 
+        // Set default fragment
         SetDefaultFragment()
-        SetInitListener()
+
+        SetInitListner()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            RequestNotificationPermission()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+            permissionDeniedDialog?.dismiss()
+        } else {
+            permissionDeniedDialog?.show()
+        }
     }
 
     private fun SetDefaultFragment() {
@@ -51,7 +77,7 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun SetInitListener() {
+    private fun SetInitListner() {
         bubbleTabBar.addBubbleListener(object : OnBubbleClickListener {
             override fun onBubbleClick(id: Int) {
                 if (!isNavigationEnabled) {
@@ -67,12 +93,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                         fragment = HomeFragment()
                         tag = HomeFragment::class.java.simpleName
                     }
-
                     R.id.bottom_lead -> {
                         fragment = LeadFragment()
                         tag = LeadFragment::class.java.simpleName
                     }
-
                     R.id.bottom_nb -> {
                         fragment = NBFragment()
                         tag = NBFragment::class.java.simpleName
@@ -167,5 +191,53 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun RequestNotificationPermission() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), PERMISSION_REQUEST_CODE)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("Permission", "POST_NOTIFICATIONS permission granted")
+                permissionDeniedDialog?.dismiss()
+            } else {
+                Log.d("Permission", "POST_NOTIFICATIONS permission denied")
+                showPermissionDeniedDialog()
+            }
+        }
+    }
+
+    private fun showPermissionDeniedDialog() {
+        permissionDeniedDialog = AlertDialog.Builder(this)
+            .setTitle("Permission Required")
+            .setMessage("Please enable notification permissions in Settings to receive notifications.")
+            .setPositiveButton("Settings") { _, _ ->
+                openAppSettings()
+            }
+            .setCancelable(false)
+            .show()
+    }
+
+    private fun openAppSettings() {
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package", packageName, null)
+        intent.data = uri
+        startActivityForResult(intent, PERMISSION_REQUEST_CODE)
     }
 }

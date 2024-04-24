@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
+import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
@@ -22,6 +24,7 @@ import com.app.insurancevala.model.response.RecordingsResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.LogUtil
 import com.app.insurancevala.utils.TAG
+import com.app.insurancevala.utils.errortint
 import com.app.insurancevala.utils.getRequestJSONBody
 import com.app.insurancevala.utils.gone
 import com.app.insurancevala.utils.hideKeyboard
@@ -44,21 +47,22 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.URLEncoder
 
 class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickListener {
 
-    lateinit var adapter: AllRecordingsListAdapter
-    var arrayListRecording: ArrayList<RecordingsModel> = ArrayList()
-    var ID: Int? = null
-    var LeadID: Int? = null
+    private lateinit var adapter: AllRecordingsListAdapter
+    private var arrayListRecording: ArrayList<RecordingsModel> = ArrayList()
+    private var ID: Int? = null
+    private var RecordingID: Int? = null
+    private var state: String? = null
 
-    var RecordingURL: Uri? = null
-    var RecordingName: String? = null
-    var state: String? = null
-
-    var RecordingID: Int? = null
+    private var mediaPlayer: MediaPlayer? = null
+    private var currentPlayingPosition: Int = -1
 
     private val REQUEST_PICK_AUDIO = 123
+
+    private var audioPositin = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,10 +83,13 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
 
         arrayListRecording = ArrayList()
         adapter = AllRecordingsListAdapter(this, arrayListRecording, this)
+        RvRecordingsList.adapter = adapter
+
+        prepareMediaPlayer()
 
         refreshLayout.setOnRefreshListener {
             hideKeyboard(this@RecordingsListActivity, refreshLayout)
-            searchView.closeSearch()
+            adapter.stopPlayback()
             callManageRecording()
             refreshLayout.isRefreshing = false
         }
@@ -103,6 +110,10 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
 
     override fun onItemClickEvent(view: View, position: Int, type: Int) {
         when (type) {
+            100 -> { // Play Audio
+                adapter.updatePlayback(position)
+            }
+
             101 -> { // Update Recording
                 RecordingID = arrayListRecording[position].ID
                 state = "Update"
@@ -129,10 +140,9 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
     }
 
     private fun callManageRecording() {
-
         showProgress()
 
-        var jsonObject = JSONObject()
+        val jsonObject = JSONObject()
         jsonObject.put("NBInquiryTypeID", ID)
 
         val call =
@@ -146,22 +156,15 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
 
-                        arrayListRecording?.clear()
-                        arrayListRecording = response.body()?.Data!!
+                        arrayListRecording.clear()
+                        arrayListRecording.addAll(response.body()?.Data ?: emptyList())
 
-                        if (arrayListRecording!!.size > 0) {
-                            adapter = AllRecordingsListAdapter(
-                                this@RecordingsListActivity,
-                                arrayListRecording!!,
-                                this@RecordingsListActivity
-                            )
-                            RvRecordingsList.adapter = adapter
-
+                        if (arrayListRecording.isNotEmpty()) {
+                            adapter.notifyDataSetChanged()
                             shimmer.stopShimmer()
                             shimmer.gone()
                             FL.visible()
                             RLNoData.gone()
-
                         } else {
                             Snackbar.make(
                                 layout,
@@ -198,6 +201,10 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
         })
     }
 
+    private fun prepareMediaPlayer() {
+        adapter.prepareMediaPlayer()
+    }
+
     private fun callRecordingDeleteAPI(ID: Int) {
         showProgress()
         val jsonObject = JSONObject()
@@ -217,6 +224,7 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
                             response.body()?.Details.toString(),
                             Snackbar.LENGTH_LONG
                         ).show()
+                        adapter.stopPlayback()
                         callManageRecording()
                     } else {
                         hideProgress()
@@ -263,7 +271,6 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
 
     @Suppress("DEPRECATION")
     @Deprecated("Deprecated in Java")
-    @SuppressLint("Range")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -293,24 +300,22 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
         val txtButtonCancel = bottomSheetDialog.findViewById<TextView>(R.id.txtButtonCancel)
         val txtButtonSubmit = bottomSheetDialog.findViewById<TextView>(R.id.txtButtonSubmit)
 
-        img!!.setImageResource(R.drawable.ic_profile)
-        edtName!!.requestFocus()
+        img?.setImageResource(R.drawable.ic_profile)
+        edtName?.requestFocus()
 
         val fileName = getFileNameFromUri(fileUri)
-        edtName.setText(fileName)
+        edtName?.setText(fileName)
 
-        txtButtonSubmit!!.setOnClickListener {
-            if (!edtName.text.toString().trim().isEmpty()) {
-                RecordingURL = fileUri
-                RecordingName = edtName.text.toString()
+        txtButtonSubmit?.setOnClickListener {
+            if (!edtName?.text.toString().trim().isEmpty()) {
                 bottomSheetDialog.dismiss()
-                callRecordingInsertUpdate(fileUri, edtName.text.toString())
+                callRecordingInsertUpdate(fileUri, edtName?.text.toString())
             } else {
-                edtName.error = "Enter Name"
+                edtName?.setError("Enter Name", errortint(this))
             }
         }
 
-        txtButtonCancel!!.setOnClickListener {
+        txtButtonCancel?.setOnClickListener {
             bottomSheetDialog.dismiss()
         }
 
@@ -328,13 +333,16 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
         }
 
         audioRequestBody?.let {
-            partsList.add(MultipartBody.Part.createFormData("RecodingFiles", audioName, it))
+            // URL encode the audioName
+            val encodedAudioName = URLEncoder.encode(audioName, "UTF-8")
+
+            partsList.add(MultipartBody.Part.createFormData("RecodingFiles", encodedAudioName, it))
         }
 
         val call = if (state.equals("Add")) {
-            ApiUtils.apiInterface.ManageRecordingInsert(ID, partsList)
+            ApiUtils.apiInterface.ManageRecordingInsert(ID, audioName, partsList)
         } else {
-            ApiUtils.apiInterface.ManageRecordingUpdate(RecordingID, ID, partsList)
+            ApiUtils.apiInterface.ManageRecordingUpdate(RecordingID, ID, audioName, partsList)
         }
 
         call.enqueue(object : Callback<CommonResponse> {
@@ -349,6 +357,7 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
                             response.body()?.Details.toString(),
                             Snackbar.LENGTH_LONG
                         ).show()
+                        adapter.stopPlayback()
                         callManageRecording()
                     } else {
                         hideProgress()
@@ -392,5 +401,20 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
             }
         }
         return fileName
+    }
+
+    private fun stopAudio() {
+        mediaPlayer?.apply {
+            if (mediaPlayer!!.isPlaying) {
+                pause()
+            }
+            release()
+        }
+        mediaPlayer = null
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        adapter.stopPlayback()
     }
 }

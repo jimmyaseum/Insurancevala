@@ -61,6 +61,10 @@ data class NBInquiryModel (
     val NBInquiryTypeGUID: String? = null,
     @SerializedName("NBInquiryID")
     val NBInquiryID: Int? = null,
+    @SerializedName("NBInquiryBy")
+    val NBInquiryBy: Int? = null,
+    @SerializedName("NBInquiryByName")
+    val NBInquiryByName: String? = null,
     @SerializedName("InquiryTypeID")
     val InquiryTypeID: Int? = null,
     @SerializedName("InquiryType")

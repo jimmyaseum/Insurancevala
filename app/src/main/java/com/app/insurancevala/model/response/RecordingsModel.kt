@@ -25,10 +25,15 @@ data class RecordingsModel (
     val NBInquiryTypeID: Int? = null,
     @SerializedName("RecodingFiles")
     val RecodingFiles: String? = null,
+    @SerializedName("Title")
+    val Title: String? = null,
     @SerializedName("IsActive")
     val IsActive: Boolean? = null,
     @SerializedName("CreatedOn")
     val CreatedOn: String? = null,
     @SerializedName("UpdatedOn")
     val UpdatedOn: String? = null,
+
+
+    var isPlaying: Boolean = false,
 )

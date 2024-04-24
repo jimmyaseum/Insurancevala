@@ -1,7 +1,10 @@
 <resources >
     <string name="app_name">Mitul Thakkar</string>
+    <string name="default_notification_channel_id">my_notification_channel</string>
 
  <!--button-->
+    <string name="notification_channel_id" translatable="false">Inquiry</string>
+
     <string name="str_login">Login</string>
     <string name="str_signup">Sign up</string>
     <string name="str_reset_password">Reset password</string>
@@ -19,7 +22,7 @@
     <string name="str_reset_title">Password reset email has been sent</string>
     <string name="str_reset_msg">A password reset email has been sent to your e-mail address.</string>
     <string name="str_set_new_password_title">Please, enter a new password below</string>
-    <string name="str_new_password_confirm_success">New password confirmed successful.</string>
+    <string name="str_new_password_confirm_success">New Password Updated Successfully.</string>
     <string name="str_new_password_confirm_success_msg">You have been successfully confirm your new password. Please, use your new password when logging in.</string>
     <!-- hint -->
     <string name="str_email">Email address</string>
@@ -37,7 +40,10 @@
     <string name="error_empty_mobile_number">Enter mobile number</string>
     <string name="error_valid_mobile_number">Enter valid mobile number</string>
     <string name="error_valid_password">Enter password at least 6 characters</string>
+    <string name="error_empty_old_password">Enter old password</string>
+    <string name="error_empty_new_password">Enter new password</string>
     <string name="error_empty_confirm_password">Enter confirm password</string>
+    <string name="error_old_and_new_password_password">Old Password and New Password Cannot Be Same</string>
     <string name="error_mismatch_password">Password does not match</string>
     <string name="error_empty_inquiry_type">Enter Inquiry Type</string>
     <string name="error_empty_inquiry_sub_type">Enter Inquiry Sub Type</string>
@@ -50,8 +56,11 @@
     <string name="error_empty_state">Enter State</string>
     <string name="error_empty_city">Enter City</string>
     <string name="error_empty_type">Select Status</string>
+    <string name="error_empty_company_name">Enter company name</string>
+    <string name="error_empty_plan_name">Enter plan name</string>
     <string name="msg_permission_storage">Application need permission to read photos or documents from device</string>
     <string name="msg_permission_camera">Application need permission to access camera</string>
+    <string name="msg_permission_notification">Application need permission to access Notification</string>
     <string name="error_failed_to_connect">Failed to connect to server. Try again later.</string>
 
     <string name="audio_file">Audio from File</string>

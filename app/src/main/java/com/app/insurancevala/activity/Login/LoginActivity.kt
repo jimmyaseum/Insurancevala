@@ -14,7 +14,9 @@ import com.app.insurancevala.model.response.LoginResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.app.insurancevala.utils.AppConstant.DEVICE_TYPE
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_login.layout
 import kotlinx.android.synthetic.main.activity_login.imgBack
@@ -26,14 +28,18 @@ import retrofit2.Response
 //commit by shubham
 class LoginActivity : BaseActivity(), View.OnClickListener {
 
-    companion object {
-        var fcmDeviceToken = ""
-    }
+    var sharedPreference: SharedPreference? = null
+
+    var fcmDeviceToken = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        sharedPreference = SharedPreference(applicationContext)
         overridePendingTransition(R.anim.fadein, R.anim.fadeout)
         initializeView()
+
+        getDeviceToken()
+
     }
 
     override fun initializeView() {
@@ -114,6 +120,23 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
         }
     }
 
+    private fun getDeviceToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (task.isSuccessful) {
+                fcmDeviceToken = task.result
+                LogUtil.d(TAG, "FCM DeviceToken: $fcmDeviceToken")
+            } else {
+                // Handle the case where fetching token failed
+                val exception = task.exception
+                if (exception != null) {
+                    LogUtil.e(TAG, "Fetching FCM token failed: ${exception.message}")
+                } else {
+                    LogUtil.e(TAG, "Fetching FCM token failed with unknown exception")
+                }
+            }
+        })
+    }
+
     private fun isValidate(): Boolean {
 
         var isvalidate = true
@@ -142,10 +165,6 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
 
         showProgress()
 
-        if (fcmDeviceToken.isNullOrEmpty()) {
-            fcmDeviceToken = "123456"
-        }
-
         val jsonObject = JSONObject()
         jsonObject.put("UserName", edtUserName.text.toString().trim())
         jsonObject.put("Password", edtPassword.text.toString().trim())
@@ -162,17 +181,16 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                     if (response.body()?.Status == 200) {
 
                         val userModel: LoginModel? = response.body()!!.Data!!
-                        val sharedPreference = SharedPreference(this@LoginActivity)
-                        sharedPreference.setPreference(PrefConstants.PREF_IS_LOGIN, "1")
-                        sharedPreference.setPreference(PrefConstants.PREF_TOKEN, userModel!!.Token.toString())
-                        sharedPreference.setPreference(PrefConstants.PREF_USER_ID, userModel.ID.toString())
-                        sharedPreference.setPreference(PrefConstants.PREF_USER_USER_NAME, userModel.UserName.toString())
-                        sharedPreference.setPreference(PrefConstants.PREF_USER_EMAIL, userModel.EmailID.toString())
-                        sharedPreference.setPreference(PrefConstants.PREF_USER_MOBILE, userModel.MobileNo.toString())
-                        sharedPreference.setPreference(PrefConstants.PREF_USER_IMAGE, userModel.UserImage.toString())
-                        sharedPreference.setPreference(PrefConstants.PREF_USER_GUID, userModel.UserGUID.toString())
-                        sharedPreference.setPreference(PrefConstants.PREF_USER_TYPE_ID, userModel.UserTypeID.toString())
-                        sharedPreference.setPreference(PrefConstants.PREF_USER_TYPE, userModel.UserType.toString())
+                        sharedPreference!!.setPreference(PrefConstants.PREF_IS_LOGIN, "1")
+                        sharedPreference!!.setPreference(PrefConstants.PREF_TOKEN, userModel!!.Token.toString())
+                        sharedPreference!!.setPreference(PrefConstants.PREF_USER_ID, userModel.ID.toString())
+                        sharedPreference!!.setPreference(PrefConstants.PREF_USER_USER_NAME, userModel.UserName.toString())
+                        sharedPreference!!.setPreference(PrefConstants.PREF_USER_EMAIL, userModel.EmailID.toString())
+                        sharedPreference!!.setPreference(PrefConstants.PREF_USER_MOBILE, userModel.MobileNo.toString())
+                        sharedPreference!!.setPreference(PrefConstants.PREF_USER_IMAGE, userModel.UserImage.toString())
+                        sharedPreference!!.setPreference(PrefConstants.PREF_USER_GUID, userModel.UserGUID.toString())
+                        sharedPreference!!.setPreference(PrefConstants.PREF_USER_TYPE_ID, userModel.UserTypeID.toString())
+                        sharedPreference!!.setPreference(PrefConstants.PREF_USER_TYPE, userModel.UserType.toString())
 
                         val intent = Intent(applicationContext, HomeActivity::class.java)
                         startActivity(intent)

@@ -47,6 +47,7 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
         ClosedCall = intent.getStringExtra("ClosedCall")
         if (!ClosedCall.isNullOrEmpty()) {
             txtHearderText.text = "Closed Calls"
+            imgAddCalls.gone()
         }
     }
 

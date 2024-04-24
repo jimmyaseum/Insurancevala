@@ -46,5 +46,9 @@ data class DashboardInnerModel (
     @SerializedName("Frequency")
     val Frequency: String? = null,
     @SerializedName("LeadName")
-    val LeadName: String? = null
+    val LeadName: String? = null,
+    @SerializedName("InquiryDate")
+    val InquiryDate: String? = null,
+    @SerializedName("GroupCode")
+    val GroupCode: String? = null
     )

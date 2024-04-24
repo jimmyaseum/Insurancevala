@@ -62,6 +62,7 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
         ClosedTask = intent.getStringExtra("ClosedTask")
         if (!ClosedTask.isNullOrEmpty()) {
             txtHearderText.text = "Closed Tasks"
+            imgAddTasks.gone()
         }
     }
 

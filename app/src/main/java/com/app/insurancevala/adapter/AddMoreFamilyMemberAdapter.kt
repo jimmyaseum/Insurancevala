@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerItemClickListener
 import com.app.insurancevala.model.pojo.FamilyMemberInfoModel
+import com.app.insurancevala.utils.LogUtil
+import com.app.insurancevala.utils.TAG
 import com.app.insurancevala.utils.errortint
 import kotlinx.android.synthetic.main.activity_add_lead.edtMobileNo
 import kotlinx.android.synthetic.main.adapter_add_more_family_member.view.*
@@ -64,6 +66,8 @@ class AddMoreFamilyMemberAdapter (val arrayList: ArrayList<FamilyMemberInfoModel
             arrayList: ArrayList<FamilyMemberInfoModel>?,
             recyclerItemClickListener: RecyclerItemClickListener
         ) {
+
+            LogUtil.d(TAG,""+arrayList!![position].FirstName)
 
             itemView.edtRelation.setText(arrayList!![position].Relation)
             itemView.edtInitialItem.setText(arrayList!![position].Initial)
@@ -192,23 +196,23 @@ class AddMoreFamilyMemberAdapter (val arrayList: ArrayList<FamilyMemberInfoModel
         if (!arrayList.isNullOrEmpty()) {
             for (model in arrayList) {
                 if (TextUtils.isEmpty(model.tilRelation?.text!!.trim())) {
-                    model.tilRelation?.error = "Select Relation"
+                    model.tilRelation?.setError("Select Relation", errortint(context!!))
                     emptyBox = false
                 }
                 if (TextUtils.isEmpty(model.tilInitial?.text!!.trim())) {
-                    model.tilInitial?.error = "Select Inital"
+                    model.tilInitial?.setError("Select Inital", errortint(context!!))
                     emptyBox = false
                 }
                 if (TextUtils.isEmpty(model.tilFirstName?.text!!.trim())) {
-                    model.tilFirstName?.error = "Enter First Name"
+                    model.tilFirstName?.setError("Enter First Name", errortint(context!!))
                     emptyBox = false
                 }
                 if (TextUtils.isEmpty(model.tilLastName?.text!!.trim())) {
-                    model.tilLastName?.error = "Enter Last Name"
+                    model.tilLastName?.setError("Enter Last Name", errortint(context!!))
                     emptyBox = false
                 }
                 if (TextUtils.isEmpty(model.tilDOB?.text!!.trim())) {
-                    model.tilDOB?.error = "Select Date Of Birth"
+                    model.tilDOB?.setError("Select Date Of Birth", errortint(context!!))
                     emptyBox = false
                 }
             }
@@ -221,7 +225,7 @@ class AddMoreFamilyMemberAdapter (val arrayList: ArrayList<FamilyMemberInfoModel
         if (!arrayList.isNullOrEmpty()) {
              hideErrorTIL(position)
             arrayList.removeAt(position)
-            notifyItemChanged(position)
+            notifyDataSetChanged()
         }
     }
 
@@ -244,12 +248,12 @@ class AddMoreFamilyMemberAdapter (val arrayList: ArrayList<FamilyMemberInfoModel
     private fun hideErrorTIL(position: Int) {
         if (!arrayList.isNullOrEmpty()) {
             for (i in arrayList.indices) {
-                arrayList[i].tilRelation?.error = null
-                arrayList[i].tilInitial?.error = null
-                arrayList[i].tilFirstName?.error = null
-                arrayList[i].tilLastName?.error = null
-                arrayList[i].tilMobileNo?.error = null
-                arrayList[i].tilDOB?.error = null
+                arrayList[i].tilRelation?.setError(null)
+                arrayList[i].tilInitial?.setError(null)
+                arrayList[i].tilFirstName?.setError(null)
+                arrayList[i].tilLastName?.setError(null)
+                arrayList[i].tilMobileNo?.setError(null)
+                arrayList[i].tilDOB?.setError(null)
             }
         }
     }

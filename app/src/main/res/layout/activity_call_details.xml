@@ -395,6 +395,45 @@
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/LLFollowupTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/_5sdp">
+                <ImageView
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_15sdp"
+                    android:src="@drawable/ic_time"
+                    app:tint="@color/color10"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:gravity="center_vertical"
+                        android:text="Followup Time"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/_12sdp"/>
+                    <TextView
+                        android:id="@+id/txtFollowupTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_regular"
+                        android:gravity="center_vertical"
+                        android:text=""
+                        android:textColor="@color/color10"
+                        android:textSize="@dimen/_10sdp"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:background="@color/colorGradish"/>
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
                 android:id="@+id/LLFollowupNotes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

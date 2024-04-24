@@ -17,7 +17,7 @@
             android:layout_weight="1"
             android:text="Relation"
             android:gravity="center_vertical"
-            android:textColor="@color/white"
+            android:textColor="@color/colorBlack"
             android:fontFamily="@font/poppins_regular"
             android:textSize="@dimen/_12sdp"/>
 
@@ -25,9 +25,9 @@
             android:id="@+id/txtName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
             android:text="Name"
-            android:textColor="@color/white"
+            android:textColor="@color/colorBlack"
             android:paddingHorizontal="@dimen/_5sdp"
             android:fontFamily="@font/poppins_regular"
             android:textSize="@dimen/_12sdp"/>
@@ -38,8 +38,8 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="BirthDate"
-            android:gravity="center_vertical"
-            android:textColor="@color/white"
+            android:gravity="right"
+            android:textColor="@color/colorBlack"
             android:fontFamily="@font/poppins_regular"
             android:textSize="@dimen/_12sdp"/>
 
@@ -49,7 +49,7 @@
         android:id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:background="@color/colorGray100"
+        android:background="@color/colorGray500"
         android:layout_marginHorizontal="@dimen/_5sdp"/>
 
 </LinearLayout>

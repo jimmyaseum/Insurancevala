@@ -42,6 +42,7 @@ class MastersListActivity : BaseActivity(), View.OnClickListener {
         LLInitialType.setOnClickListener(this)
         LLLeadSource.setOnClickListener(this)
         LLCategoryType.setOnClickListener(this)
+        LLCompany.setOnClickListener(this)
         LLOccupation.setOnClickListener(this)
         LLRelation.setOnClickListener(this)
         LLCountry.setOnClickListener(this)
@@ -106,6 +107,13 @@ class MastersListActivity : BaseActivity(), View.OnClickListener {
             R.id.LLCategoryType -> {
                 preventTwoClick(v)
                 val intent = Intent(this, CategoryTypeListActivity::class.java)
+                startActivity(intent)
+
+            }
+
+            R.id.LLCompany -> {
+                preventTwoClick(v)
+                val intent = Intent(this, CompanyListActivity::class.java)
                 startActivity(intent)
 
             }

@@ -39,13 +39,12 @@ class DashboardInnerListAdapter(private val context: Context?, private val array
         ) {
             this.context = context
 
-            if(!arrayList[position].InquiryAllotmentName.isNullOrEmpty()) {
-                itemView.txtName.text = arrayList[position].InquiryAllotmentName + " - " + arrayList[position].ID
+            if(!arrayList[position].LeadName.isNullOrEmpty()) {
+                itemView.txtLeadName.text = arrayList[position].LeadName + " - " + arrayList[position].GroupCode
             }
 
-
-            if(!arrayList[position].LeadName.isNullOrEmpty()) {
-                itemView.txtLeadName.text = arrayList[position].LeadName
+            if(!arrayList[position].InquiryDate.isNullOrEmpty()) {
+                itemView.txtInquiryDate.text = arrayList[position].InquiryDate
             }
 
             if(!arrayList[position].InquiryType.isNullOrEmpty()) {
@@ -70,6 +69,10 @@ class DashboardInnerListAdapter(private val context: Context?, private val array
 
             if(!arrayList[position].Frequency.isNullOrEmpty()) {
                 itemView.txtFrequency.text = arrayList[position].Frequency
+            }
+
+            if(!arrayList[position].InquiryAllotmentName.isNullOrEmpty()) {
+                itemView.txtName.text = arrayList[position].InquiryAllotmentName + " - " + arrayList[position].ID
             }
 
             var colors = arrayOf(R.drawable.bg_shadow_orange, R.drawable.bg_shadow_purple, R.drawable.bg_shadow_blue)

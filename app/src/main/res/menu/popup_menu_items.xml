@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_notes"
+        android:title="Notes" />
+    <item
+        android:id="@+id/menu_tasks"
+        android:title="Tasks" />
+    <item
+        android:id="@+id/menu_calls"
+        android:title="Calls" />
+    <item
+        android:id="@+id/menu_meetings"
+        android:title="Meetings" />
+    <item
+        android:id="@+id/menu_attachments"
+        android:title="Attachments" />
+    <item
+        android:id="@+id/menu_recordings"
+        android:title="Recordings" />
+    <item
+        android:id="@+id/menu_closed_tasks"
+        android:title="Closed Tasks" />
+    <item
+        android:id="@+id/menu_closed_calls"
+        android:title="Closed Calls" />
+    <item
+        android:id="@+id/menu_closed_meetings"
+        android:title="Closed Meetings" />
+</menu>

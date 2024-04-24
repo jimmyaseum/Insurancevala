@@ -321,7 +321,7 @@ class AddNotesActivity : BaseActivity(), View.OnClickListener,RecyclerClickListe
         }
         Select_Doc!!.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "application/*"
+            intent.type = "application/pdf"
             startActivityForResult(intent, 101)
             bottomSheetDialog.dismiss()
         }
@@ -526,7 +526,7 @@ class AddNotesActivity : BaseActivity(), View.OnClickListener,RecyclerClickListe
                 adapter.addItem(edtName.text.toString(), fileuri, attachmenttype)
                 bottomSheetDialog.dismiss()
             } else {
-                edtName.error = "Enter Name"
+                edtName.setError("Enter Name", errortint(this))
             }
         }
 

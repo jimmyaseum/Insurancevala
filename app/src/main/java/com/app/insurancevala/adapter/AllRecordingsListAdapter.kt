@@ -1,8 +1,8 @@
 package com.app.insurancevala.adapter
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
+import android.media.AudioAttributes
+import android.media.MediaPlayer
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -12,16 +12,17 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.RecordingsModel
-import com.app.insurancevala.utils.AppConstant
-import com.app.insurancevala.utils.convertDateStringToString
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
+import com.app.insurancevala.utils.preventTwoClick
 import kotlinx.android.synthetic.main.adapter_all_recordings_list.view.*
-import java.util.*
-import kotlin.collections.ArrayList
 
-class AllRecordingsListAdapter(private val mContext: Context, private val arrayList: ArrayList<RecordingsModel>?, private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<AllRecordingsListAdapter.ViewHolder>() {
+class AllRecordingsListAdapter(
+    private val mContext: Context,
+    private val arrayList: ArrayList<RecordingsModel>?,
+    private val recyclerItemClickListener: RecyclerClickListener
+) : RecyclerView.Adapter<AllRecordingsListAdapter.ViewHolder>() {
+
+    private var mediaPlayer: MediaPlayer? = null
+    private var currentPlayingPosition: Int = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -35,41 +36,104 @@ class AllRecordingsListAdapter(private val mContext: Context, private val arrayL
     }
 
     override fun getItemCount(): Int {
-        return arrayList!!.size
+        return arrayList?.size ?: 0
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-        var context: Context? = null
-
-        @RequiresApi(Build.VERSION_CODES.M)
         fun bindItems(
             context: Context,
             position: Int,
-            arrayList : RecordingsModel,
+            recording: RecordingsModel,
             recyclerItemClickListener: RecyclerClickListener
         ) {
-            this.context = context
+            itemView.txtType.text = recording.Title
 
-            /*itemView.rlItemContent.setOnClickListener {
-                if (!arrayList.RecodingFiles.isNullOrEmpty()){
-                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(arrayList.RecodingFiles))
-                    context.startActivity(browserIntent)
-                }
-            }*/
+            // Handle audio play/pause icon
+            if (position == currentPlayingPosition && mediaPlayer?.isPlaying == true) {
+                itemView.audioPlay.setImageResource(R.drawable.ic_pause)
+            } else {
+                itemView.audioPlay.setImageResource(R.drawable.ic_play)
+            }
 
-            if(!arrayList.RecodingFiles.isNullOrEmpty()) {
-                itemView.txtType.text = arrayList.RecodingFiles
+            itemView.audioPlay.setOnClickListener {
+                preventTwoClick(itemView.audioPlay)
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 100)
             }
 
             itemView.imgEdit.setOnClickListener {
+                preventTwoClick(itemView.imgEdit)
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 101)
             }
 
             itemView.imgDelete.setOnClickListener {
+                preventTwoClick(itemView.imgDelete)
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 102)
             }
-
         }
+    }
+
+    fun prepareMediaPlayer() {
+        mediaPlayer?.release()
+        mediaPlayer = MediaPlayer().apply {
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+            )
+            setOnCompletionListener {
+                currentPlayingPosition = -1
+                notifyDataSetChanged()
+            }
+        }
+        // Prepare each recording
+        arrayList?.forEach { recording ->
+            try {
+                mediaPlayer?.setDataSource(recording.RecodingFiles)
+                mediaPlayer?.prepare()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun updatePlayback(position: Int) {
+        // Toggle playback for the clicked position
+        if (position == currentPlayingPosition && mediaPlayer?.isPlaying == true) {
+            mediaPlayer?.pause()
+        } else {
+            startAudio(arrayList?.get(position)?.RecodingFiles)
+            currentPlayingPosition = position
+        }
+        notifyDataSetChanged()
+    }
+
+    private fun startAudio(url: String?) {
+        mediaPlayer?.release()
+        mediaPlayer = MediaPlayer().apply {
+            setAudioAttributes(
+                AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                    .build()
+            )
+            setDataSource(url)
+            prepare()
+            start()
+            setOnCompletionListener {
+                currentPlayingPosition = -1
+                notifyDataSetChanged()
+            }
+        }
+    }
+
+    fun stopPlayback() {
+        mediaPlayer?.apply {
+            if (isPlaying) {
+                stop()
+            }
+            reset()
+            release()
+        }
+        mediaPlayer = null
     }
 }

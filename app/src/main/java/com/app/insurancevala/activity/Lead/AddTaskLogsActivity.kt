@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.database.Cursor
@@ -83,6 +84,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
     //followup date
     val CalenderFollowUpTaskDate = Calendar.getInstance()
     var FollowUpTaskDate: String = ""
+    var ReminderTime: String = ""
 
     val arrayListtaskstatus  = ArrayList<SingleSelectionModel>()
     var mTaskstatus : String = ""
@@ -202,6 +204,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
 
         edtDueDate.setOnClickListener(this)
         edtReminderDate.setOnClickListener(this)
+        edtReminderTime.setOnClickListener(this)
         edtStatus.setOnClickListener(this)
         edtPriority.setOnClickListener(this)
         edtRepeat.setOnClickListener(this)
@@ -303,6 +306,27 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
 //                dpd.datePicker.maxDate = System.currentTimeMillis() - 1000
                 dpd.show()
             }
+            R.id.edtReminderTime -> {
+                preventTwoClick(v)
+                val caltime = Calendar.getInstance()
+                val hour = caltime.get(Calendar.HOUR_OF_DAY)
+                val minute = caltime.get(Calendar.MINUTE)
+                val timePickerDialog = TimePickerDialog(this, { view, hourOfDay, minute ->
+                    val mTime = convertDateStringToString(
+                        "$hourOfDay:$minute",
+                        AppConstant.HH_MM_FORMAT,
+                        AppConstant.HH_MM_AA_FORMAT
+                    )!!
+                    ReminderTime = convertDateStringToString(
+                        "$hourOfDay:$minute",
+                        AppConstant.HH_MM_FORMAT,
+                        AppConstant.HH_MM_SS_FORMAT
+                    )!!
+                    edtReminderTime.setText(mTime)
+                }, hour, minute, false)
+
+                timePickerDialog.show()
+            }
         }
     }
 
@@ -348,6 +372,10 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                 edtReminderDate.setError("Select Reminder Date",errortint(this))
                 isValidate = false
             }
+            if (edtReminderTime.text.isEmpty()) {
+                edtReminderTime.setError("Select Reminder Time", errortint(this))
+                isValidate = false
+            }
         }
 
         return isValidate
@@ -372,6 +400,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         if(cbIsReminder.isChecked) {
             isreminder = true
             jsonObject.put("ReminderDate",FollowUpTaskDate)
+            jsonObject.put("ReminderTime",ReminderTime)
             jsonObject.put("Repeat", mTaskrepeatID)
             jsonObject.put("NotifyVia", mTasknotifyviaID)
         } else {
@@ -741,6 +770,17 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         if(model.ReminderDate != null && model.ReminderDate != "") {
             edtReminderDate.setText(model.ReminderDate)
             FollowUpTaskDate = convertDateStringToString(model.ReminderDate , AppConstant.dd_MM_yyyy_Slash,AppConstant.yyyy_MM_dd_Dash).toString()
+        }
+
+        if (model.ReminderTime != null && model.ReminderTime != "") {
+            val FollowupTime = convertDateStringToString(
+                model.ReminderTime,
+                AppConstant.HH_MM_SS_FORMAT,
+                AppConstant.HH_MM_AA_FORMAT
+            )
+            edtReminderTime.setText(FollowupTime)
+
+            ReminderTime = model.ReminderTime
         }
 
         txtAttachments.gone()
@@ -1199,7 +1239,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         }
         Select_Doc!!.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "application/*"
+            intent.type = "application/pdf"
             startActivityForResult(intent, 101)
             bottomSheetDialog.dismiss()
         }
@@ -1404,7 +1444,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                 adapter.addItem(edtName.text.toString(), fileuri, attachmenttype)
                 bottomSheetDialog.dismiss()
             } else {
-                edtName.error = "Enter Name"
+                edtName.setError("Enter Name", errortint(this))
             }
         }
 

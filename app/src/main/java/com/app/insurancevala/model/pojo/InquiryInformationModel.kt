@@ -6,6 +6,12 @@ import com.google.gson.annotations.SerializedName
 
 data class InquiryInformationModel (
 
+    @SerializedName("FamilyMember")
+    var FamilyMember: String = "",
+
+    @SerializedName("FamilyMemberId")
+    var FamilyMemberId: Int = 0,
+
     @SerializedName("InquirytypeId")
     var InquirytypeId: Int = 0,
 
@@ -49,6 +55,9 @@ data class InquiryInformationModel (
     var mInquiryDate: String = "",
 
     //TIL Error handling
+
+    @SerializedName("tilFamilyMember")
+    var tilFamilyMember: EditText? = null,
 
     @SerializedName("tilInquiryType")
     var tilInquiryType: EditText? = null,

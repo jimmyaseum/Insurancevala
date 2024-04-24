@@ -10,10 +10,12 @@ import android.view.animation.AnimationUtils
 import com.app.insurancevala.R
 import kotlinx.android.synthetic.main.fragment_nb.view.*
 import kotlinx.android.synthetic.main.fragment_nb.*
-import kotlinx.android.synthetic.main.fragment_nb.layout
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.activity.NBInquiry.AddNBActivity
+import com.app.insurancevala.activity.NBInquiry.InquiryListActivity
 import com.app.insurancevala.adapter.NBListAdapter
+import com.app.insurancevala.helper.PaginationScrollListener
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.NBModel
 import com.app.insurancevala.model.response.NBResponse
@@ -32,6 +34,12 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
     var arrayListNB : ArrayList<NBModel>? = ArrayList()
     var arrayListNBNew : ArrayList<NBModel>? = ArrayList()
 
+    var skip = 0
+    var isLastPage: Boolean = false
+    var isLoading: Boolean = false
+
+    var searchText: String = ""
+
     lateinit var adapter : NBListAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -46,73 +54,63 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
 
         views!!.imgAddNBInquiry.setOnClickListener(this)
 
-        arrayListNB = ArrayList()
-        arrayListNBNew = ArrayList()
+        val manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+        views!!.RvNBList.layoutManager = manager
+        views!!.RvNBList.isNestedScrollingEnabled = false
 
-        val layoutManager = LinearLayoutManager(activity)
-        views!!.RvNBList.layoutManager = layoutManager
-
-        adapter = NBListAdapter(activity, arrayListNB!!,this@NBFragment)
-        views!!.RvNBList.adapter = adapter
+        loadMoreRecyclerView(manager)
 
         if (isOnline(requireActivity())) {
-            callManageNB()
+            callAPIDefaultData(false, true)
         } else {
             internetErrordialog(requireActivity())
         }
 
         views!!.imgSearch.setOnClickListener {
-            if(searchView.isSearchOpen) {
+            if (searchView.isSearchOpen) {
                 searchView.closeSearch()
             } else {
                 searchView.showSearch()
             }
-
         }
 
         views!!.searchView.setOnQueryTextListener(object : SimpleSearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
-                return false
+                return true
             }
+
             override fun onQueryTextChange(newText: String): Boolean {
-                val arrItemsFinal1: ArrayList<NBModel> = ArrayList()
-                if (newText.trim().isNotEmpty()) {
-                    val strSearch = newText
-                    for (model in arrayListNB!!) {
-                        try {
-                            if (model.LeadID.toString()!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                                model.LeadName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                                model.NBInquiryGUID!!.toLowerCase().contains(strSearch.toLowerCase()) ) {
-                                arrItemsFinal1.add(model)
-                            }
-                        } catch (e: Exception){
-                        }
-                    }
-                    arrayListNBNew = arrItemsFinal1
-                    adapter =  NBListAdapter(activity, arrayListNBNew!!,this@NBFragment)
-                    views!!.RvNBList.adapter = adapter
-                } else {
-                    arrayListNBNew = arrayListNB
-                    adapter = NBListAdapter(activity, arrayListNBNew!!, this@NBFragment)
-                    views!!.RvNBList.adapter = adapter
+                if (newText.trim().isNotEmpty() && newText.trim().length > 2) {
+                    searchText = newText
+                    skip = 0
+                    isLastPage = false
+                    isLoading = false
+                    callManageNB(searchText, false)
+                } else if (newText.trim().isEmpty()) {
+                    arrayListNB?.clear()
+                    arrayListNBNew?.clear()
+                    searchText = ""
+                    callAPIDefaultData(false,false)
                 }
                 return false
             }
 
             override fun onQueryTextCleared(): Boolean {
+                searchText = ""
+                skip = 0
+                callManageNB(searchText, false)
                 return false
             }
         })
+
         views!!.searchView.setOnSearchViewListener(object : SimpleSearchView.SearchViewListener {
             override fun onSearchViewClosed() {
-                arrayListNBNew = arrayListNB
-                adapter = NBListAdapter(activity, arrayListNBNew!!, this@NBFragment)
-                views!!.RvNBList.adapter = adapter
-
             }
 
             override fun onSearchViewClosedAnimation() {
                 AnimationUtils.loadAnimation(activity, R.anim.searchview_close_anim)
+                searchText = ""
+                callAPIDefaultData(false, true)
             }
 
             override fun onSearchViewShown() {
@@ -126,10 +124,50 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
 
         views!!.refreshLayout.setOnRefreshListener {
             hideKeyboard(requireContext(),refreshLayout)
-            searchView.closeSearch()
-            callManageNB()
+            callAPIDefaultData(true, true)
             views!!.refreshLayout.isRefreshing = false
         }
+
+        views!!.RvNBList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                var position = adapter.getAdapterPosition().toString()
+
+                var visibleItem = manager.findFirstCompletelyVisibleItemPosition()
+
+
+                if (dy > 0) { // Scrolling down
+                    LogUtil.e("AdapterPosition VisibleItem", "$visibleItem")
+                    var position = adapter.getAdapterPosition().toString()
+                    if (("0").contains(position)) {
+                        views!!.refreshLayout.isEnabled = true
+                    } else {
+                        views!!.refreshLayout.isEnabled = false
+                    }
+                } else { // Scrolling up
+                    if (visibleItem == 0) {
+                        views!!.refreshLayout.isEnabled = true
+                    }
+                }
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+            }
+        })
+    }
+
+    private fun callAPIDefaultData(search: Boolean, progress: Boolean) {
+        skip = 0
+        isLoading = false
+        isLastPage = false
+
+        if (search) {
+            searchView.closeSearch()
+        }
+
+        callManageNB("", progress)
     }
     override fun onClick(v: View?) {
         hideKeyboard(requireContext(), v)
@@ -138,16 +176,20 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
                 preventTwoClick(v)
                 val intent = Intent(getActivity(), AddNBActivity::class.java)
                 intent.putExtra(AppConstant.STATE,AppConstant.S_ADD)
-                requireActivity().startActivityForResult(intent, AppConstant.INTENT_1002)
+                requireActivity().startActivityForResult(intent, AppConstant.INTENT_1001)
             }
         }
     }
-    private fun callManageNB() {
+    private fun callManageNB(InquirySearch: String, progress: Boolean) {
 
-        showProgress()
+        if (progress) {
+            showProgress()
+        }
 
         var jsonObject = JSONObject()
-        jsonObject.put("LeadID", 0)
+        jsonObject.put("Limit", 10)
+        jsonObject.put("Skip", skip)
+        jsonObject.put("InquirySearch", InquirySearch)
 //        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
 
         val call = ApiUtils.apiInterface.ManageNBInquiryFindAllActive(getRequestJSONBody(jsonObject.toString()))
@@ -156,43 +198,97 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
+                        val arrayList = response.body()?.Data!!
 
-                        arrayListNB?.clear()
-                        arrayListNBNew?.clear()
-                        arrayListNB = response.body()?.Data!!
-                        arrayListNBNew = arrayListNB
-
-                        Log.e("arrayListNBNew","===>"+arrayListNBNew)
-                        if(arrayListNBNew!!.size > 0) {
-
-                        adapter = NBListAdapter(activity, arrayListNBNew!!,this@NBFragment)
-                        views!!.RvNBList.adapter = adapter
-
-                        views!!.shimmer.stopShimmer()
-                        views!!.shimmer.gone()
-
+                        if (skip > 0) {
+                            arrayListNBNew!!.addAll(arrayList)
                         } else {
-                            Log.e("AAA"," ==> 222")
-                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            arrayListNB = ArrayList()
+                            arrayListNBNew = ArrayList()
+                            arrayListNB?.clear()
+                            arrayListNBNew?.clear()
+                            arrayListNB!!.addAll(arrayList)
+                            arrayListNBNew = arrayListNB
+                            views!!.RLNoData.gone()
+                            views!!.FL.visible()
+                        }
+
+                        if (arrayListNBNew!!.size > 0) {
+                            if (skip == 0) {
+                                setData()
+                                views!!.shimmer.stopShimmer()
+                                views!!.shimmer.gone()
+
+                                if (arrayListNBNew.isNullOrEmpty().not()) {
+                                    if (arrayListNBNew!!.size < 10) {
+                                        isLastPage = true
+                                    }
+                                }
+                            } else {
+                                addLoadMoreData(arrayListNBNew!!)
+                            }
+                        } else {
+                            Snackbar.make(
+                                layout,
+                                response.body()?.Details.toString(),
+                                Snackbar.LENGTH_LONG
+                            ).show()
                             views!!.shimmer.stopShimmer()
                             views!!.shimmer.gone()
                             views!!.FL.gone()
                             views!!.RLNoData.visible()
                         }
-                    } else {
+                    } else if (response.body()!!.Status == 1010 ||  response.body()?.Status == 201) {
                         views!!.shimmer.stopShimmer()
                         views!!.shimmer.gone()
                         views!!.FL.gone()
                         views!!.RLNoData.visible()
+                    } else if (response.body()!!.Status == 1013) {
+                        isLastPage = true
+                        context!!.toast(response.body()?.Message.toString(), AppConstant.TOAST_SHORT)
+                    } else {
+                        if (searchText != "" && skip == 0) {
+                            views!!.RLNoData.visible()
+                            views!!.FL.gone()
+                            views!!.shimmer.stopShimmer()
+                            views!!.shimmer.gone()
+                        } else if (arrayListNBNew!!.size == 0) {
+                            views!!.RLNoData.visible()
+                            views!!.FL.gone()
+                            views!!.shimmer.stopShimmer()
+                            views!!.shimmer.gone()
+                        }
                     }
                 }
             }
+
             override fun onFailure(call: Call<NBResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         })
     }
+
+    fun addLoadMoreData(arrayList: ArrayList<NBModel>) {
+        if (::adapter.isInitialized) {
+            adapter.notifyDataSetChanged()
+            isLoading = false
+        } else {
+            setData()
+            views!!.RvNBList.adapter = adapter
+            isLoading = false
+        }
+    }
+
+    private fun setData() {
+        adapter = NBListAdapter(context, arrayListNBNew!!, this)
+        views!!.RvNBList.adapter = adapter
+    }
+
     override fun onItemClickEvent(view: View, position: Int, type: Int) {
         when(type) {
             102 -> {
@@ -204,6 +300,15 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
                 startActivityForResult(intent, AppConstant.INTENT_1001)
 
             }
+
+            103 -> {
+                preventTwoClick(view)
+                val intent = Intent(getActivity(), InquiryListActivity::class.java)
+                intent.putExtra("LeadID",arrayListNBNew!![position].ID)
+                intent.putExtra("GUID",arrayListNBNew!![position].LeadGUID)
+                startActivity(intent)
+
+            }
         }
     }
     @Suppress("DEPRECATION")
@@ -212,13 +317,31 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
         super.onActivityResult(requestCode, resultCode, data)
 
         Log.e("333","==>")
-        if (requestCode == AppConstant.INTENT_1002) {
+        if (requestCode == AppConstant.INTENT_1001) {
             if (isOnline(requireActivity())) {
-                callManageNB()
+                callAPIDefaultData(true, true)
             } else {
                 internetErrordialog(requireActivity())
             }
         }
+    }
+
+    private fun loadMoreRecyclerView(layoutManager: LinearLayoutManager) {
+        views!!.RvNBList?.addOnScrollListener(object : PaginationScrollListener(layoutManager) {
+            override fun isLastPage(): Boolean {
+                return isLastPage
+            }
+
+            override fun isLoading(): Boolean {
+                return isLoading
+            }
+
+            override fun loadMoreItems() {
+                isLoading = true
+                skip = skip + 10
+                callManageNB(searchText, true)
+            }
+        })
     }
 
 }

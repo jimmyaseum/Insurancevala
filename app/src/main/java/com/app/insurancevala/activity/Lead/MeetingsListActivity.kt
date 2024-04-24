@@ -66,6 +66,7 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
         ClosedMeeting = intent.getIntExtra("ClosedMeeting", 0)
         if (ClosedMeeting != 0) {
             txtHearderText.text = "Closed Meetings"
+            imgAddMeeting.gone()
         }
     }
 

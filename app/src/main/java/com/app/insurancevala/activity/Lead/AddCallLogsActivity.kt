@@ -32,10 +32,7 @@ import com.app.insurancevala.utils.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_add_call_logs.*
-import kotlinx.android.synthetic.main.activity_add_call_logs.layout
-import kotlinx.android.synthetic.main.activity_add_call_logs.cbIsFollowup
-import kotlinx.android.synthetic.main.activity_add_call_logs.imgBack
-import kotlinx.android.synthetic.main.activity_add_call_logs.txtSave
+import kotlinx.android.synthetic.main.activity_add_meeting_logs.LLFollowUpTime
 import kotlinx.android.synthetic.main.activity_add_user.edtUserType
 
 import org.json.JSONObject
@@ -76,6 +73,7 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
     //followup date
     val CalenderFollowUpCallDate = Calendar.getInstance()
     var FollowUpCallDate: String = ""
+    var FollowUpTime: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,6 +140,7 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
         edtLCallPurpose.setOnClickListener(this)
         edtLCallResult.setOnClickListener(this)
         edtFollowupDate.setOnClickListener(this)
+        edtFollowupTime.setOnClickListener(this)
         cbIsFollowup.setOnClickListener(this)
 
     }
@@ -209,9 +208,11 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
             R.id.cbIsFollowup -> {
                 if (cbIsFollowup.isChecked) {
                     LLFollowupDate.visible()
+                    LLFollowUpTime.visible()
                     LLFollowupNotes.visible()
                 } else {
                     LLFollowupDate.gone()
+                    LLFollowUpTime.gone()
                     LLFollowupNotes.gone()
                 }
             }
@@ -238,6 +239,27 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
                 dpd.datePicker.minDate = System.currentTimeMillis() - 1000
 //                dpd.datePicker.maxDate = System.currentTimeMillis() - 1000
                 dpd.show()
+            }
+            R.id.edtFollowupTime -> {
+                preventTwoClick(v)
+                val caltime = Calendar.getInstance()
+                val hour = caltime.get(Calendar.HOUR_OF_DAY)
+                val minute = caltime.get(Calendar.MINUTE)
+                val timePickerDialog = TimePickerDialog(this, { view, hourOfDay, minute ->
+                    val mTime = convertDateStringToString(
+                        "$hourOfDay:$minute",
+                        AppConstant.HH_MM_FORMAT,
+                        AppConstant.HH_MM_AA_FORMAT
+                    )!!
+                    FollowUpTime = convertDateStringToString(
+                        "$hourOfDay:$minute",
+                        AppConstant.HH_MM_FORMAT,
+                        AppConstant.HH_MM_SS_FORMAT
+                    )!!
+                    edtFollowupTime.setText(mTime)
+                }, hour, minute, false)
+
+                timePickerDialog.show()
             }
 
         }
@@ -297,6 +319,16 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
                 edtLCallSubject.setError("Select Call Subject",errortint(this))
                 isValidate = false
             }
+            if (cbIsFollowup.isChecked) {
+                if (edtFollowupDate.text.isEmpty()) {
+                    edtFollowupDate.setError("Select Followup Date", errortint(this))
+                    isValidate = false
+                }
+                if (edtFollowupTime.text.isEmpty()) {
+                    edtFollowupTime.setError("Select Followup Time", errortint(this))
+                    isValidate = false
+                }
+            }
         }
         return isValidate
     }
@@ -326,6 +358,7 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
             if(cbIsFollowup.isChecked) {
                 isreminder = true
                 jsonObject.put("FollowupDate", FollowUpCallDate)
+                jsonObject.put("FollowupTime", FollowUpTime)
                 jsonObject.put("FollowupNotes", edtFollowupNotes.text.toString().trim())
             } else {
                 isreminder = false

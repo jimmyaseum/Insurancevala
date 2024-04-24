@@ -23,6 +23,8 @@ data class DocumentsModel (
     val ID: Int? = null,
     @SerializedName("LeadID")
     val LeadID: Int? = null,
+    @SerializedName("NBInquiryTypeID")
+    val NBInquiryTypeID: Int? = null,
     @SerializedName("AttachmentGUID")
     val AttachmentGUID: String? = null,
     @SerializedName("AttachmentURL")

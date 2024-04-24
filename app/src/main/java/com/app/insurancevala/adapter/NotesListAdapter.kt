@@ -53,19 +53,19 @@ class NotesListAdapter(private val context: Context?, private val arrayList: Arr
                  itemView.txtDescription.text = arrayList[position].Description
             }
 
-            if(arrayList[position].UpdatedBy == 0)
+            if(arrayList[position].UpdatedBy == 0 || arrayList[position].UpdatedBy == null)
             {
                 if(!arrayList[position].CreatedOn.isNullOrEmpty()) {
                     val mdate = convertDateStringToString(arrayList[position].CreatedOn!! , AppConstant.ddMMyyyy_HHmmss, AppConstant.dd_LLL_yyyy)
                     val mtime = convertDateStringToString(arrayList[position].CreatedOn!! , AppConstant.ddMMyyyy_HHmmss, AppConstant.HH_MM_AA_FORMAT)
-                    itemView.txtCreatedBy.text = "created by " + arrayList[position].CreatedByName + " on " + mdate + " " + mtime
+                    itemView.txtCreatedBy.text = "Created By " + arrayList[position].CreatedByName + " On " + mdate + " " + mtime
                 }
 
             } else {
                 if(!arrayList[position].UpdatedOn.isNullOrEmpty()) {
                     val mdate = convertDateStringToString(arrayList[position].UpdatedOn!! , AppConstant.ddMMyyyy_HHmmss, AppConstant.dd_LLL_yyyy)
                     val mtime = convertDateStringToString(arrayList[position].UpdatedOn!! , AppConstant.ddMMyyyy_HHmmss, AppConstant.HH_MM_AA_FORMAT)
-                    itemView.txtCreatedBy.text = "updated by " + arrayList[position].UpdatedByName + " on " + mdate + " " + mtime
+                    itemView.txtCreatedBy.text = "Updated By " + arrayList[position].UpdatedByName + " On " + mdate + " " + mtime
                 }
             }
             val readMoreOption = ReadMoreOption.Builder(context)

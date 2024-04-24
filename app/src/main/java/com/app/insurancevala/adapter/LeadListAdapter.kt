@@ -20,17 +20,23 @@ import kotlinx.android.synthetic.main.adapter_lead_item.view.*
 
 class LeadListAdapter(private val context: Context?, private val arrayList: ArrayList<LeadModel>, private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<LeadListAdapter.ViewHolder>() {
 
+    var adapterPositionGet: Int = -1
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.adapter_lead_item, parent, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        adapterPositionGet = position
         holder.bindItems(context!!, position, arrayList, recyclerItemClickListener)
     }
 
     override fun getItemCount(): Int {
         return arrayList.size
+    }
+
+    fun getAdapterPosition(): Int {
+        return adapterPositionGet
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -47,6 +53,8 @@ class LeadListAdapter(private val context: Context?, private val arrayList: Arra
 
             if(!arrayList[position].MobileNo.isNullOrEmpty()) {
                 itemView.txtMobileNumber.text = arrayList[position].MobileNo
+            } else {
+                itemView.txtMobileNumber.gone()
             }
 
             if(!arrayList[position].EmailID.isNullOrEmpty()) {

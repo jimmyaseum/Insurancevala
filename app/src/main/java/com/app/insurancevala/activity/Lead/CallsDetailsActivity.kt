@@ -1,16 +1,16 @@
 package com.app.insurancevala.activity.Lead
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
+import com.app.insurancevala.activity.DashBoard.HomeActivity
 import com.app.insurancevala.model.response.*
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_call_details.*
-import kotlinx.android.synthetic.main.activity_call_details.imgBack
-import kotlinx.android.synthetic.main.activity_call_details.layout
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -18,9 +18,10 @@ import retrofit2.Response
 
 class CallsDetailsActivity  : BaseActivity(), View.OnClickListener {
 
-    var ID: Int? = null
-    var LeadID: Int? = null
-    var CallGUID: String? = null
+    var ID: Int? = 0
+    var LeadID: Int? = 0
+    var CallGUID: String? = ""
+    var Type: String? = ""
     var sharedPreference: SharedPreference? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,13 +34,32 @@ class CallsDetailsActivity  : BaseActivity(), View.OnClickListener {
     }
 
     private fun getIntentData() {
+        if (intent.hasExtra("Type")) {
+            Type = intent.getStringExtra("Type")
+        }
         ID = intent.getIntExtra("ID",0)
         LeadID = intent.getIntExtra("LeadID",0)
         CallGUID = intent.getStringExtra("CallGUID")
+
+        if (sharedPreference == null) {
+            sharedPreference = SharedPreference(applicationContext)
+        }
+        AppConstant.TOKEN =
+            sharedPreference?.getPreferenceString(PrefConstants.PREF_TOKEN).toString()
     }
 
     override fun initializeView() {
         SetInitListner()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if(Type == ""){
+            finish()
+        } else {
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun SetInitListner() {
@@ -92,10 +112,12 @@ class CallsDetailsActivity  : BaseActivity(), View.OnClickListener {
             if(model.CallStatus.equals("Scheduled")) {
                 LLResult.gone()
                 LLFollowupDate.gone()
+                LLFollowupTime.gone()
                 LLFollowupNotes.gone()
             } else {
                 LLResult.visible()
                 LLFollowupDate.visible()
+                LLFollowupTime.visible()
                 LLFollowupNotes.visible()
             }
         }
@@ -120,6 +142,9 @@ class CallsDetailsActivity  : BaseActivity(), View.OnClickListener {
         if(model.FollowupDate != null && model.FollowupDate != "") {
             txtFollowupDate.setText(model.FollowupDate)
         }
+        if(model.FollowupTime != null && model.FollowupTime != "") {
+            txtFollowupTime.setText(model.FollowupTime)
+        }
         if(model.FollowupNotes != null && model.FollowupNotes != "") {
             txtFollowupNotes.setText(model.FollowupNotes)
         }
@@ -131,7 +156,7 @@ class CallsDetailsActivity  : BaseActivity(), View.OnClickListener {
         when (v?.id) {
             R.id.imgBack -> {
                 preventTwoClick(v)
-                finish()
+                onBackPressed()
             }
         }
     }

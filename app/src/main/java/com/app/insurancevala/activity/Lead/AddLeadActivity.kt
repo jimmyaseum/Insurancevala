@@ -20,6 +20,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
@@ -1467,18 +1468,6 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
             edtLastName.setError("Enter LastName", errortint(this))
             isValidate = false
         }
-        if (edtMobileNo.text.isEmpty()) {
-            edtMobileNo.setError("Enter MobileNo", errortint(this))
-            isValidate = false
-        }
-        if (edtMobileNo.text.toString().trim().length < 10) {
-            edtMobileNo.setError(getString(R.string.error_valid_mobile_number), errortint(this))
-            isValidate = false
-        }
-        if (edtGroupCode.text.isEmpty()) {
-            edtGroupCode.setError("Enter GroupCode", errortint(this))
-            isValidate = false
-        }
         if (::adapter.isInitialized) {
             if (!adapter.isValidateItem()) {
                 isValidate = false
@@ -1533,7 +1522,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         val jsonObject = JSONObject()
         jsonObject.put("LeadStage", mLeadStage)
         jsonObject.put("InitialID", mInitialID)
-        jsonObject.put("CategoryID", rating_bar.rating)
+        jsonObject.put("CategoryID", rating_bar.rating.toInt())
         jsonObject.put("OccupationID", mOccupationID)
         jsonObject.put("FirstName", edtFirstName.text.toString().trim())
         jsonObject.put("LastName", edtLastName.text.toString().trim())
@@ -1733,7 +1722,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         if (!model.GroupCode.isNullOrEmpty()) {
             edtGroupCode.setText(model.GroupCode)
         }
-        if (model.LeadOwnerID != null && model.LeadOwnerID != "") {
+        if (model.LeadOwnerID != null && model.LeadOwnerID != 0) {
             mUsersID = model.LeadOwnerID.toInt()
         }
         if (model.CompanyName != null && model.CompanyName != "") {

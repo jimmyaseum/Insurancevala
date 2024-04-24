@@ -3,6 +3,8 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.google.firebase.crashlytics'
+
 android {
     compileSdkVersion 33
     defaultConfig {
@@ -133,5 +135,14 @@ dependencies {
 
     // dialog
     implementation 'com.github.chnouman:AwesomeDialog:1.0.5'
+
+    //firebase
+    implementation 'com.google.firebase:firebase-database-ktx:20.0.6'
+    implementation("com.google.firebase:firebase-crashlytics")
+    implementation("com.google.firebase:firebase-analytics")
+    implementation platform('com.google.firebase:firebase-bom:28.4.1')
+
+    //Firebase Notification
+    implementation 'com.google.firebase:firebase-messaging:23.4.1'
 
 }

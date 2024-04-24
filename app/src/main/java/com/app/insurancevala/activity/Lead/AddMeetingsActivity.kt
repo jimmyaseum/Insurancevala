@@ -65,7 +65,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickListener, EasyPermissions.PermissionCallbacks {
+class AddMeetingsActivity : BaseActivity(), View.OnClickListener, RecyclerClickListener,
+    EasyPermissions.PermissionCallbacks {
 
     var sharedPreference: SharedPreference? = null
     var state: String? = null
@@ -83,24 +84,26 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
     //date
     val CalenderDate = Calendar.getInstance()
     var MeetingDate: String = ""
+
     var MeetingStartTime: String = ""
     var MeetingEndTime: String = ""
+    var FollowUpTime: String = ""
 
     //followup date
     val CalenderFollowUpMeetingDate = Calendar.getInstance()
     var FollowUpMeetingDate: String = ""
 
-    var arrayListmeetingtype : ArrayList<MeetingTypeModel>? = ArrayList()
-    var mMeetingtype : String = ""
-    var mMeetingtypeID : Int = 0
+    var arrayListmeetingtype: ArrayList<MeetingTypeModel>? = ArrayList()
+    var mMeetingtype: String = ""
+    var mMeetingtypeID: Int = 0
 
-    var arrayListmeetingstatus  : ArrayList<MeetingStatusModel>? = ArrayList()
-    var mMeetingstatus : String = ""
-    var mMeetingstatusID : Int = 0
+    var arrayListmeetingstatus: ArrayList<MeetingStatusModel>? = ArrayList()
+    var mMeetingstatus: String = ""
+    var mMeetingstatusID: Int = 0
 
-    var arrayListmeetingoutcome  : ArrayList<MeetingOutcomeModel>? = ArrayList()
-    var mMeetingoutcome : String = ""
-    var mMeetingoutcomeID : Int = 0
+    var arrayListmeetingoutcome: ArrayList<MeetingOutcomeModel>? = ArrayList()
+    var mMeetingoutcome: String = ""
+    var mMeetingoutcomeID: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -112,20 +115,20 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 
     private fun getIntentData() {
         state = intent.getStringExtra(AppConstant.STATE)
-        ID = intent.getIntExtra("ID",0)
-        LeadID = intent.getIntExtra("LeadID",0)
+        ID = intent.getIntExtra("ID", 0)
+        LeadID = intent.getIntExtra("LeadID", 0)
     }
 
     override fun initializeView() {
-        if(state.equals(AppConstant.S_ADD)) {
+        if (state.equals(AppConstant.S_ADD)) {
             txtHearderText.text = "Create Meeting"
             setMasterData()
-        } else if(state.equals(AppConstant.S_EDIT)) {
+        } else if (state.equals(AppConstant.S_EDIT)) {
             txtHearderText.text = "Update Meeting"
 
             if (isOnline(this)) {
-                ID = intent.getIntExtra("ID",0)
-                LeadID = intent.getIntExtra("LeadID",0)
+                ID = intent.getIntExtra("ID", 0)
+                LeadID = intent.getIntExtra("LeadID", 0)
                 MeetingGUID = intent.getStringExtra("MeetingGUID")
 
                 callManageMeetingsGUID()
@@ -149,16 +152,32 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 
     private fun setDefaultDate() {
 
-        val mDate = convertDateStringToString(getcurrentdate() , AppConstant.dd_MM_yyyy_HH_mm_ss,AppConstant.dd_LLL_yyyy)
-        val mTime = convertDateStringToString(getcurrentdate() , AppConstant.dd_MM_yyyy_HH_mm_ss,AppConstant.HH_MM_AA_FORMAT)
+        val mDate = convertDateStringToString(
+            getcurrentdate(),
+            AppConstant.dd_MM_yyyy_HH_mm_ss,
+            AppConstant.dd_LLL_yyyy
+        )
+        val mTime = convertDateStringToString(
+            getcurrentdate(),
+            AppConstant.dd_MM_yyyy_HH_mm_ss,
+            AppConstant.HH_MM_AA_FORMAT
+        )
 
         edtMeetingDate.setText(mDate)
 
         edtMeetingStartTime.setText(mTime)
         edtMeetingEndTime.setText(mTime)
 
-        MeetingDate = convertDateStringToString(getcurrentdate() , AppConstant.dd_MM_yyyy_HH_mm_ss,AppConstant.yyyy_MM_dd_Dash).toString()
-        FollowUpMeetingDate = convertDateStringToString(getcurrentdate() , AppConstant.dd_MM_yyyy_HH_mm_ss,AppConstant.yyyy_MM_dd_Dash).toString()
+        MeetingDate = convertDateStringToString(
+            getcurrentdate(),
+            AppConstant.dd_MM_yyyy_HH_mm_ss,
+            AppConstant.yyyy_MM_dd_Dash
+        ).toString()
+        FollowUpMeetingDate = convertDateStringToString(
+            getcurrentdate(),
+            AppConstant.dd_MM_yyyy_HH_mm_ss,
+            AppConstant.yyyy_MM_dd_Dash
+        ).toString()
 
     }
 
@@ -183,6 +202,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         edtAttachments.setOnClickListener(this)
         cbIsFollowup.setOnClickListener(this)
         edtFollowupDate.setOnClickListener(this)
+        edtFollowupTime.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -192,10 +212,12 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                 preventTwoClick(v)
                 finish()
             }
+
             R.id.txtSave -> {
                 preventTwoClick(v)
                 validation()
             }
+
             R.id.edtMeetingType -> {
                 preventTwoClick(v)
                 if (arrayListmeetingtype.isNullOrEmpty()) {
@@ -204,6 +226,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                     selectTypeDialog()
                 }
             }
+
             R.id.edtMeetingDate -> {
                 preventTwoClick(v)
                 val dpd = DatePickerDialog(
@@ -213,10 +236,20 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                         CalenderDate.set(Calendar.MONTH, monthOfYear)
                         CalenderDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                        MeetingDate = SimpleDateFormat(AppConstant.yyyy_MM_dd_Dash, Locale.US).format(CalenderDate.time)
+                        MeetingDate =
+                            SimpleDateFormat(AppConstant.yyyy_MM_dd_Dash, Locale.US).format(
+                                CalenderDate.time
+                            )
 
-                        val selecteddate = SimpleDateFormat(AppConstant.dd_MM_yyyy_HH_mm_ss, Locale.US).format(CalenderDate.time)
-                        val mDate = convertDateStringToString(selecteddate , AppConstant.dd_MM_yyyy_HH_mm_ss,AppConstant.dd_LLL_yyyy)
+                        val selecteddate =
+                            SimpleDateFormat(AppConstant.dd_MM_yyyy_HH_mm_ss, Locale.US).format(
+                                CalenderDate.time
+                            )
+                        val mDate = convertDateStringToString(
+                            selecteddate,
+                            AppConstant.dd_MM_yyyy_HH_mm_ss,
+                            AppConstant.dd_LLL_yyyy
+                        )
                         edtMeetingDate.setText(mDate)
                     },
                     CalenderDate.get(Calendar.YEAR),
@@ -227,32 +260,51 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 //                dpd.datePicker.maxDate = System.currentTimeMillis() - 1000
                 dpd.show()
             }
+
             R.id.edtMeetingStartTime -> {
                 preventTwoClick(v)
                 val caltime = Calendar.getInstance()
                 val hour = caltime.get(Calendar.HOUR_OF_DAY)
                 val minute = caltime.get(Calendar.MINUTE)
-                val timePickerDialog = TimePickerDialog(this,  { view, hourOfDay, minute ->
-                    val  mTime = convertDateStringToString("$hourOfDay:$minute", AppConstant.HH_MM_FORMAT, AppConstant.HH_MM_AA_FORMAT)!!
-                    MeetingStartTime = convertDateStringToString("$hourOfDay:$minute", AppConstant.HH_MM_FORMAT, AppConstant.HH_MM_SS_FORMAT)!!
+                val timePickerDialog = TimePickerDialog(this, { view, hourOfDay, minute ->
+                    val mTime = convertDateStringToString(
+                        "$hourOfDay:$minute",
+                        AppConstant.HH_MM_FORMAT,
+                        AppConstant.HH_MM_AA_FORMAT
+                    )!!
+                    MeetingStartTime = convertDateStringToString(
+                        "$hourOfDay:$minute",
+                        AppConstant.HH_MM_FORMAT,
+                        AppConstant.HH_MM_SS_FORMAT
+                    )!!
                     edtMeetingStartTime.setText(mTime)
-                }, hour,  minute, false)
+                }, hour, minute, false)
 
                 timePickerDialog.show()
             }
+
             R.id.edtMeetingEndTime -> {
                 preventTwoClick(v)
                 val caltime = Calendar.getInstance()
                 val hour = caltime.get(Calendar.HOUR_OF_DAY)
                 val minute = caltime.get(Calendar.MINUTE)
-                val timePickerDialog = TimePickerDialog(this,  { view, hourOfDay, minute ->
-                    val  mTime = convertDateStringToString("$hourOfDay:$minute", AppConstant.HH_MM_FORMAT, AppConstant.HH_MM_AA_FORMAT)!!
-                    MeetingEndTime = convertDateStringToString("$hourOfDay:$minute", AppConstant.HH_MM_FORMAT, AppConstant.HH_MM_SS_FORMAT)!!
+                val timePickerDialog = TimePickerDialog(this, { view, hourOfDay, minute ->
+                    val mTime = convertDateStringToString(
+                        "$hourOfDay:$minute",
+                        AppConstant.HH_MM_FORMAT,
+                        AppConstant.HH_MM_AA_FORMAT
+                    )!!
+                    MeetingEndTime = convertDateStringToString(
+                        "$hourOfDay:$minute",
+                        AppConstant.HH_MM_FORMAT,
+                        AppConstant.HH_MM_SS_FORMAT
+                    )!!
                     edtMeetingEndTime.setText(mTime)
-                }, hour,  minute, false)
+                }, hour, minute, false)
 
                 timePickerDialog.show()
             }
+
             R.id.edtMeetingStatus -> {
                 preventTwoClick(v)
                 if (arrayListmeetingstatus.isNullOrEmpty()) {
@@ -261,6 +313,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                     selectMeetingStatusDialog()
                 }
             }
+
             R.id.edtMeetingOutcome -> {
                 preventTwoClick(v)
                 if (arrayListmeetingoutcome.isNullOrEmpty()) {
@@ -269,19 +322,24 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                     selectOutcomeDialog()
                 }
             }
+
             R.id.edtAttachments -> {
                 preventTwoClick(v)
                 showAttachmentBottomSheetDialog()
             }
+
             R.id.cbIsFollowup -> {
                 if (cbIsFollowup.isChecked) {
                     LLFollowupDate.visible()
+                    LLFollowUpTime.visible()
                     LLFollowupNotes.visible()
                 } else {
                     LLFollowupDate.gone()
+                    LLFollowUpTime.gone()
                     LLFollowupNotes.gone()
                 }
             }
+
             R.id.edtFollowupDate -> {
                 preventTwoClick(v)
 
@@ -292,10 +350,20 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                         CalenderFollowUpMeetingDate.set(Calendar.MONTH, monthOfYear)
                         CalenderFollowUpMeetingDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                        FollowUpMeetingDate = SimpleDateFormat(AppConstant.yyyy_MM_dd_Dash, Locale.US).format(CalenderFollowUpMeetingDate.time)
+                        FollowUpMeetingDate =
+                            SimpleDateFormat(AppConstant.yyyy_MM_dd_Dash, Locale.US).format(
+                                CalenderFollowUpMeetingDate.time
+                            )
 
-                        val selecteddate = SimpleDateFormat(AppConstant.dd_MM_yyyy_HH_mm_ss, Locale.US).format(CalenderFollowUpMeetingDate.time)
-                        val mDate = convertDateStringToString(selecteddate , AppConstant.dd_MM_yyyy_HH_mm_ss,AppConstant.dd_LLL_yyyy)
+                        val selecteddate =
+                            SimpleDateFormat(AppConstant.dd_MM_yyyy_HH_mm_ss, Locale.US).format(
+                                CalenderFollowUpMeetingDate.time
+                            )
+                        val mDate = convertDateStringToString(
+                            selecteddate,
+                            AppConstant.dd_MM_yyyy_HH_mm_ss,
+                            AppConstant.dd_LLL_yyyy
+                        )
                         edtFollowupDate.setText(mDate)
                     },
                     CalenderFollowUpMeetingDate.get(Calendar.YEAR),
@@ -305,6 +373,28 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 //                dpd.datePicker.minDate = System.currentTimeMillis() - 1000
 //                dpd.datePicker.maxDate = System.currentTimeMillis() - 1000
                 dpd.show()
+            }
+
+            R.id.edtFollowupTime -> {
+                preventTwoClick(v)
+                val caltime = Calendar.getInstance()
+                val hour = caltime.get(Calendar.HOUR_OF_DAY)
+                val minute = caltime.get(Calendar.MINUTE)
+                val timePickerDialog = TimePickerDialog(this, { view, hourOfDay, minute ->
+                    val mTime = convertDateStringToString(
+                        "$hourOfDay:$minute",
+                        AppConstant.HH_MM_FORMAT,
+                        AppConstant.HH_MM_AA_FORMAT
+                    )!!
+                    FollowUpTime = convertDateStringToString(
+                        "$hourOfDay:$minute",
+                        AppConstant.HH_MM_FORMAT,
+                        AppConstant.HH_MM_SS_FORMAT
+                    )!!
+                    edtFollowupTime.setText(mTime)
+                }, hour, minute, false)
+
+                timePickerDialog.show()
             }
         }
     }
@@ -321,37 +411,42 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
             }
         }
     }
+
     private fun isValidate(): Boolean {
 
         var isValidate = true
 
         if (edtMeetingPurpose.text.isEmpty()) {
-            edtMeetingPurpose.setError("Enter Purpose",errortint(this))
+            edtMeetingPurpose.setError("Enter Purpose", errortint(this))
             isValidate = false
         }
         if (edtMeetingDescription.text.isEmpty()) {
-            edtMeetingDescription.setError("Enter Description",errortint(this))
+            edtMeetingDescription.setError("Enter Description", errortint(this))
             isValidate = false
         }
         if (edtLocation.text.isEmpty()) {
-            edtLocation.setError("Enter Location",errortint(this))
+            edtLocation.setError("Enter Location", errortint(this))
             isValidate = false
         }
         if (edtMeetingDate.text.isEmpty()) {
-            edtMeetingDate.setError("Select MeetingDate",errortint(this))
+            edtMeetingDate.setError("Select MeetingDate", errortint(this))
             isValidate = false
         }
         if (edtMeetingStartTime.text.isEmpty()) {
-            edtMeetingStartTime.setError("Select Meeting StartTime",errortint(this))
+            edtMeetingStartTime.setError("Select Meeting StartTime", errortint(this))
             isValidate = false
         }
         if (edtMeetingEndTime.text.isEmpty()) {
-            edtMeetingEndTime.setError("Select Meeting EndTime",errortint(this))
+            edtMeetingEndTime.setError("Select Meeting EndTime", errortint(this))
             isValidate = false
         }
-        if(cbIsFollowup.isChecked) {
+        if (cbIsFollowup.isChecked) {
             if (edtFollowupDate.text.isEmpty()) {
-                edtFollowupDate.setError("Select Followup Date",errortint(this))
+                edtFollowupDate.setError("Select Followup Date", errortint(this))
+                isValidate = false
+            }
+            if (edtFollowupTime.text.isEmpty()) {
+                edtFollowupTime.setError("Select Followup Time", errortint(this))
                 isValidate = false
             }
         }
@@ -379,9 +474,10 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         jsonObject.put("MeetingOutcomeID", mMeetingoutcomeID)
         jsonObject.put("Attendee", edtAttendee.text.toString().trim())
 
-        if(cbIsFollowup.isChecked) {
+        if (cbIsFollowup.isChecked) {
             isFollowup = true
-            jsonObject.put("FollowupDate",FollowUpMeetingDate)
+            jsonObject.put("FollowupDate", FollowUpMeetingDate)
+            jsonObject.put("FollowupTime", FollowUpTime)
             jsonObject.put("FollowupNotes", edtFollowupNotes.text.toString().trim())
         } else {
             isFollowup = false
@@ -389,22 +485,30 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         jsonObject.put("IsFollowup", isFollowup)
         jsonObject.put("IsActive", true)
 
-        if(state.equals(AppConstant.S_EDIT)) {
+        if (state.equals(AppConstant.S_EDIT)) {
             jsonObject.put("MeetingGUID", MeetingGUID)
         }
 
-        if(state.equals(AppConstant.S_ADD)) {
-            val call = ApiUtils.apiInterface.ManageMeetingInsert(getRequestJSONBody(jsonObject.toString()))
+        if (state.equals(AppConstant.S_ADD)) {
+            val call =
+                ApiUtils.apiInterface.ManageMeetingInsert(getRequestJSONBody(jsonObject.toString()))
             call.enqueue(object : Callback<RefGUIDResponse> {
-                override fun onResponse(call: Call<RefGUIDResponse>, response: Response<RefGUIDResponse>) {
+                override fun onResponse(
+                    call: Call<RefGUIDResponse>,
+                    response: Response<RefGUIDResponse>
+                ) {
                     hideProgress()
                     if (response.code() == 200) {
                         if (response.body()?.Status == 201) {
 
-                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                layout,
+                                response.body()?.Details.toString(),
+                                Snackbar.LENGTH_LONG
+                            ).show()
                             ReferenceGUID = response.body()?.Data!!.ReferenceGUID
 
-                            if(arrayListAttachment!!.size > 0) {
+                            if (arrayListAttachment!!.size > 0) {
                                 CallUploadDocuments(ReferenceGUID)
                             } else {
                                 val intent = Intent()
@@ -412,7 +516,11 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                                 finish()
                             }
                         } else {
-                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                layout,
+                                response.body()?.Details.toString(),
+                                Snackbar.LENGTH_LONG
+                            ).show()
                             val intent = Intent()
                             setResult(RESULT_OK, intent)
                             finish()
@@ -433,18 +541,30 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                 }
             })
         } else {
-            val call = ApiUtils.apiInterface.ManageMeetingUpdate(getRequestJSONBody(jsonObject.toString()))
+            val call =
+                ApiUtils.apiInterface.ManageMeetingUpdate(getRequestJSONBody(jsonObject.toString()))
             call.enqueue(object : Callback<CommonResponse> {
-                override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
+                override fun onResponse(
+                    call: Call<CommonResponse>,
+                    response: Response<CommonResponse>
+                ) {
                     hideProgress()
                     if (response.code() == 200) {
                         if (response.body()?.Status == 201) {
-                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                layout,
+                                response.body()?.Details.toString(),
+                                Snackbar.LENGTH_LONG
+                            ).show()
                             val intent = Intent()
                             setResult(RESULT_OK, intent)
                             finish()
                         } else {
-                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                layout,
+                                response.body()?.Details.toString(),
+                                Snackbar.LENGTH_LONG
+                            ).show()
                             val intent = Intent()
                             setResult(RESULT_OK, intent)
                             finish()
@@ -466,6 +586,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
             })
         }
     }
+
     private fun callManageMeetingsGUID() {
 
         showProgress()
@@ -474,95 +595,137 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 
         jsonObject.put("MeetingGUID", MeetingGUID)
 
-        val call = ApiUtils.apiInterface.ManageMeetingFindByID(getRequestJSONBody(jsonObject.toString()))
+        val call =
+            ApiUtils.apiInterface.ManageMeetingFindByID(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<MeetingsByGUIDResponse> {
-            override fun onResponse(call: Call<MeetingsByGUIDResponse>, response: Response<MeetingsByGUIDResponse>) {
+            override fun onResponse(
+                call: Call<MeetingsByGUIDResponse>,
+                response: Response<MeetingsByGUIDResponse>
+            ) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arrayListLead = response.body()?.Data!!
                         setAPIData(arrayListLead)
                     } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
 
             override fun onFailure(call: Call<MeetingsByGUIDResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         })
     }
 
     private fun setAPIData(model: MeetingsModel) {
-        if(model.MeetingDate != null && model.MeetingDate != "") {
+        if (model.MeetingDate != null && model.MeetingDate != "") {
             edtMeetingDate.setText(model.MeetingDate)
-            MeetingDate = convertDateStringToString(model.MeetingDate , AppConstant.dd_MM_yyyy_Slash,AppConstant.yyyy_MM_dd_Dash).toString()
+            MeetingDate = convertDateStringToString(
+                model.MeetingDate,
+                AppConstant.dd_MM_yyyy_Slash,
+                AppConstant.yyyy_MM_dd_Dash
+            ).toString()
 
         }
-        if(model.Purpose != null && model.Purpose != "") {
+        if (model.Purpose != null && model.Purpose != "") {
             edtMeetingPurpose.setText(model.Purpose)
         }
-        if(model.MeetingType != null && model.MeetingType != "") {
+        if (model.MeetingType != null && model.MeetingType != "") {
             edtMeetingType.setText(model.MeetingType)
             mMeetingtypeID = model.MeetingTypeID!!
             callManageMeetingsType(0)
         }
-        if(model.StartTime != null && model.Purpose != "" && model.EndTime != null && model.EndTime != "") {
-            val mStime = convertDateStringToString(model.StartTime!! , AppConstant.HH_MM_SS_FORMAT, AppConstant.HH_MM_AA_FORMAT)
-            val mEtime = convertDateStringToString(model.EndTime!! , AppConstant.HH_MM_SS_FORMAT, AppConstant.HH_MM_AA_FORMAT)
+        if (model.StartTime != null && model.Purpose != "" && model.EndTime != null && model.EndTime != "") {
+            val mStime = convertDateStringToString(
+                model.StartTime!!,
+                AppConstant.HH_MM_SS_FORMAT,
+                AppConstant.HH_MM_AA_FORMAT
+            )
+            val mEtime = convertDateStringToString(
+                model.EndTime!!,
+                AppConstant.HH_MM_SS_FORMAT,
+                AppConstant.HH_MM_AA_FORMAT
+            )
             edtMeetingStartTime.setText(mStime)
             edtMeetingEndTime.setText(mEtime)
 
             MeetingStartTime = model.StartTime!!
             MeetingEndTime = model.EndTime!!
         }
-        if(model.MeetingStatus != null && model.MeetingStatus != "") {
+        if (model.MeetingStatus != null && model.MeetingStatus != "") {
             edtMeetingStatus.setText(model.MeetingStatus)
             mMeetingstatusID = model.MeetingStatusID!!
             mMeetingstatus = model.MeetingStatus
             callManageMeetingsStatus(0)
         }
-        if(model.MeetingOutcome != null && model.MeetingOutcome != "") {
+        if (model.MeetingOutcome != null && model.MeetingOutcome != "") {
             edtMeetingOutcome.setText(model.MeetingOutcome)
             mMeetingoutcomeID = model.MeetingOutcomeID!!
             mMeetingoutcome = model.MeetingOutcome
             callManageMeetingsOutcome(0)
         }
-        if(model.Description != null && model.Description != "") {
+        if (model.Description != null && model.Description != "") {
             edtMeetingDescription.setText(model.Description)
         }
-        if(model.Location != null && model.Location != "") {
+        if (model.Location != null && model.Location != "") {
             edtLocation.setText(model.Location)
         }
-        if(model.Attendee != null && model.Attendee != "") {
+        if (model.Attendee != null && model.Attendee != "") {
             edtAttendee.setText(model.Attendee)
         }
-        if(model.IsFollowup != null) {
-            if(model.IsFollowup) {
+        if (model.IsFollowup != null) {
+            if (model.IsFollowup) {
                 cbIsFollowup.isChecked = true
                 LLFollowupDate.visible()
+                LLFollowUpTime.visible()
                 LLFollowupNotes.visible()
             } else {
                 cbIsFollowup.isChecked = false
                 LLFollowupDate.gone()
+                LLFollowUpTime.gone()
                 LLFollowupNotes.gone()
             }
         }
 
-        if(model.FollowupDate != null && model.FollowupDate != "") {
+        if (model.FollowupDate != null && model.FollowupDate != "") {
             edtFollowupDate.setText(model.FollowupDate)
-            FollowUpMeetingDate = convertDateStringToString(model.FollowupDate , AppConstant.dd_MM_yyyy_Slash,AppConstant.yyyy_MM_dd_Dash).toString()
+            FollowUpMeetingDate = convertDateStringToString(
+                model.FollowupDate,
+                AppConstant.dd_MM_yyyy_Slash,
+                AppConstant.yyyy_MM_dd_Dash
+            ).toString()
         }
-        if(model.FollowupNotes != null && model.FollowupNotes != "") {
+
+        if (model.FollowupTime != null && model.FollowupTime != "") {
+            val FollowupTime = convertDateStringToString(
+                model.FollowupTime,
+                AppConstant.HH_MM_SS_FORMAT,
+                AppConstant.HH_MM_AA_FORMAT
+            )
+            edtFollowupTime.setText(FollowupTime)
+
+            FollowUpTime = model.FollowupTime
+        }
+
+        if (model.FollowupNotes != null && model.FollowupNotes != "") {
             edtFollowupNotes.setText(model.FollowupNotes)
         }
 
         txtAttachments.gone()
         edtAttachments.gone()
         viewAttachments.gone()
-        if(!model.MeetingAttachmentList.isNullOrEmpty()) {
+        if (!model.MeetingAttachmentList.isNullOrEmpty()) {
             arrayListAttachment = java.util.ArrayList()
             arrayListAttachment = model.MeetingAttachmentList
             adapter = MultipleAttachmentListAdapter(this, false, arrayListAttachment, this)
@@ -573,14 +736,18 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
     }
 
     private fun callManageMeetingsType(mode: Int) {
-        if(mode == 1) {
+        if (mode == 1) {
             showProgress()
         }
         var jsonObject = JSONObject()
-        jsonObject.put("OperationType",AppConstant.GETALLACTIVEWITHFILTER)
-        val call = ApiUtils.apiInterface.ManageMeetingType(getRequestJSONBody(jsonObject.toString()))
+        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
+        val call =
+            ApiUtils.apiInterface.ManageMeetingType(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<MeetingTypeResponse> {
-            override fun onResponse(call: Call<MeetingTypeResponse>, response: Response<MeetingTypeResponse>) {
+            override fun onResponse(
+                call: Call<MeetingTypeResponse>,
+                response: Response<MeetingTypeResponse>
+            ) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
@@ -596,18 +763,27 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 
                         }
                     } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
 
             override fun onFailure(call: Call<MeetingTypeResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         })
 
     }
+
     private fun selectTypeDialog() {
         var dialogSelectType = Dialog(this)
         dialogSelectType.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -622,12 +798,15 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         dialogSelectType.setCancelable(true)
         dialogSelectType.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectType.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectType.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectType.window!!.setGravity(Gravity.CENTER)
 
         val rvDialogCustomer = dialogSelectType.findViewById(R.id.rvDialogCustomer) as RecyclerView
         val edtSearchCustomer = dialogSelectType.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectType.findViewById(R.id.txtid) as TextView
+        val txtid = dialogSelectType.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectType.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -638,7 +817,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 
         val itemAdapter = BottomSheetMeetingTypeListAdapter(this, arrayListmeetingtype!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                 itemAdapter.updateItem(pos)
                 mMeetingtype = arrayListmeetingtype!![pos].MeetingType!!
@@ -650,10 +829,9 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListmeetingtype!!.size > 6) {
+        if (arrayListmeetingtype!!.size > 6) {
             edtSearchCustomer.visible()
-        }
-        else {
+        } else {
             edtSearchCustomer.gone()
         }
 
@@ -674,7 +852,8 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                         }
                     }
 
-                    val itemAdapter = BottomSheetMeetingTypeListAdapter(this@AddMeetingsActivity, arrItemsFinal1)
+                    val itemAdapter =
+                        BottomSheetMeetingTypeListAdapter(this@AddMeetingsActivity, arrItemsFinal1)
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
@@ -687,7 +866,10 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter = BottomSheetMeetingTypeListAdapter(this@AddMeetingsActivity, arrayListmeetingtype!!)
+                    val itemAdapter = BottomSheetMeetingTypeListAdapter(
+                        this@AddMeetingsActivity,
+                        arrayListmeetingtype!!
+                    )
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
@@ -706,14 +888,18 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
     }
 
     private fun callManageMeetingsStatus(mode: Int) {
-        if(mode == 1) {
+        if (mode == 1) {
             showProgress()
         }
         var jsonObject = JSONObject()
-        jsonObject.put("OperationType",AppConstant.GETALLACTIVEWITHFILTER)
-        val call = ApiUtils.apiInterface.ManageMeetingStatus(getRequestJSONBody(jsonObject.toString()))
+        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
+        val call =
+            ApiUtils.apiInterface.ManageMeetingStatus(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<MeetingStatusResponse> {
-            override fun onResponse(call: Call<MeetingStatusResponse>, response: Response<MeetingStatusResponse>) {
+            override fun onResponse(
+                call: Call<MeetingStatusResponse>,
+                response: Response<MeetingStatusResponse>
+            ) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
@@ -722,22 +908,34 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                         if (mode == 1) {
                             selectMeetingStatusDialog()
                         } else {
-                            mMeetingstatus = arrayListmeetingstatus!![0].MeetingStatus!!
-                            mMeetingstatusID = arrayListmeetingstatus!![0].ID!!
-                            edtMeetingStatus.setText(mMeetingstatus)
-                            arrayListmeetingstatus!![0].IsSelected = true
+                            if (state == AppConstant.S_ADD) {
+                                mMeetingstatus = arrayListmeetingstatus!![0].MeetingStatus!!
+                                mMeetingstatusID = arrayListmeetingstatus!![0].ID!!
+                                edtMeetingStatus.setText(mMeetingstatus)
+                                arrayListmeetingstatus!![0].IsSelected = true
+                            }
                         }
                     } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
+
             override fun onFailure(call: Call<MeetingStatusResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         })
     }
+
     private fun selectMeetingStatusDialog() {
         var dialogSelectMeetingStatus = Dialog(this)
         dialogSelectMeetingStatus.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -752,12 +950,17 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         dialogSelectMeetingStatus.setCancelable(true)
         dialogSelectMeetingStatus.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectMeetingStatus.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectMeetingStatus.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectMeetingStatus.window!!.setGravity(Gravity.CENTER)
 
-        val rvDialogCustomer = dialogSelectMeetingStatus.findViewById(R.id.rvDialogCustomer) as RecyclerView
-        val edtSearchCustomer = dialogSelectMeetingStatus.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectMeetingStatus.findViewById(R.id.txtid) as TextView
+        val rvDialogCustomer =
+            dialogSelectMeetingStatus.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectMeetingStatus.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectMeetingStatus.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectMeetingStatus.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -768,7 +971,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 
         val itemAdapter = BottomSheetMeetingStatusListAdapter(this, arrayListmeetingstatus!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                 itemAdapter.updateItem(pos)
                 mMeetingstatus = arrayListmeetingstatus!![pos].MeetingStatus!!
@@ -780,10 +983,9 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListmeetingstatus!!.size > 6) {
+        if (arrayListmeetingstatus!!.size > 6) {
             edtSearchCustomer.visible()
-        }
-        else {
+        } else {
             edtSearchCustomer.gone()
         }
 
@@ -804,7 +1006,10 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                         }
                     }
 
-                    val itemAdapter = BottomSheetMeetingStatusListAdapter(this@AddMeetingsActivity, arrItemsFinal1)
+                    val itemAdapter = BottomSheetMeetingStatusListAdapter(
+                        this@AddMeetingsActivity,
+                        arrItemsFinal1
+                    )
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
@@ -817,7 +1022,10 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter = BottomSheetMeetingStatusListAdapter(this@AddMeetingsActivity, arrayListmeetingstatus!!)
+                    val itemAdapter = BottomSheetMeetingStatusListAdapter(
+                        this@AddMeetingsActivity,
+                        arrayListmeetingstatus!!
+                    )
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
@@ -836,14 +1044,18 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
     }
 
     private fun callManageMeetingsOutcome(mode: Int) {
-        if(mode == 1) {
+        if (mode == 1) {
             showProgress()
         }
         var jsonObject = JSONObject()
-        jsonObject.put("OperationType",AppConstant.GETALLACTIVEWITHFILTER)
-        val call = ApiUtils.apiInterface.ManageMeetingOutcome(getRequestJSONBody(jsonObject.toString()))
+        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
+        val call =
+            ApiUtils.apiInterface.ManageMeetingOutcome(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<MeetingOutcomeResponse> {
-            override fun onResponse(call: Call<MeetingOutcomeResponse>, response: Response<MeetingOutcomeResponse>) {
+            override fun onResponse(
+                call: Call<MeetingOutcomeResponse>,
+                response: Response<MeetingOutcomeResponse>
+            ) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
@@ -853,22 +1065,34 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                         if (mode == 1) {
                             selectOutcomeDialog()
                         } else {
-                            mMeetingoutcome = arrayListmeetingoutcome!![0].MeetingOutcome!!
-                            mMeetingoutcomeID = arrayListmeetingoutcome!![0].ID!!
-                            edtMeetingOutcome.setText(mMeetingoutcome)
-                            arrayListmeetingoutcome!![0].IsSelected = true
+                            if (state == AppConstant.S_ADD) {
+                                mMeetingoutcome = arrayListmeetingoutcome!![0].MeetingOutcome!!
+                                mMeetingoutcomeID = arrayListmeetingoutcome!![0].ID!!
+                                edtMeetingOutcome.setText(mMeetingoutcome)
+                                arrayListmeetingoutcome!![0].IsSelected = true
+                            }
                         }
                     } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
+
             override fun onFailure(call: Call<MeetingOutcomeResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         })
     }
+
     private fun selectOutcomeDialog() {
         var dialogSelectOutcome = Dialog(this)
         dialogSelectOutcome.requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -883,12 +1107,16 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         dialogSelectOutcome.setCancelable(true)
         dialogSelectOutcome.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectOutcome.window!!.setLayout(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+        dialogSelectOutcome.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
         dialogSelectOutcome.window!!.setGravity(Gravity.CENTER)
 
-        val rvDialogCustomer = dialogSelectOutcome.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val rvDialogCustomer =
+            dialogSelectOutcome.findViewById(R.id.rvDialogCustomer) as RecyclerView
         val edtSearchCustomer = dialogSelectOutcome.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid =  dialogSelectOutcome.findViewById(R.id.txtid) as TextView
+        val txtid = dialogSelectOutcome.findViewById(R.id.txtid) as TextView
         val imgClear = dialogSelectOutcome.findViewById(R.id.imgClear) as ImageView
 
         imgClear.setOnClickListener {
@@ -899,7 +1127,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 
         val itemAdapter = BottomSheetMeetingOutcomeListAdapter(this, arrayListmeetingoutcome!!)
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v:View, pos: Int, flag: Int) {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                 itemAdapter.updateItem(pos)
                 mMeetingoutcome = arrayListmeetingoutcome!![pos].MeetingOutcome!!
@@ -911,10 +1139,9 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
 
         rvDialogCustomer.adapter = itemAdapter
 
-        if(arrayListmeetingoutcome!!.size > 6) {
+        if (arrayListmeetingoutcome!!.size > 6) {
             edtSearchCustomer.visible()
-        }
-        else {
+        } else {
             edtSearchCustomer.gone()
         }
 
@@ -930,12 +1157,17 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                 if (char.toString().trim().isNotEmpty()) {
                     val strSearch = char.toString()
                     for (model in arrayListmeetingoutcome!!) {
-                        if (model.MeetingOutcome!!.toLowerCase().contains(strSearch.toLowerCase())) {
+                        if (model.MeetingOutcome!!.toLowerCase()
+                                .contains(strSearch.toLowerCase())
+                        ) {
                             arrItemsFinal1.add(model)
                         }
                     }
 
-                    val itemAdapter = BottomSheetMeetingOutcomeListAdapter(this@AddMeetingsActivity, arrItemsFinal1)
+                    val itemAdapter = BottomSheetMeetingOutcomeListAdapter(
+                        this@AddMeetingsActivity,
+                        arrItemsFinal1
+                    )
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
@@ -948,7 +1180,10 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter = BottomSheetMeetingOutcomeListAdapter(this@AddMeetingsActivity, arrayListmeetingoutcome!!)
+                    val itemAdapter = BottomSheetMeetingOutcomeListAdapter(
+                        this@AddMeetingsActivity,
+                        arrayListmeetingoutcome!!
+                    )
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
@@ -1036,13 +1271,13 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                     FilePickerConst.PERMISSIONS_FILE_PICKER
                 )
             }
-        } else{
+        } else {
             showBottomSheetDialogAttachments()
         }
     }
 
     private fun showBottomSheetDialogAttachments() {
-        val bottomSheetDialog = BottomSheetDialog(this,R.style.SheetDialog)
+        val bottomSheetDialog = BottomSheetDialog(this, R.style.SheetDialog)
         bottomSheetDialog.setContentView(R.layout.bottom_sheet_attachment)
 
         val Select_Image = bottomSheetDialog.findViewById<LinearLayout>(R.id.Select_Image)
@@ -1072,7 +1307,11 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                     )
                 }
             } else {
-                if (EasyPermissions.hasPermissions(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                if (EasyPermissions.hasPermissions(
+                        this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
+                ) {
                     if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
                         photopicker()
                     } else {
@@ -1097,7 +1336,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         }
         Select_Doc!!.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "application/*"
+            intent.type = "application/pdf"
             startActivityForResult(intent, 101)
             bottomSheetDialog.dismiss()
         }
@@ -1122,7 +1361,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
     override fun onItemClickEvent(view: View, position: Int, type: Int) {
         when (type) {
             1 -> {
-                when(view.id) {
+                when (view.id) {
                     R.id.imgRemove -> {
                         removeAdapterItem(position)
                     }
@@ -1158,7 +1397,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                         val fileName = fullName.substringBeforeLast(".")
                         val extension = imageUri.path!!.substringAfterLast(".")
 
-                        showBottomSheetDialogRename(fullName , imageUri , 2)
+                        showBottomSheetDialogRename(fullName, imageUri, 2)
 //                        arrayListAttachment!!.add(AttachmentModel(name = fullName, attachmentUri = imageUri, attachmentType = 2))
 //                        adapter.notifyDataSetChanged()
                     }
@@ -1177,7 +1416,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                     ImagePaths = ArrayList()
 //                    ImagePaths.addAll(data.getParcelableArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)!!)
                     ImagePaths.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)!!)
-                    if (!ImagePaths.isNullOrEmpty()){
+                    if (!ImagePaths.isNullOrEmpty()) {
 //                        val PassportPath = ImagePaths[0]
                         val PassportPath = Uri.fromFile(File(ImagePaths[0]))
                         CropImage.activity(PassportPath)
@@ -1191,7 +1430,8 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                 val sUri = data!!.data
                 val sPath = sUri!!.path
 
-                val PassportPath = Uri.fromFile(fileFromContentUri1("passport", applicationContext, sUri))
+                val PassportPath =
+                    Uri.fromFile(fileFromContentUri1("passport", applicationContext, sUri))
                 var displayName = ""
 
                 if (sUri.toString().startsWith("content://")) {
@@ -1199,7 +1439,8 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                     try {
                         cursor = getContentResolver().query(sUri, null, null, null, null)
                         if (cursor != null && cursor.moveToFirst()) {
-                            displayName = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
+                            displayName =
+                                cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME))
                         }
                     } finally {
                         cursor!!.close()
@@ -1208,7 +1449,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
                     displayName = sPath!!
                 }
 
-                showBottomSheetDialogRename(displayName , PassportPath , 1)
+                showBottomSheetDialogRename(displayName, PassportPath, 1)
 
 //                arrayListAttachment!!.add(AttachmentModel(name = displayName!!,attachmentUri = PassportPath, attachmentType = 1))
 //                adapter.notifyDataSetChanged()
@@ -1217,7 +1458,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
     }
 
     // attachment
-    fun fileFromContentUri1(name  :String, context: Context, contentUri: Uri): File {
+    fun fileFromContentUri1(name: String, context: Context, contentUri: Uri): File {
         // Preparing Temp file name
         val fileExtension = getFileExtension(context, contentUri)
         val fileName = "temp_file_" + name + if (fileExtension != null) ".$fileExtension" else ""
@@ -1259,7 +1500,11 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
     }
 
     //Permission Result
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
@@ -1276,7 +1521,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         }
     }
 
-    private fun showBottomSheetDialogRename(name: String , fileuri : Uri , attachmenttype : Int) {
+    private fun showBottomSheetDialogRename(name: String, fileuri: Uri, attachmenttype: Int) {
         val bottomSheetDialog = BottomSheetDialog(this)
         bottomSheetDialog.setContentView(R.layout.bottom_sheet_rename_dialog)
         bottomSheetDialog.setCancelable(false)
@@ -1287,7 +1532,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         val txtButtonCancel = bottomSheetDialog.findViewById<TextView>(R.id.txtButtonCancel)
         val txtButtonSubmit = bottomSheetDialog.findViewById<TextView>(R.id.txtButtonSubmit)
 
-        if(attachmenttype == 1) {
+        if (attachmenttype == 1) {
             img!!.setImageResource(R.drawable.pdficon)
         } else {
             img!!.setImageURI(fileuri)
@@ -1297,11 +1542,11 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         edtName!!.requestFocus()
 
         txtButtonSubmit!!.setOnClickListener {
-            if(!edtName.text.toString().trim().equals("")) {
+            if (!edtName.text.toString().trim().equals("")) {
                 adapter.addItem(edtName.text.toString(), fileuri, attachmenttype)
                 bottomSheetDialog.dismiss()
             } else {
-                edtName.error = "Enter Name"
+                edtName.setError("Enter Name", errortint(this))
             }
         }
 
@@ -1319,31 +1564,59 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
         val partsList: ArrayList<MultipartBody.Part> = ArrayList()
         val AttachmentName: ArrayList<String> = ArrayList()
 
-        if(!arrayListAttachment.isNullOrEmpty()) {
+        if (!arrayListAttachment.isNullOrEmpty()) {
             for (i in arrayListAttachment!!.indices) {
                 if (arrayListAttachment!![i].AttachmentType == "Image") {
                     if (arrayListAttachment!![i].AttachmentURL != null) {
-                        partsList.add(CommonUtil.prepareFilePart(this, "image/*", "AttachmentURL", arrayListAttachment!![i].AttachmentURL!!.toUri()))
+                        partsList.add(
+                            CommonUtil.prepareFilePart(
+                                this,
+                                "image/*",
+                                "AttachmentURL",
+                                arrayListAttachment!![i].AttachmentURL!!.toUri()
+                            )
+                        )
                         AttachmentName.add(arrayListAttachment!![i].AttachmentName!!)
 
                     } else {
-                        val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
-                        partsList.add(MultipartBody.Part.createFormData("AttachmentURL", "", attachmentEmpty))
+                        val attachmentEmpty: RequestBody =
+                            RequestBody.create(MediaType.parse("text/plain"), "")
+                        partsList.add(
+                            MultipartBody.Part.createFormData(
+                                "AttachmentURL",
+                                "",
+                                attachmentEmpty
+                            )
+                        )
                     }
                 } else {
                     if (arrayListAttachment!![i].AttachmentURL != null) {
-                        partsList.add(CommonUtil.prepareFilePart(this, "application/*", "AttachmentURL", arrayListAttachment!![i].AttachmentURL!!.toUri()))
+                        partsList.add(
+                            CommonUtil.prepareFilePart(
+                                this,
+                                "application/*",
+                                "AttachmentURL",
+                                arrayListAttachment!![i].AttachmentURL!!.toUri()
+                            )
+                        )
                         AttachmentName.add(arrayListAttachment!![i].AttachmentName!!)
                     } else {
-                        val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
-                        partsList.add(MultipartBody.Part.createFormData("AttachmentURL", "", attachmentEmpty))
+                        val attachmentEmpty: RequestBody =
+                            RequestBody.create(MediaType.parse("text/plain"), "")
+                        partsList.add(
+                            MultipartBody.Part.createFormData(
+                                "AttachmentURL",
+                                "",
+                                attachmentEmpty
+                            )
+                        )
                     }
                 }
             }
         }
 
         val a = AttachmentName.toString().replace("[", "").replace("]", "")
-        LogUtil.d(TAG,"111===> "+a)
+        LogUtil.d(TAG, "111===> " + a)
         val mAttachmentName = CommonUtil.createPartFromString(a)
         val mreferenceGUID = CommonUtil.createPartFromString(referenceGUID.toString())
         val mID = CommonUtil.createPartFromString(ID.toString())
@@ -1358,26 +1631,42 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener,RecyclerClickLi
             attachment = partsList
         )
         call.enqueue(object : Callback<CommonResponse> {
-            override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
+            override fun onResponse(
+                call: Call<CommonResponse>,
+                response: Response<CommonResponse>
+            ) {
                 hideProgress()
                 if (response.code() == 200) {
 
                     if (response.body()?.Status == 200) {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                         val intent = Intent()
                         setResult(RESULT_OK, intent)
                         finish()
                     } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                         val intent = Intent()
                         setResult(RESULT_OK, intent)
                         finish()
                     }
                 }
             }
+
             override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
                 val intent = Intent()
                 setResult(RESULT_OK, intent)
                 finish()

@@ -4,11 +4,13 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.NBInquiryModel
+import com.app.insurancevala.utils.preventTwoClick
 import kotlinx.android.synthetic.main.adapter_inquiry_item.view.*
 
 class InquiryListAdapter(private val context: Context?, private val arrayList: ArrayList<NBInquiryModel>, private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<InquiryListAdapter.ViewHolder>() {
@@ -24,10 +26,15 @@ class InquiryListAdapter(private val context: Context?, private val arrayList: A
     }
 
     override fun getItemCount(): Int {
-        return arrayList!!.size
+        return arrayList.size
     }
 
-    class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+
+        init {
+            // Set click listener for imgMore
+            itemView.imgMore.setOnClickListener(this)
+        }
 
         var context: Context? = null
 
@@ -37,14 +44,31 @@ class InquiryListAdapter(private val context: Context?, private val arrayList: A
             arrayList : ArrayList<NBInquiryModel>,
             recyclerItemClickListener: RecyclerClickListener
         ) {
+
             this.context = context
 
-            if(!arrayList[position].InquiryType.isNullOrEmpty()) {
+            if (!arrayList[position].InquiryType.isNullOrEmpty()) {
                 itemView.txtInquiryType.text = arrayList[position].InquiryType
             }
 
+            var colors = arrayOf(R.drawable.bg_shadow_orange, R.drawable.bg_shadow_purple, R.drawable.bg_shadow_blue)
+            val reminder = position % 3
+            itemView.v1.setBackgroundResource(colors[reminder])
+
             if(!arrayList[position].InquirySubType.isNullOrEmpty()) {
                 itemView.txtInquirySubType.text = arrayList[position].InquirySubType
+            }
+
+            if(!arrayList[position].NBInquiryByName.isNullOrEmpty()) {
+                itemView.txtInquiryPerson.text = arrayList[position].NBInquiryByName
+            }
+
+            if(!arrayList[position].InquiryAllotmentName.isNullOrEmpty()) {
+                itemView.txtAllotedPerson.text = arrayList[position].InquiryAllotmentName
+            }
+
+            if(!arrayList[position].InquiryDate.isNullOrEmpty()) {
+                itemView.txtInquiryDate.text = arrayList[position].InquiryDate
             }
 
             if(!arrayList[position].LeadStatus.isNullOrEmpty()) {
@@ -63,49 +87,74 @@ class InquiryListAdapter(private val context: Context?, private val arrayList: A
                 itemView.txtFrequency.text = arrayList[position].Frequency
             }
 
-            var colors = arrayOf(R.drawable.bg_shadow_orange, R.drawable.bg_shadow_purple, R.drawable.bg_shadow_blue)
-            var colors1 = arrayOf(R.color.color5, R.color.color11, R.color.color8)
-
-            val reminder = position % 3
-            itemView.v1.setBackgroundDrawable(ContextCompat.getDrawable(context, colors[reminder]))
-
             itemView.setOnClickListener {
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 101)
             }
 
-            itemView.imgEdit.setOnClickListener {
+            itemView.txtEdit.setOnClickListener {
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 102)
             }
-            itemView.txtDelete.setOnClickListener {
-                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 103)
+
+            itemView.imgMore.tag = position
+        }
+
+        override fun onClick(v: View?) {
+            when (v?.id) {
+                R.id.imgMore -> {
+                    preventTwoClick(v)
+                    val position = v.tag as Int
+                    showPopupMenu(v, position)
+                }
             }
-            itemView.txtNotes.setOnClickListener {
-                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 104)
+        }
+
+        private fun showPopupMenu(view: View, position: Int) {
+            val popupMenu = PopupMenu(context, view)
+            popupMenu.inflate(R.menu.popup_menu_items)
+
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.menu_notes -> {
+                        recyclerItemClickListener.onItemClickEvent(view, position, 104)
+                        true
+                    }
+                    R.id.menu_tasks -> {
+                        recyclerItemClickListener.onItemClickEvent(view, position, 105)
+                        true
+                    }
+                    R.id.menu_calls -> {
+                        recyclerItemClickListener.onItemClickEvent(view, position, 106)
+                        true
+                    }
+                    R.id.menu_meetings -> {
+                        recyclerItemClickListener.onItemClickEvent(view, position, 107)
+                        true
+                    }
+                    R.id.menu_attachments -> {
+                        recyclerItemClickListener.onItemClickEvent(view, position, 108)
+                        true
+                    }
+                    R.id.menu_closed_tasks -> {
+                        recyclerItemClickListener.onItemClickEvent(view, position, 109)
+                        true
+                    }
+                    R.id.menu_closed_calls -> {
+                        recyclerItemClickListener.onItemClickEvent(view, position, 110)
+                        true
+                    }
+                    R.id.menu_closed_meetings -> {
+                        recyclerItemClickListener.onItemClickEvent(view, position, 111)
+                        true
+                    }
+                    R.id.menu_recordings -> {
+                        recyclerItemClickListener.onItemClickEvent(view, position, 112)
+                        true
+                    }
+                    else -> false
+                }
             }
-            itemView.txtTasks.setOnClickListener {
-                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 105)
-            }
-            itemView.txtCalls.setOnClickListener {
-                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 106)
-            }
-            itemView.txtMeetings.setOnClickListener {
-                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 107)
-            }
-            itemView.txtAttachments.setOnClickListener {
-                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 108)
-            }
-            itemView.txtClosed_Tasks.setOnClickListener {
-                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 109)
-            }
-            itemView.txtClosed_Calls.setOnClickListener {
-                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 110)
-            }
-            itemView.txtClosed_Meetings.setOnClickListener {
-                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 111)
-            }
-            itemView.txtRecordings.setOnClickListener {
-                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 112)
-            }
+
+            popupMenu.show()
         }
     }
 }
