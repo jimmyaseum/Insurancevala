@@ -6,6 +6,7 @@ import android.view.View
 import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.insurancevala.R
+import com.app.insurancevala.activity.ActivityLog.ParticularInquiryActivityLog
 import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.activity.Lead.AttachmentsListActivity
 import com.app.insurancevala.activity.Lead.CallsListActivity
@@ -35,6 +36,8 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
     var LeadID: Int? = null
     var LeadGUID: String? = null
 
+    var sharedPreference: SharedPreference? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_inquiry_list)
@@ -51,6 +54,11 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
     }
 
     override fun initializeView() {
+
+        if (sharedPreference == null) {
+            sharedPreference = SharedPreference(this)
+        }
+
         if (isOnline(this@InquiryListActivity)) {
             callManageNB()
         } else {
@@ -66,7 +74,7 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         RvInquiryList.layoutManager = manager
 
         arrayListInquiry = ArrayList()
-        adapter = InquiryListAdapter(this,arrayListInquiry!!, this@InquiryListActivity)
+        adapter = InquiryListAdapter(this,arrayListInquiry!!, sharedPreference!!, this@InquiryListActivity)
 
         imgSearch.setOnClickListener {
             if(searchView.isSearchOpen) {
@@ -75,13 +83,6 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                 searchView.showSearch()
             }
 
-        }
-        imgSearch.setOnClickListener {
-            if(searchView.isSearchOpen) {
-                searchView.closeSearch()
-            } else {
-                searchView.showSearch()
-            }
         }
 
         searchView.setOnQueryTextListener(object : SimpleSearchView.OnQueryTextListener {
@@ -107,11 +108,11 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                         }
                     }
                     arrayListInquiryNew = arrItemsFinal1
-                    val itemAdapter = InquiryListAdapter(this@InquiryListActivity, arrayListInquiryNew!!,this@InquiryListActivity)
+                    val itemAdapter = InquiryListAdapter(this@InquiryListActivity, arrayListInquiryNew!!, sharedPreference!!,this@InquiryListActivity)
                     RvInquiryList.adapter = itemAdapter
                 } else {
                     arrayListInquiryNew = arrayListInquiry
-                    val itemAdapter = InquiryListAdapter( this@InquiryListActivity, arrayListInquiryNew!!, this@InquiryListActivity)
+                    val itemAdapter = InquiryListAdapter( this@InquiryListActivity, arrayListInquiryNew!!, sharedPreference!!,this@InquiryListActivity)
                     RvInquiryList.adapter = itemAdapter
                 }
                 return false
@@ -124,7 +125,7 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         searchView.setOnSearchViewListener(object : SimpleSearchView.SearchViewListener {
             override fun onSearchViewClosed() {
                 arrayListInquiryNew = arrayListInquiry
-                val itemAdapter = InquiryListAdapter( this@InquiryListActivity, arrayListInquiryNew!!, this@InquiryListActivity)
+                val itemAdapter = InquiryListAdapter( this@InquiryListActivity, arrayListInquiryNew!!, sharedPreference!!,this@InquiryListActivity)
                 RvInquiryList.adapter = itemAdapter
             }
 
@@ -180,10 +181,12 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                         arrayListInquiryNew = arrayListInquiry
 
                         if(arrayListInquiryNew!!.size > 0) {
-                            var myAdapter = InquiryListAdapter(this@InquiryListActivity, arrayListInquiryNew!!,this@InquiryListActivity)
+                            var myAdapter = InquiryListAdapter(this@InquiryListActivity, arrayListInquiryNew!!, sharedPreference!!,this@InquiryListActivity)
                             RvInquiryList.adapter = myAdapter
                             shimmer.stopShimmer()
                             shimmer.gone()
+                            FL.visible()
+                            RLNoData.gone()
                         } else {
                             Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                             shimmer.stopShimmer()
@@ -296,6 +299,13 @@ class InquiryListActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                 val intent = Intent(this, RecordingsListActivity::class.java)
                 intent.putExtra("ID",arrayListInquiryNew!![position].ID)
                 intent.putExtra("LeadID",LeadID)
+                startActivity(intent)
+            }
+            113 -> {
+                //Activity Log
+                preventTwoClick(view)
+                val intent = Intent(this, ParticularInquiryActivityLog::class.java)
+                intent.putExtra("NBInquiryTypeGUID",arrayListInquiryNew!![position].NBInquiryTypeGUID)
                 startActivity(intent)
             }
         }

@@ -26,6 +26,7 @@ import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_add_nbinquiry.llContent
 import kotlinx.android.synthetic.main.activity_edit_nbinquiry.*
 import org.json.JSONObject
 import retrofit2.Call
@@ -62,6 +63,8 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
     var mInquirySubType: String = ""
     var mInquirySubTypeID: Int = 0
 
+    var Edit: Boolean = true
+
     var arrayListInquiryAllotmentTo: ArrayList<UserModel>? = ArrayList()
     var mInquiryAllotmentTo: String = ""
     var mInquiryAllotmentToID: Int = 0
@@ -75,9 +78,22 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun getIntentData() {
+        if (intent.hasExtra("Edit")) {
+            Edit = intent.getBooleanExtra("Edit", true)
+        }
         state = intent.getStringExtra(AppConstant.STATE)
         NBInquiryTypeGUID = intent.getStringExtra("NBInquiryTypeGUID")
         LeadID = intent.getIntExtra("LeadID", 0)
+
+        if (Edit) {
+            txtButtonSubmit.visible()
+            txtHearderText.text = "Update Inquiry"
+            enableDisableViewGroup(llContent,true)
+        } else {
+            txtButtonSubmit.gone()
+            txtHearderText.text = "View Inquiry"
+            enableDisableViewGroup(llContent,false)
+        }
     }
 
     override fun initializeView() {
@@ -87,7 +103,6 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
 
     private fun setMasterData() {
         if (state.equals(AppConstant.S_EDIT)) {
-            txtHearderText.text = "Update Inquiry"
             if (isOnline(this)) {
                 callManageNBInquiryTypeGUID()
             } else {

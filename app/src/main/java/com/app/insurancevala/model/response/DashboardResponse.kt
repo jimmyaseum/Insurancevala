@@ -37,6 +37,8 @@ data class InquiryTypeWiseCountsModel (
     val InquiryTypeID: Int? = null,
     @SerializedName("InquiryTypeCount")
     val InquiryTypeCount: Int? = null,
+    @SerializedName("ProposedAmount")
+    val ProposedAmount: Double? = null,
 )
 data class LeadStatusWiseCountModel (
     @SerializedName("LeadStatus")

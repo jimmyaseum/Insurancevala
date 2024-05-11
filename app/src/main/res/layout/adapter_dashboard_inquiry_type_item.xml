@@ -22,12 +22,22 @@
             android:textSize="@dimen/_13sdp"/>
         <TextView
             android:id="@+id/txtInquiryTypeCount"
-            android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0"
+            android:paddingHorizontal="@dimen/_5sdp"
             android:textColor="@color/colorBlack"
             android:fontFamily="@font/poppins_bold"
+            android:textSize="@dimen/_13sdp"
+            android:gravity="right"/>
+        <TextView
+            android:id="@+id/txtInquiryTypeAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:paddingHorizontal="@dimen/_5sdp"
+            android:textColor="@color/colorBlack"
+            android:fontFamily="@font/poppins_regular"
             android:textSize="@dimen/_13sdp"
             android:gravity="right"/>
     </LinearLayout>

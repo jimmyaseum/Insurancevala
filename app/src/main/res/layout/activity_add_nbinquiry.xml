@@ -47,11 +47,13 @@
             android:textSize="@dimen/_12sdp"
             android:layout_alignParentRight="true"
             android:paddingRight="@dimen/_5sdp"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/llContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"

@@ -43,6 +43,7 @@
     <string name="error_empty_old_password">Enter old password</string>
     <string name="error_empty_new_password">Enter new password</string>
     <string name="error_empty_confirm_password">Enter confirm password</string>
+    <string name="no_data_found">No Data Found</string>
     <string name="error_old_and_new_password_password">Old Password and New Password Cannot Be Same</string>
     <string name="error_mismatch_password">Password does not match</string>
     <string name="error_empty_inquiry_type">Enter Inquiry Type</string>

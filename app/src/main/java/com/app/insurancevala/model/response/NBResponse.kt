@@ -111,6 +111,24 @@ data class NBInquiryByGUIDResponse (
     var ErrorMessage: String? = null
     )
 
+// --------------------------------------------
+//NBInquiryFindLeadStatusResponse
+
+data class NBInquiryLeadStatusResponse (
+    @SerializedName("Data")
+    var Data: ArrayList<NBInquiryModel>? = null,
+    @SerializedName("Details")
+    var Details: String? = null,
+    @SerializedName("Message")
+    var Message: String? = null,
+    @SerializedName("Status")
+    var Status: Int? = null,
+    @SerializedName("ItemCount")
+    var ItemCount: Int? = null,
+    @SerializedName("ErrorMessage")
+    var ErrorMessage: String? = null
+    )
+
 data class NBInquiryTypeByGUIDResponse (
     @SerializedName("Data")
     var Data: NBInquiryModel? = null,

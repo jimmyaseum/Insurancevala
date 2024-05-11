@@ -21,10 +21,16 @@ data class DashboardInnerModel (
     val ID: Int? = null,
     @SerializedName("NBInquiryTypeGUID")
     val NBInquiryTypeGUID: String? = null,
+    @SerializedName("LeadID")
+    val LeadID: Int? = null,
     @SerializedName("NBInquiryID")
     val NBInquiryID: Int? = null,
+    @SerializedName("LeadGUID")
+    val LeadGUID: String? = null,
     @SerializedName("InquiryAllotmentName")
     val InquiryAllotmentName: String? = null,
+    @SerializedName("InquiryAllotmentID")
+    val InquiryAllotmentID: Int? = null,
     @SerializedName("InquiryTypeID")
     val InquiryTypeID: Int? = null,
     @SerializedName("InquiryType")

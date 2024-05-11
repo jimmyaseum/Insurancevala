@@ -27,4 +27,7 @@
     <item
         android:id="@+id/menu_closed_meetings"
         android:title="Closed Meetings" />
+    <item
+        android:id="@+id/menu_activity_log"
+        android:title="Activity Log" />
 </menu>

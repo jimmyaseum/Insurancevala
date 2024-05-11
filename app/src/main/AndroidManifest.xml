@@ -173,6 +173,8 @@
         <activity
             android:name=".activity.NBInquiry.InquiryListActivity"
             android:exported="true" />
+        <activity android:name=".activity.NBInquiry.InquiryTypeListActivity"
+            android:exported="true"/>
         <activity
             android:name=".activity.NBInquiry.InquiryEditActivity"
             android:exported="true" />
@@ -312,6 +314,12 @@
         <activity android:name=".activity.BrochureListActivity"
             android:exported="true"/>
         <activity android:name=".activity.AddBrochureActivity"
+            android:exported="true"/>
+
+        <!--Particular Inquiry Activity Log-->
+        <activity android:name=".activity.ActivityLog.ParticularInquiryActivityLog"
+            android:exported="true"/>
+        <activity android:name=".activity.ActivityLog.ActivityLog"
             android:exported="true"/>
 
         <!-- FCM -->

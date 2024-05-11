@@ -8,12 +8,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.activity.NBInquiry.InquiryEditActivity
+import com.app.insurancevala.activity.NBInquiry.InquiryListActivity
 import com.app.insurancevala.adapter.DashboardInnerListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.DashboardInnerModel
 import com.app.insurancevala.model.response.DashboardInnerResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.AppConstant
+import com.app.insurancevala.utils.PrefConstants
+import com.app.insurancevala.utils.SharedPreference
 import com.app.insurancevala.utils.getRequestJSONBody
 import com.app.insurancevala.utils.gone
 import com.app.insurancevala.utils.hideKeyboard
@@ -36,6 +39,8 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
     var arrayList: ArrayList<DashboardInnerModel>? = ArrayList()
     var arrayListNew: ArrayList<DashboardInnerModel>? = ArrayList()
 
+    var sharedPreference: SharedPreference? = null
+
     var OperationType: Int? = null
     var Header: String? = null
     var LeadStatusID: Int? = null
@@ -43,6 +48,7 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
     var ToDate: String? = null
     var UserID: Int? = null
     var InquiryTypeID: Int? = null
+    var LeadID: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,17 +59,22 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
     }
 
     private fun getIntentData() {
+        LeadID = intent.getIntExtra("LeadID", 0)
         Header = intent.getStringExtra("Header")
-        OperationType = intent.getIntExtra("OperationType",0)
-        LeadStatusID = intent.getIntExtra("LeadStatusID",0)
+        OperationType = intent.getIntExtra("OperationType", 0)
+        LeadStatusID = intent.getIntExtra("LeadStatusID", 0)
         FromDate = intent.getStringExtra("FromDate")
         ToDate = intent.getStringExtra("ToDate")
-        LeadStatusID = intent.getIntExtra("LeadStatusID",0)
-        InquiryTypeID = intent.getIntExtra("InquiryTypeID",0)
+        LeadStatusID = intent.getIntExtra("LeadStatusID", 0)
+        InquiryTypeID = intent.getIntExtra("InquiryTypeID", 0)
         UserID = intent.getIntExtra("UserID", 0)
     }
 
     override fun initializeView() {
+
+        if (sharedPreference == null) {
+            sharedPreference = SharedPreference(this)
+        }
 
         txtHearderText.setText(Header)
 
@@ -82,10 +93,10 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
         RvList.layoutManager = manager
 
         arrayList = ArrayList()
-        adapter = DashboardInnerListAdapter(this,arrayList!!, this@HomeInnerListActivity)
+        adapter = DashboardInnerListAdapter(this, arrayList!!, this@HomeInnerListActivity)
 
         imgSearch.setOnClickListener {
-            if(searchView.isSearchOpen) {
+            if (searchView.isSearchOpen) {
                 searchView.closeSearch()
             } else {
                 searchView.showSearch()
@@ -94,7 +105,7 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
         }
 
         imgSearch.setOnClickListener {
-            if(searchView.isSearchOpen) {
+            if (searchView.isSearchOpen) {
                 searchView.closeSearch()
             } else {
                 searchView.showSearch()
@@ -105,30 +116,45 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
             override fun onQueryTextSubmit(query: String): Boolean {
                 return false
             }
+
             override fun onQueryTextChange(newText: String): Boolean {
                 val arrItemsFinal1: ArrayList<DashboardInnerModel> = ArrayList()
                 if (newText.trim().isNotEmpty()) {
                     val strSearch = newText
                     for (model in arrayList!!) {
                         try {
-                            if (model.InquiryType!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                                model.InquirySubType!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                                model.InquiryAllotmentName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                                model.ProposedAmount.toString()!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                                model.Frequency!!.toLowerCase().contains(strSearch.toLowerCase())  ||
+                            if (model.InquiryType!!.toLowerCase()
+                                    .contains(strSearch.toLowerCase()) ||
+                                model.InquirySubType!!.toLowerCase()
+                                    .contains(strSearch.toLowerCase()) ||
+                                model.InquiryAllotmentName!!.toLowerCase()
+                                    .contains(strSearch.toLowerCase()) ||
+                                model.ProposedAmount.toString()!!.toLowerCase()
+                                    .contains(strSearch.toLowerCase()) ||
+                                model.Frequency!!.toLowerCase().contains(strSearch.toLowerCase()) ||
                                 model.LeadType!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                                model.LeadStatus!!.toLowerCase().contains(strSearch.toLowerCase())) {
+                                model.LeadStatus!!.toLowerCase().contains(strSearch.toLowerCase())
+                            ) {
                                 arrItemsFinal1.add(model)
                             }
-                        } catch (e: Exception){
+                        } catch (e: Exception) {
+
                         }
                     }
                     arrayListNew = arrItemsFinal1
-                    val itemAdapter = DashboardInnerListAdapter(this@HomeInnerListActivity, arrayListNew!!,this@HomeInnerListActivity)
+                    val itemAdapter = DashboardInnerListAdapter(
+                        this@HomeInnerListActivity,
+                        arrayListNew!!,
+                        this@HomeInnerListActivity
+                    )
                     RvList.adapter = itemAdapter
                 } else {
                     arrayListNew = arrayList
-                    val itemAdapter = DashboardInnerListAdapter( this@HomeInnerListActivity, arrayListNew!!, this@HomeInnerListActivity)
+                    val itemAdapter = DashboardInnerListAdapter(
+                        this@HomeInnerListActivity,
+                        arrayListNew!!,
+                        this@HomeInnerListActivity
+                    )
                     RvList.adapter = itemAdapter
                 }
                 return false
@@ -142,19 +168,29 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
         searchView.setOnSearchViewListener(object : SimpleSearchView.SearchViewListener {
             override fun onSearchViewClosed() {
                 arrayListNew = arrayList
-                val itemAdapter = DashboardInnerListAdapter( this@HomeInnerListActivity, arrayListNew!!, this@HomeInnerListActivity)
+                val itemAdapter = DashboardInnerListAdapter(
+                    this@HomeInnerListActivity,
+                    arrayListNew!!,
+                    this@HomeInnerListActivity
+                )
                 RvList.adapter = itemAdapter
             }
 
             override fun onSearchViewClosedAnimation() {
-                AnimationUtils.loadAnimation(this@HomeInnerListActivity, R.anim.searchview_close_anim)
+                AnimationUtils.loadAnimation(
+                    this@HomeInnerListActivity,
+                    R.anim.searchview_close_anim
+                )
             }
 
             override fun onSearchViewShown() {
             }
 
             override fun onSearchViewShownAnimation() {
-                AnimationUtils.loadAnimation(this@HomeInnerListActivity, R.anim.searchview_open_anim)
+                AnimationUtils.loadAnimation(
+                    this@HomeInnerListActivity,
+                    R.anim.searchview_open_anim
+                )
             }
         })
 
@@ -184,21 +220,25 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
         var jsonObject = JSONObject()
         jsonObject.put("OperationType", OperationType)
 
-        if(LeadStatusID != 0 && LeadStatusID != null) {
-            jsonObject.put("LeadStatusID",LeadStatusID)
-            jsonObject.put("FromDate",FromDate)
-            jsonObject.put("ToDate",ToDate)
+        if (LeadStatusID != 0 && LeadStatusID != null) {
+            jsonObject.put("LeadStatusID", LeadStatusID)
+            jsonObject.put("FromDate", FromDate)
+            jsonObject.put("ToDate", ToDate)
         }
-        if(InquiryTypeID != 0 && InquiryTypeID != null) {
-            jsonObject.put("InquiryTypeID",InquiryTypeID)
+        if (InquiryTypeID != 0 && InquiryTypeID != null) {
+            jsonObject.put("InquiryTypeID", InquiryTypeID)
         }
-        if(UserID != 0 && UserID != null) {
-            jsonObject.put("UserID",UserID)
+        if (UserID != 0 && UserID != null) {
+            jsonObject.put("UserID", UserID)
         }
 
-        val call = ApiUtils.apiInterface.ManageDashboardInnerList(getRequestJSONBody(jsonObject.toString()))
+        val call =
+            ApiUtils.apiInterface.ManageDashboardInnerList(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<DashboardInnerResponse> {
-            override fun onResponse(call: Call<DashboardInnerResponse>, response: Response<DashboardInnerResponse>) {
+            override fun onResponse(
+                call: Call<DashboardInnerResponse>,
+                response: Response<DashboardInnerResponse>
+            ) {
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
@@ -208,21 +248,33 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
                         arrayList = response.body()?.Data!!
                         arrayListNew = arrayList
 
-                        if(arrayListNew!!.size > 0) {
-                            var myAdapter = DashboardInnerListAdapter(this@HomeInnerListActivity, arrayListNew!!,this@HomeInnerListActivity)
+                        if (arrayListNew!!.size > 0) {
+                            var myAdapter = DashboardInnerListAdapter(
+                                this@HomeInnerListActivity,
+                                arrayListNew!!,
+                                this@HomeInnerListActivity
+                            )
                             RvList.adapter = myAdapter
                             shimmer.stopShimmer()
                             shimmer.gone()
 
                         } else {
-                            Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                layout,
+                                response.body()?.Details.toString(),
+                                Snackbar.LENGTH_LONG
+                            ).show()
                             shimmer.stopShimmer()
                             shimmer.gone()
                             FL.gone()
                             RLNoData.visible()
                         }
                     } else {
-                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
                         shimmer.stopShimmer()
                         shimmer.gone()
                         FL.gone()
@@ -233,7 +285,11 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
 
             override fun onFailure(call: Call<DashboardInnerResponse>, t: Throwable) {
                 hideProgress()
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
             }
         })
     }
@@ -243,10 +299,10 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
             102 -> {
                 //edit
                 preventTwoClick(view)
-                val intent = Intent(this, InquiryEditActivity::class.java)
-                intent.putExtra(AppConstant.STATE, AppConstant.S_EDIT)
-                intent.putExtra("NBInquiryTypeGUID",arrayListNew!![position].NBInquiryTypeGUID)
-                startActivityForResult(intent, AppConstant.INTENT_1001)
+                val intent = Intent(this, InquiryListActivity::class.java)
+                intent.putExtra("LeadID", arrayListNew!![position].ID)
+                intent.putExtra("GUID", arrayListNew!![position].LeadGUID)
+                startActivity(intent)
             }
 
         }

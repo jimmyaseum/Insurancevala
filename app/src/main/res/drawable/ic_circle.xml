@@ -1,0 +1,23 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Outer path for green border -->
+    <path
+        android:fillColor="@color/transparent"
+        android:strokeColor="@color/colorGray500"
+        android:strokeWidth="40"
+        android:pathData="M 100,100 m -80,0
+                          a 80,80 0 1,0 160,0
+                          a 80,80 0 1,0 -160,0" />
+
+    <!-- Inner path for transparent center -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M 100,100 m -60,0
+                          a 60,60 0 1,0 120,0
+                          a 60,60 0 1,0 -120,0" />
+
+</vector>

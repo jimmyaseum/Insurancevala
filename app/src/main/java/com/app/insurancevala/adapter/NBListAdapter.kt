@@ -84,6 +84,14 @@ class NBListAdapter(private val context: Context?,private val arrayList: ArrayLi
             itemView.imgList.setOnClickListener {
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 103)
             }
+
+            itemView.txtOpen.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 104)
+            }
+
+            itemView.txtClose.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 105)
+            }
         }
     }
 }

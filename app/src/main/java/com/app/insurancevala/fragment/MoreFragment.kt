@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.app.insurancevala.R
+import com.app.insurancevala.activity.ActivityLog.ActivityLog
 import com.app.insurancevala.activity.BrochureListActivity
 import com.app.insurancevala.activity.Login.LoginActivity
 import com.app.insurancevala.activity.Login.ChangePasswordActivity
@@ -65,8 +66,16 @@ class MoreFragment : BaseFragment() {
 
         if (UserTypeID.equals("1")) {
             views!!.LLManageUser.visible()
+            views!!.LLActivityLog.visible()
+
+            views!!.V1.visible()
+            views!!.V2.visible()
         } else {
             views!!.LLManageUser.gone()
+            views!!.LLActivityLog.gone()
+
+            views!!.V1.gone()
+            views!!.V2.gone()
         }
         views!!.tvUserName.text = Username
         views!!.txtMobileNo.text = Mobile
@@ -90,6 +99,13 @@ class MoreFragment : BaseFragment() {
         views!!.LLManageUser.setOnClickListener {
             preventTwoClick(it)
             val intent = Intent(requireActivity(), UsersListActivity::class.java)
+            startActivity(intent)
+
+        }
+
+        views!!.LLActivityLog.setOnClickListener {
+            preventTwoClick(it)
+            val intent = Intent(requireActivity(), ActivityLog::class.java)
             startActivity(intent)
 
         }

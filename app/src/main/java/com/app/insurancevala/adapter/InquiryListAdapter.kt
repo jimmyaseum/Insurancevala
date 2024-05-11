@@ -10,10 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.NBInquiryModel
+import com.app.insurancevala.utils.PrefConstants
+import com.app.insurancevala.utils.SharedPreference
+import com.app.insurancevala.utils.gone
 import com.app.insurancevala.utils.preventTwoClick
+import com.app.insurancevala.utils.visible
 import kotlinx.android.synthetic.main.adapter_inquiry_item.view.*
 
-class InquiryListAdapter(private val context: Context?, private val arrayList: ArrayList<NBInquiryModel>, private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<InquiryListAdapter.ViewHolder>() {
+class InquiryListAdapter(private val context: Context?, private val arrayList: ArrayList<NBInquiryModel>, private val sharedPreference: SharedPreference, private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<InquiryListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -91,6 +95,13 @@ class InquiryListAdapter(private val context: Context?, private val arrayList: A
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 101)
             }
 
+            if (arrayList[position].InquiryAllotmentID == sharedPreference.getPreferenceString(PrefConstants.PREF_USER_ID)!!.toInt() ||
+                sharedPreference.getPreferenceString(PrefConstants.PREF_USER_TYPE_ID)!!.toInt() == 1) {
+                itemView.txtEdit.visible()
+            } else {
+                itemView.txtEdit.gone()
+            }
+
             itemView.txtEdit.setOnClickListener {
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 102)
             }
@@ -148,6 +159,10 @@ class InquiryListAdapter(private val context: Context?, private val arrayList: A
                     }
                     R.id.menu_recordings -> {
                         recyclerItemClickListener.onItemClickEvent(view, position, 112)
+                        true
+                    }
+                    R.id.menu_activity_log -> {
+                        recyclerItemClickListener.onItemClickEvent(view, position, 113)
                         true
                     }
                     else -> false

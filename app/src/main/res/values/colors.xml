@@ -46,5 +46,6 @@
     <color name="gold">#E5B80B</color>
     <color name="silver">#71706E</color>
 
+    <color name="transparent">#00000000</color>
 
 </resources>

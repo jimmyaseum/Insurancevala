@@ -3,6 +3,7 @@ package com.app.insurancevala.retrofit
 import com.app.insurancevala.model.api.AppVersion
 import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.api.LeadCountResponse
+import com.app.insurancevala.model.pojo.DocumentsModel
 import com.app.insurancevala.model.pojo.DocumentsResponse
 import com.app.insurancevala.model.response.*
 import okhttp3.MultipartBody
@@ -141,6 +142,12 @@ interface ApiInterface {
 
     @POST("NBInquiry/NBInquiryFindByID")
     fun ManageNBInquiryFindByID(@Body body: RequestBody?): retrofit2.Call<NBInquiryByGUIDResponse>
+
+    @POST("NBInquiry/NBInquiryFindLeadStatus")
+    fun ManageNBInquiryFindLeadStatus(@Body body: RequestBody?): retrofit2.Call<NBInquiryLeadStatusResponse>
+
+    @POST("ActivityLog/ActivityLogFindAll")
+    fun ActivityLogFindAll(@Body body: RequestBody?): retrofit2.Call<ActivityLogResponse>
 
     @POST("MasterSub/DashBoardCountView")
     fun ManageDashboard(@Body body: RequestBody?): retrofit2.Call<DashboardResponse>
@@ -416,6 +423,9 @@ interface ApiInterface {
 
     @POST("Master/ManageUserLogout")
     fun ManageUserLogout(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
+
+    @POST("BrochureAttachments/BrochureAttachmentsLogFindByID")
+    fun ManageAttachmentsLogFindByID(@Body body: RequestBody?): retrofit2.Call<DocumentsResponse>
 
     @Multipart
     @POST("RecodingFiles/RecodingFilesInsert")

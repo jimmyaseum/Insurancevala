@@ -111,10 +111,6 @@
                                 android:text="Choose document"
                                 android:drawableRight="@drawable/ic_down"
                                 android:drawableTint="@color/colorGray500"/>
-                            <View
-                                android:layout_width="match_parent"
-                                android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
                         </LinearLayout>
 
                     </LinearLayout>

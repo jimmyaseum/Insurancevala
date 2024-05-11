@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.activity.NBInquiry.AddNBActivity
 import com.app.insurancevala.activity.NBInquiry.InquiryListActivity
+import com.app.insurancevala.activity.NBInquiry.InquiryTypeListActivity
 import com.app.insurancevala.adapter.NBListAdapter
 import com.app.insurancevala.helper.PaginationScrollListener
 import com.app.insurancevala.interFase.RecyclerClickListener
@@ -306,6 +307,26 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
                 val intent = Intent(getActivity(), InquiryListActivity::class.java)
                 intent.putExtra("LeadID",arrayListNBNew!![position].ID)
                 intent.putExtra("GUID",arrayListNBNew!![position].LeadGUID)
+                startActivity(intent)
+
+            }
+
+            104 -> {
+                preventTwoClick(view)
+                val intent = Intent(getActivity(), InquiryTypeListActivity::class.java)
+                intent.putExtra("LeadID",arrayListNBNew!![position].LeadID)
+                intent.putExtra("GUID",arrayListNBNew!![position].LeadGUID)
+                intent.putExtra("InquiryStatus","Open")
+                startActivity(intent)
+
+            }
+
+            105 -> {
+                preventTwoClick(view)
+                val intent = Intent(getActivity(), InquiryTypeListActivity::class.java)
+                intent.putExtra("LeadID",arrayListNBNew!![position].LeadID)
+                intent.putExtra("GUID",arrayListNBNew!![position].LeadGUID)
+                intent.putExtra("InquiryStatus","Closed")
                 startActivity(intent)
 
             }

@@ -51,6 +51,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
     var sharedPreference: SharedPreference? = null
     var state: String? = null
     var AddMore: Boolean? = null
+    var View: Boolean? = false
     var NBInquiryGUID: String? = null
 
     var arrayListAllotmentTo: ArrayList<UserModel>? = ArrayList()
@@ -115,12 +116,12 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
     private fun getIntentData() {
         state = intent.getStringExtra(AppConstant.STATE)
-        AddMore = intent.getBooleanExtra("AddMore",true)
+        AddMore = intent.getBooleanExtra("AddMore", true)
         edtClient.setText(intent.getStringExtra("LeadName"))
 
-        mClientID = intent.getIntExtra("LeadID",0)
+        mClientID = intent.getIntExtra("LeadID", 0)
 
-        mAllotmentToID = intent.getIntExtra("LeadOwnerID",0)
+        mAllotmentToID = intent.getIntExtra("LeadOwnerID", 0)
         mAllotmentTo = intent.getStringExtra("LeadOwnerName").toString()
 
         if (!AddMore!!) {
@@ -135,7 +136,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         mClientGUID = intent.getStringExtra("LeadGUID").toString()
 
-        mClientStageID = intent.getIntExtra("LeadType",0)
+        mClientStageID = intent.getIntExtra("LeadType", 0)
         if (mClientStageID.equals(1)) {
             edtClientType.setText("Existing Client")
         } else if (mClientStageID.equals(2)) {
@@ -168,6 +169,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
             if (!AddMore!!) {
                 callManageLeadGUID(mClientGUID, null)
             }
+            txtSave.visible()
         } else if (state.equals(AppConstant.S_EDIT)) {
             NBInquiryGUID = intent.getStringExtra("NBInquiryGUID")
             txtHearderText.text = "Update NB Inquiry"
@@ -209,12 +211,12 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
     }
 
     private fun setAdapterData(arrayList: ArrayList<InquiryInformationModel>?) {
-        adapter = AddMoreInquiryAdapter(arrayList, AddMore!!, this@AddNBActivity)
+        adapter = AddMoreInquiryAdapter(arrayList, AddMore!!, View!!,this@AddNBActivity)
         rvInquiry.adapter = adapter
 
         Handler().postDelayed({
             smoothScrollToLastItem()
-        },100)
+        }, 100)
     }
 
     private fun smoothScrollToLastItem() {
@@ -323,15 +325,17 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         jsonObject.put("IsActive", true)
         jsonObject.put("AllotmentID", mAllotmentToID)
         jsonObject.put("NBInquiryList", jsonArrayEducation)
-        jsonObject.put("FamilyID",mFamilyMemberID)
+        jsonObject.put("FamilyID", mFamilyMemberID)
 
         var call: Call<NBInquiryTypeAddUpdateResponse>? = null
 
         if (state.equals(AppConstant.S_ADD)) {
-            call = ApiUtils.apiInterface.ManageNBInquiryInsert(getRequestJSONBody(jsonObject.toString()))
+            call =
+                ApiUtils.apiInterface.ManageNBInquiryInsert(getRequestJSONBody(jsonObject.toString()))
         } else if (state.equals(AppConstant.S_EDIT)) {
             jsonObject.put("NBInquiryGUID", NBInquiryGUID)
-            call = ApiUtils.apiInterface.ManageNBInquiryUpdate(getRequestJSONBody(jsonObject.toString()))
+            call =
+                ApiUtils.apiInterface.ManageNBInquiryUpdate(getRequestJSONBody(jsonObject.toString()))
         }
 
         if (call != null) {
@@ -595,7 +599,8 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
             override fun onTextChanged(char: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 val arrItemsFinal1: ArrayList<LeadModel> = ArrayList()
-                if (char.toString().trim().isNotEmpty() && edtSearchCustomer.text.toString().trim().length > 2
+                if (char.toString().trim().isNotEmpty() && edtSearchCustomer.text.toString()
+                        .trim().length > 2
                 ) {
                     val strSearch = char.toString()
                     txtChar.gone()
@@ -614,7 +619,8 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                 var jsonObject = JSONObject()
                 jsonObject.put("GroupCode", searchdata)
                 jsonObject.put("FirstName", searchdata)
-                val call = ApiUtils.apiInterface.ManageLeadsFindAll(getRequestJSONBody(jsonObject.toString()))
+                val call =
+                    ApiUtils.apiInterface.ManageLeadsFindAll(getRequestJSONBody(jsonObject.toString()))
                 call.enqueue(object : Callback<LeadResponse> {
                     override fun onResponse(
                         call: Call<LeadResponse>, response: Response<LeadResponse>
@@ -636,7 +642,10 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                                             itemAdapter.updateItem(pos)
 
                                             if (state.equals(AppConstant.S_ADD)) {
-                                                callManageLeadGUID(arrayListClient!![pos].LeadGUID!!, dialogSelectClient)
+                                                callManageLeadGUID(
+                                                    arrayListClient!![pos].LeadGUID!!,
+                                                    dialogSelectClient
+                                                )
                                                 callManageFamilyDetails(arrayListClient!![pos].ID!!)
                                             }
                                         }
@@ -705,9 +714,14 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
             override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
                 itemAdapter.updateItem(pos)
-                mFamilyMember = arrayListFamilyMember!![pos].FirstName!! + " " + arrayListFamilyMember!![pos].LastName!!
+                mFamilyMember =
+                    arrayListFamilyMember!![pos].FirstName!! + " " + arrayListFamilyMember!![pos].LastName!!
                 mFamilyMemberID = arrayListFamilyMember!![pos].ID!!
-                adapter.updateFamilyMemberItem(mFamilyMemberItemPostion, mFamilyMember, mFamilyMemberID)
+                adapter.updateFamilyMemberItem(
+                    mFamilyMemberItemPostion,
+                    mFamilyMember,
+                    mFamilyMemberID
+                )
                 dialogSelectFamilyMember!!.dismiss()
             }
         })
@@ -733,7 +747,8 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                     val strSearch = char.toString()
                     for (model in arrayListFamilyMember!!) {
                         if (model.FirstName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                            model.LastName!!.toLowerCase().contains(strSearch.toLowerCase())) {
+                            model.LastName!!.toLowerCase().contains(strSearch.toLowerCase())
+                        ) {
                             arrItemsFinal1.add(model)
                         }
                     }
@@ -744,21 +759,34 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                             mFamilyMemberID = arrItemsFinal1[pos].ID!!
-                            mFamilyMember = arrItemsFinal1[pos].FirstName + " " + arrItemsFinal1[pos].LastName
-                            adapter.updateFamilyMemberItem(mFamilyMemberItemPostion, mFamilyMember, mFamilyMemberID)
+                            mFamilyMember =
+                                arrItemsFinal1[pos].FirstName + " " + arrItemsFinal1[pos].LastName
+                            adapter.updateFamilyMemberItem(
+                                mFamilyMemberItemPostion,
+                                mFamilyMember,
+                                mFamilyMemberID
+                            )
                             dialogSelectFamilyMember.dismiss()
                         }
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
                     val itemAdapter =
-                        BottomSheetFamilyMemberListAdapter(this@AddNBActivity, arrayListFamilyMember!!)
+                        BottomSheetFamilyMemberListAdapter(
+                            this@AddNBActivity,
+                            arrayListFamilyMember!!
+                        )
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
                             mFamilyMemberID = arrayListFamilyMember!![pos].ID!!
-                            mFamilyMember = arrayListFamilyMember!![pos].FirstName + " " + arrayListFamilyMember!![pos].LastName
-                            adapter.updateFamilyMemberItem(mFamilyMemberItemPostion, mFamilyMember, mFamilyMemberID)
+                            mFamilyMember =
+                                arrayListFamilyMember!![pos].FirstName + " " + arrayListFamilyMember!![pos].LastName
+                            adapter.updateFamilyMemberItem(
+                                mFamilyMemberItemPostion,
+                                mFamilyMember,
+                                mFamilyMemberID
+                            )
                             dialogSelectFamilyMember!!.dismiss()
                         }
                     })
@@ -1780,6 +1808,21 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
     private fun SetAPIData(model: NBModel) {
 
+
+        if (model.AllotmentID == sharedPreference!!.getPreferenceString(PrefConstants.PREF_USER_ID)!!.toInt() ||
+            sharedPreference!!.getPreferenceString(PrefConstants.PREF_USER_TYPE_ID)!!.toInt() == 1) {
+            AddMore = true
+            txtSave.visible()
+            enableDisableViewGroup(llContent,true)
+        } else {
+            AddMore = false
+            View = true
+            txtSave.gone()
+            txtHearderText.text = "View NB Inquiry"
+            enableDisableViewGroup(llContent,false)
+        }
+
+
         if (model.LeadID != 0 && model.LeadID != null) {
             callManageFamilyDetails(model.LeadID)
             mClientID = model.LeadID
@@ -1815,7 +1858,11 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
             for (i in 0 until model.NBInquiryList.size) {
 
-                val mDate = convertDateStringToString(model.NBInquiryList[i].InquiryDate!! , AppConstant.DATE_INPUT_FORMAT,AppConstant.DEFAULT_DATE_FORMAT)
+                val mDate = convertDateStringToString(
+                    model.NBInquiryList[i].InquiryDate!!,
+                    AppConstant.DATE_INPUT_FORMAT,
+                    AppConstant.DEFAULT_DATE_FORMAT
+                )
 
                 arrayListInquiryInfo?.add(
                     InquiryInformationModel(
@@ -1852,9 +1899,13 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
         var jsonObject = JSONObject()
         jsonObject.put("LeadGUID", mClientGUID)
 
-        val call = ApiUtils.apiInterface.ManageLeadsFindByID(getRequestJSONBody(jsonObject.toString()))
+        val call =
+            ApiUtils.apiInterface.ManageLeadsFindByID(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<LeadByGUIDResponse> {
-            override fun onResponse(call: Call<LeadByGUIDResponse>, response: Response<LeadByGUIDResponse>) {
+            override fun onResponse(
+                call: Call<LeadByGUIDResponse>,
+                response: Response<LeadByGUIDResponse>
+            ) {
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arrayListLead = response.body()?.Data!!
@@ -1893,7 +1944,10 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
         val call = ApiUtils.apiInterface.ManageFamilyList(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<FamilyResponse> {
-            override fun onResponse(call: Call<FamilyResponse>, response: Response<FamilyResponse>) {
+            override fun onResponse(
+                call: Call<FamilyResponse>,
+                response: Response<FamilyResponse>
+            ) {
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arrayListFamily = response.body()?.Data!!

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
+import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.interFase.RecyclerItemClickListener
 import com.app.insurancevala.model.pojo.InquiryInformationModel
 import com.app.insurancevala.utils.LogUtil
@@ -17,9 +18,10 @@ import com.app.insurancevala.utils.TAG
 import com.app.insurancevala.utils.errortint
 import com.app.insurancevala.utils.gone
 import com.app.insurancevala.utils.visible
+import kotlinx.android.synthetic.main.activity_add_nbinquiry.llContent
 import kotlinx.android.synthetic.main.adapter_add_more_inquiry.view.*
 
-class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?, val  AddMore: Boolean, val recyclerItemClickListener: RecyclerItemClickListener) : RecyclerView.Adapter<AddMoreInquiryAdapter .ViewHolder>()
+class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?, val  AddMore: Boolean, val view: Boolean, val recyclerItemClickListener: RecyclerItemClickListener) : RecyclerView.Adapter<AddMoreInquiryAdapter .ViewHolder>()
 {
     var context: Context? = null
     var views: View? = null
@@ -62,6 +64,9 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
         } else {
             holder.itemView.tvAddMore.gone()
             holder.itemView.imgDelete.gone()
+            if (view) {
+                (context as BaseActivity).enableDisableViewGroup(holder.itemView.llContent, false)
+            }
         }
     }
 
