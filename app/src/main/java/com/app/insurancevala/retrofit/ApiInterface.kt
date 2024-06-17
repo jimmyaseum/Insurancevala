@@ -101,8 +101,16 @@ interface ApiInterface {
         @Part("LeadID") LeadID: Int?,
         @Part("ReferenceGUID") ReferenceGUID: RequestBody?,
         @Part("NBInquiryTypeID") NBInquiryTypeID: RequestBody?,
+        @Part("NBLeadTypeID") NBLeadTypeID: RequestBody?,
         @Part("AttachmentType") AttachmentType: RequestBody?,
         @Part("AttachmentName") AttachmentName: RequestBody?,
+        @Part attachment: ArrayList<MultipartBody.Part>?
+
+    ): retrofit2.Call<CommonResponse>
+
+    @Multipart
+    @POST("ExcelExport/ExcelExport") // done
+    fun ExcelExport(
         @Part attachment: ArrayList<MultipartBody.Part>?
 
     ): retrofit2.Call<CommonResponse>
@@ -149,11 +157,17 @@ interface ApiInterface {
     @POST("ActivityLog/ActivityLogFindAll")
     fun ActivityLogFindAll(@Body body: RequestBody?): retrofit2.Call<ActivityLogResponse>
 
+    @POST("ActivityLog/NBLeadActivityLogFindAll")
+    fun ActivityLogGUID(@Body body: RequestBody?): retrofit2.Call<ActivityLogResponse>
+
     @POST("MasterSub/DashBoardCountView")
     fun ManageDashboard(@Body body: RequestBody?): retrofit2.Call<DashboardResponse>
 
     @POST("MasterSub/DashboardInnerView")
     fun ManageDashboardInnerList(@Body body: RequestBody?): retrofit2.Call<DashboardInnerResponse>
+
+    @POST("MasterSub/ClientsProspectInnerView")
+    fun ManageClientsProspectInnerView(@Body body: RequestBody?): retrofit2.Call<DashboardInnerLeadResponse>
 
     @POST("Category/CategoryFindAll")
     fun ManageCategoryFindAll(@Body body: RequestBody?): retrofit2.Call<CategoryTypeResponse>
@@ -431,6 +445,7 @@ interface ApiInterface {
     @POST("RecodingFiles/RecodingFilesInsert")
     fun ManageRecordingInsert(
         @Part("NBInquiryTypeID") NBInquiryTypeID: Int?,
+        @Part("NBLeadTypeID") NBLeadTypeID: Int?,
         @Part("Title") Title: String?,
         @Part attachment: ArrayList<MultipartBody.Part>?
 
@@ -441,6 +456,7 @@ interface ApiInterface {
     fun ManageRecordingUpdate(
         @Part("ID")ID: Int?,
         @Part("NBInquiryTypeID")NBInquiryTypeID: Int?,
+        @Part("NBLeadTypeID")NBLeadTypeID: Int?,
         @Part("Title") Title: String?,
         @Part attachment: ArrayList<MultipartBody.Part>?
     ): retrofit2.Call<CommonResponse>
@@ -450,4 +466,16 @@ interface ApiInterface {
 
     @POST("RecodingFiles/RecodingFilesDelete")
     fun ManageRecordingDelete(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
+
+    @POST("NBLead/NBLeadInsert")
+    fun ManageNBLeadInsert(@Body body: RequestBody?): retrofit2.Call<NBInquiryTypeAddUpdateResponse>
+
+    @POST("NBLead/NBLeadByLeadGUID")
+    fun ManageNBLeadFindByGUID(@Body body: RequestBody?): retrofit2.Call<NBLeadByGUIDResponse>
+
+    @POST("NBLead/NBLeadFindByID")
+    fun ManageNBLeadFindByID(@Body body: RequestBody?): retrofit2.Call<NBLeadListByGUIDResponse>
+
+    @POST("NBLead/NBLeadUpdate")
+    fun ManageNBLeadUpdate(@Body body: RequestBody?): retrofit2.Call<NBInquiryTypeAddUpdateResponse>
 }

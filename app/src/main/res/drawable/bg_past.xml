@@ -1,0 +1,10 @@
+<!-- res/drawable/bg_past.xml -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <solid android:color="@android:color/transparent" />
+            <corners android:radius="@dimen/_5sdp" />
+            <stroke android:color="@color/colorTextHint" android:width="@dimen/_1sdp"/>
+        </shape>
+    </item>
+</layer-list>

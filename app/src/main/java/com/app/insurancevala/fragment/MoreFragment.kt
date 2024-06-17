@@ -8,8 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import com.app.insurancevala.R
-import com.app.insurancevala.activity.ActivityLog.ActivityLog
+import com.app.insurancevala.activity.ActivityLog.ActivityLogType
 import com.app.insurancevala.activity.BrochureListActivity
+import com.app.insurancevala.activity.ExcelUploadActivity
 import com.app.insurancevala.activity.Login.LoginActivity
 import com.app.insurancevala.activity.Login.ChangePasswordActivity
 import com.app.insurancevala.activity.Users.AddUsersActivity
@@ -105,7 +106,7 @@ class MoreFragment : BaseFragment() {
 
         views!!.LLActivityLog.setOnClickListener {
             preventTwoClick(it)
-            val intent = Intent(requireActivity(), ActivityLog::class.java)
+            val intent = Intent(requireActivity(), ActivityLogType::class.java)
             startActivity(intent)
 
         }
@@ -131,6 +132,13 @@ class MoreFragment : BaseFragment() {
 
         }
 
+        views!!.LLExcelUpload.setOnClickListener {
+            preventTwoClick(it)
+            val intent = Intent(requireActivity(), ExcelUploadActivity::class.java)
+            startActivity(intent)
+
+        }
+
         views!!.txtLogout.setOnClickListener {
             preventTwoClick(it)
             val sharedPreference = SharedPreference(requireContext())
@@ -143,7 +151,7 @@ class MoreFragment : BaseFragment() {
             }
         }
 
-        views!!.llEditProfile.setOnClickListener {
+        views!!.txtEditProfile.setOnClickListener {
             preventTwoClick(it)
             val intent = Intent(requireActivity(), AddUsersActivity::class.java)
             intent.putExtra("IsFrom", "MoreFragment")

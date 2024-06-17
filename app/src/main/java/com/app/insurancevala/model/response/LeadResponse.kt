@@ -6,6 +6,10 @@ import java.io.Serializable
 class LeadResponse {
     @SerializedName("Data")
     var Data: ArrayList<LeadModel>? = null
+    @SerializedName("ExistingCount")
+    var ExistingCount: String? = null
+    @SerializedName("ProspectCount")
+    var ProspectCount: String? = null
     @SerializedName("Details")
     var Details: String? = null
     @SerializedName("Message")
@@ -37,6 +41,12 @@ class LeadByGUIDResponse {
 data class LeadModel (
     @SerializedName("ID")
     val ID: Int? = null,
+    @SerializedName("ExistingCount")
+    var ExistingCount: String? = null,
+    @SerializedName("ProspectCount")
+    var ProspectCount: String? = null,
+    @SerializedName("SearchCount")
+    var SearchCount: String? = null,
     @SerializedName("LeadGUID")
     val LeadGUID: String? = null,
     @SerializedName("FirstName")
@@ -47,6 +57,8 @@ data class LeadModel (
     val LastName: String? = null,
     @SerializedName("EmailID")
     val EmailID: String? = null,
+    @SerializedName("CreatedByName")
+    val CreatedByName: String? = null,
     @SerializedName("MobileNo")
     var MobileNo : String? = null,
     @SerializedName("CategoryName")

@@ -13,6 +13,7 @@ import com.app.insurancevala.adapter.DashboardInnerListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.DashboardInnerModel
 import com.app.insurancevala.model.response.DashboardInnerResponse
+import com.app.insurancevala.model.response.NBInquiryTypeAddUpdateResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.AppConstant
 import com.app.insurancevala.utils.PrefConstants
@@ -27,7 +28,6 @@ import com.app.insurancevala.utils.visible
 import com.ferfalk.simplesearchview.SimpleSearchView
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_home_inner_list.*
-import kotlinx.android.synthetic.main.activity_home_inner_list.layout
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -123,16 +123,13 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
                     val strSearch = newText
                     for (model in arrayList!!) {
                         try {
-                            if (model.InquiryType!!.toLowerCase()
-                                    .contains(strSearch.toLowerCase()) ||
-                                model.InquirySubType!!.toLowerCase()
-                                    .contains(strSearch.toLowerCase()) ||
-                                model.InquiryAllotmentName!!.toLowerCase()
-                                    .contains(strSearch.toLowerCase()) ||
-                                model.ProposedAmount.toString()!!.toLowerCase()
-                                    .contains(strSearch.toLowerCase()) ||
+                            if (model.InquiryType!!.toLowerCase().contains(strSearch.toLowerCase()) ||
+                                model.InquirySubType!!.toLowerCase().contains(strSearch.toLowerCase()) ||
+                                model.InquiryAllotmentName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
+                                model.ProposedAmount.toString()!!.toLowerCase().contains(strSearch.toLowerCase()) ||
                                 model.Frequency!!.toLowerCase().contains(strSearch.toLowerCase()) ||
                                 model.LeadType!!.toLowerCase().contains(strSearch.toLowerCase()) ||
+                                model.LeadName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
                                 model.LeadStatus!!.toLowerCase().contains(strSearch.toLowerCase())
                             ) {
                                 arrItemsFinal1.add(model)
@@ -218,6 +215,7 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
         showProgress()
 
         var jsonObject = JSONObject()
+
         jsonObject.put("OperationType", OperationType)
 
         if (LeadStatusID != 0 && LeadStatusID != null) {
@@ -232,8 +230,8 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
             jsonObject.put("UserID", UserID)
         }
 
-        val call =
-            ApiUtils.apiInterface.ManageDashboardInnerList(getRequestJSONBody(jsonObject.toString()))
+        val call = ApiUtils.apiInterface.ManageDashboardInnerList(getRequestJSONBody(jsonObject.toString()))
+
         call.enqueue(object : Callback<DashboardInnerResponse> {
             override fun onResponse(
                 call: Call<DashboardInnerResponse>,
@@ -304,7 +302,6 @@ class HomeInnerListActivity : BaseActivity(), View.OnClickListener, RecyclerClic
                 intent.putExtra("GUID", arrayListNew!![position].LeadGUID)
                 startActivity(intent)
             }
-
         }
     }
 

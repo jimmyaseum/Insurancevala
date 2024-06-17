@@ -33,11 +33,6 @@ import com.theartofdev.edmodo.cropper.CropImageView
 import de.hdodenhof.circleimageview.CircleImageView
 import droidninja.filepicker.FilePickerConst
 import kotlinx.android.synthetic.main.activity_add_attachments.*
-import kotlinx.android.synthetic.main.activity_add_attachments.layout
-import kotlinx.android.synthetic.main.activity_add_attachments.edtAttachments
-import kotlinx.android.synthetic.main.activity_add_attachments.imgBack
-import kotlinx.android.synthetic.main.activity_add_attachments.rvAttachment
-import kotlinx.android.synthetic.main.activity_add_attachments.txtSave
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -56,6 +51,7 @@ class AddAttachmentsActivity : BaseActivity(), View.OnClickListener, RecyclerCli
     var ImagePaths = ArrayList<String>()
     var ID: Int? = null
     var LeadID: Int? = null
+    var Lead: Boolean? = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,6 +62,9 @@ class AddAttachmentsActivity : BaseActivity(), View.OnClickListener, RecyclerCli
     }
 
     private fun getIntentData() {
+        if (intent.hasExtra("Lead")) {
+            Lead = intent.getBooleanExtra("Lead", false)
+        }
         ID = intent.getIntExtra("ID",0)
         LeadID = intent.getIntExtra("LeadID",0)
     }
@@ -455,13 +454,23 @@ class AddAttachmentsActivity : BaseActivity(), View.OnClickListener, RecyclerCli
         LogUtil.d(TAG,"111===> "+a)
         val mAttachmentName = CommonUtil.createPartFromString(a)
         val mreferenceGUID = CommonUtil.createPartFromString("")
-        val mID = CommonUtil.createPartFromString(ID.toString())
         val mAttachmentType = CommonUtil.createPartFromString(AppConstant.OTHER)
+        var inquiryTypeID: RequestBody? = null
+        var leadTypeID: RequestBody? = null
+
+        if (Lead!!) {
+            inquiryTypeID = null
+            leadTypeID = CommonUtil.createPartFromString(ID.toString())
+        } else {
+            inquiryTypeID = CommonUtil.createPartFromString(ID.toString())
+            leadTypeID = null
+        }
 
         val call = ApiUtils.apiInterface.ManageAttachment(
             LeadID = LeadID,
             ReferenceGUID = mreferenceGUID,
-            NBInquiryTypeID = mID,
+            NBInquiryTypeID = inquiryTypeID,
+            NBLeadTypeID = leadTypeID,
             AttachmentType = mAttachmentType,
             AttachmentName = mAttachmentName,
             attachment = partsList

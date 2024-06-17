@@ -68,6 +68,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
     var state: String? = null
     var ID: Int? = null
     var LeadID: Int? = null
+    var Lead: Boolean? = false
     var TaskGUID: String? = null
     var ReferenceGUID: String? = null
 
@@ -114,6 +115,9 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
     }
 
     private fun getIntentData() {
+        if (intent.hasExtra("Lead")) {
+            Lead = intent.getBooleanExtra("Lead", false)
+        }
         state = intent.getStringExtra(AppConstant.STATE)
         ID = intent.getIntExtra("ID",0)
         LeadID = intent.getIntExtra("LeadID",0)
@@ -388,7 +392,13 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         var isreminder = false
 
         val jsonObject = JSONObject()
-        jsonObject.put("NBInquiryTypeID", ID)
+        if (Lead!!) {
+            jsonObject.put("NBLeadTypeID", ID)
+            jsonObject.put("NBInquiryTypeID", null)
+        } else {
+            jsonObject.put("NBLeadTypeID", null)
+            jsonObject.put("NBInquiryTypeID", ID)
+        }
         jsonObject.put("LeadID", LeadID)
         jsonObject.put("TaskOwnerID", mUsersID)
         jsonObject.put("Subject", edtSubject.text.toString().trim())
@@ -1490,12 +1500,22 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         val mAttachmentName = CommonUtil.createPartFromString(a)
         val mreferenceGUID = CommonUtil.createPartFromString(referenceGUID.toString())
         val mAttachmentType = CommonUtil.createPartFromString(AppConstant.TASK)
-        val mID = CommonUtil.createPartFromString(ID.toString())
+        var inquiryTypeID: RequestBody? = null
+        var leadTypeID: RequestBody? = null
+
+        if (Lead!!) {
+            inquiryTypeID = null
+            leadTypeID = CommonUtil.createPartFromString(ID.toString())
+        } else {
+            inquiryTypeID = CommonUtil.createPartFromString(ID.toString())
+            leadTypeID = null
+        }
 
         val call = ApiUtils.apiInterface.ManageAttachment(
             LeadID = LeadID,
             ReferenceGUID = mreferenceGUID,
-            NBInquiryTypeID = mID,
+            NBInquiryTypeID = inquiryTypeID,
+            NBLeadTypeID = leadTypeID,
             AttachmentType = mAttachmentType,
             AttachmentName = mAttachmentName,
             attachment = partsList

@@ -56,6 +56,7 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
     private var ID: Int? = null
     private var RecordingID: Int? = null
     private var state: String? = null
+    var Lead: Boolean? = false
 
     private var mediaPlayer: MediaPlayer? = null
     private var currentPlayingPosition: Int = -1
@@ -72,6 +73,9 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
     }
 
     private fun getIntentData() {
+        if (intent.hasExtra("Lead")) {
+            Lead = intent.getBooleanExtra("Lead", false)
+        }
         ID = intent.getIntExtra("ID", 0)
     }
 
@@ -143,7 +147,13 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
         showProgress()
 
         val jsonObject = JSONObject()
-        jsonObject.put("NBInquiryTypeID", ID)
+        if (Lead!!) {
+            jsonObject.put("NBLeadTypeID", ID)
+            jsonObject.put("NBInquiryTypeID", null)
+        } else {
+            jsonObject.put("NBLeadTypeID", null)
+            jsonObject.put("NBInquiryTypeID", ID)
+        }
 
         val call =
             ApiUtils.apiInterface.ManageRecordingFindAll(getRequestJSONBody(jsonObject.toString()))
@@ -340,9 +350,17 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
         }
 
         val call = if (state.equals("Add")) {
-            ApiUtils.apiInterface.ManageRecordingInsert(ID, audioName, partsList)
+            if (Lead!!) {
+                ApiUtils.apiInterface.ManageRecordingInsert(null, ID, audioName, partsList)
+            } else {
+                ApiUtils.apiInterface.ManageRecordingInsert(ID, null, audioName, partsList)
+            }
         } else {
-            ApiUtils.apiInterface.ManageRecordingUpdate(RecordingID, ID, audioName, partsList)
+            if (Lead!!) {
+                ApiUtils.apiInterface.ManageRecordingUpdate(RecordingID, null, ID, audioName, partsList)
+            } else {
+                ApiUtils.apiInterface.ManageRecordingUpdate(RecordingID, ID, null, audioName, partsList)
+            }
         }
 
         call.enqueue(object : Callback<CommonResponse> {

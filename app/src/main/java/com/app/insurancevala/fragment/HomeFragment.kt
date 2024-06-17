@@ -7,8 +7,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.app.insurancevala.R
+import com.app.insurancevala.activity.DashBoard.HomeInnerLeadListActivity
 import com.app.insurancevala.activity.DashBoard.HomeInnerListActivity
-import com.app.insurancevala.activity.NBInquiry.InquiryListActivity
 import com.app.insurancevala.adapter.dashboard.EmployeeWiseCountsAdapter
 import com.app.insurancevala.adapter.dashboard.InquiryTypeWiseCountsAdapter
 import com.app.insurancevala.adapter.dashboard.LeadStatusWiseCountsAdapter
@@ -53,6 +53,7 @@ class HomeFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
     val CalenderToDate = Calendar.getInstance()
     var ToDate: String = ""
 
+    var arrayListEmployeeWiseProspectCounts : ArrayList<EmployeeWiseCountsModel> = ArrayList()
     var arrayListEmployeeWiseCounts : ArrayList<EmployeeWiseCountsModel> = ArrayList()
     var arrayListInquiryTypeWiseCounts : ArrayList<InquiryTypeWiseCountsModel> = ArrayList()
     var arrayListLeadStatusWiseCount : ArrayList<LeadStatusWiseCountModel> = ArrayList()
@@ -247,7 +248,10 @@ class HomeFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
             views!!.txtOpenLead.setText(model.OpenNBInquiry.toString())
         }
         if(model.OwnInquiry != null) {
-            views!!.txtMyLead.setText(model.OwnInquiry.toString())
+             views!!.txtMyLead.setText(model.OwnInquiry.toString())
+        }
+        if(model.GroupCode != null) {
+            views!!.tvGroupCode.setText("Group Code - "+model.GroupCode.toString())
         }
 
         if(!model.LeadStatusWiseCount.isNullOrEmpty() && model.LeadStatusWiseCount!!.size > 0) {
@@ -262,8 +266,13 @@ class HomeFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
         }
         if(!model.EmployeeWiseCounts.isNullOrEmpty() && model.EmployeeWiseCounts!!.size > 0) {
             arrayListEmployeeWiseCounts = model.EmployeeWiseCounts!!
-            val adapter = EmployeeWiseCountsAdapter(requireActivity(), arrayListEmployeeWiseCounts, this@HomeFragment)
+            val adapter = EmployeeWiseCountsAdapter(requireActivity(), arrayListEmployeeWiseCounts, 1, this@HomeFragment)
             views!!.RvDashEmpList.adapter = adapter
+        }
+        if(!model.EmployeeWiseProspectsCounts.isNullOrEmpty() && model.EmployeeWiseProspectsCounts!!.size > 0) {
+            arrayListEmployeeWiseProspectCounts = model.EmployeeWiseProspectsCounts!!
+            val adapter = EmployeeWiseCountsAdapter(requireActivity(), arrayListEmployeeWiseProspectCounts, 2, this@HomeFragment)
+            views!!.RvDashEmpListProspect.adapter = adapter
         }
     }
 
@@ -296,6 +305,15 @@ class HomeFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
                 val intent = Intent(requireActivity(), HomeInnerListActivity::class.java)
                 intent.putExtra("Header", "Employee Wise List")
                 intent.putExtra("UserID", arrayListEmployeeWiseCounts[position].UserID)
+                intent.putExtra("OperationType", AppConstant.Employee)
+                startActivity(intent)
+
+            }
+            104 -> {
+                preventTwoClick(view)
+                val intent = Intent(requireActivity(), HomeInnerLeadListActivity::class.java)
+                intent.putExtra("Header", "Employee Wise Prospect Lead List")
+                intent.putExtra("UserID", arrayListEmployeeWiseProspectCounts[position].UserID)
                 intent.putExtra("OperationType", AppConstant.Employee)
                 startActivity(intent)
 

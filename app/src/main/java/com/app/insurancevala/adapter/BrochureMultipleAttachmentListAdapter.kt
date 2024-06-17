@@ -25,6 +25,7 @@ import com.app.insurancevala.utils.visible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.devs.readmoreoption.ReadMoreOption
 import kotlinx.android.synthetic.main.adapter_multiple_attachment_list.view.*
 import java.io.File
 import java.net.URL
@@ -34,7 +35,8 @@ import java.util.Locale
 class BrochureMultipleAttachmentListAdapter(
     private val mContext: Context,
     private val arrayList: ArrayList<DocumentsModel>?,
-    private val recyclerItemClickListener: RecyclerClickListener
+    private val recyclerItemClickListener: RecyclerClickListener,
+    private val remove: Boolean
 ) : RecyclerView.Adapter<BrochureMultipleAttachmentListAdapter.ViewHolder>() {
 
     var selectedItemPosition = -1
@@ -49,11 +51,10 @@ class BrochureMultipleAttachmentListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindItems(mContext, arrayList!![position], recyclerItemClickListener, position)
+        holder.bindItems(mContext, remove, arrayList!![position], recyclerItemClickListener, position)
         // Register the receiver
         mContext.registerReceiver(
-            downloadCompleteReceiver,
-            IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
+            downloadCompleteReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
         )
     }
 
@@ -65,7 +66,10 @@ class BrochureMultipleAttachmentListAdapter(
 
         fun bindItems(
             mContext: Context,
-            model: DocumentsModel, recyclerItemClickListener: RecyclerClickListener, position: Int
+            remove: Boolean,
+            model: DocumentsModel,
+            recyclerItemClickListener: RecyclerClickListener,
+            position: Int
         ) {
             if (!model.AttachmentURL.isNullOrEmpty()) {
                 if (!model.AttachmentName.isNullOrEmpty()) {
@@ -81,20 +85,15 @@ class BrochureMultipleAttachmentListAdapter(
                     itemView.imgFile.setImageResource(R.drawable.excel_icon)
                 }
                 // Image
-                else if (model.AttachmentURL.endsWith(".jpg") ||
-                    model.AttachmentURL.endsWith(".jpeg") ||
-                    model.AttachmentURL.endsWith(".png") ||
-                    model.AttachmentURL.endsWith(".gif")
+                else if (model.AttachmentURL.endsWith(".jpg") || model.AttachmentURL.endsWith(".jpeg") || model.AttachmentURL.endsWith(
+                        ".png"
+                    ) || model.AttachmentURL.endsWith(".gif")
                 ) {
-                    Glide.with(mContext)
-                        .load(model.AttachmentURL)
-                        .apply(
-                            RequestOptions()
-                                .placeholder(R.drawable.ic_profile)
+                    Glide.with(mContext).load(model.AttachmentURL).apply(
+                            RequestOptions().placeholder(R.drawable.ic_profile)
                                 .error(R.drawable.ic_profile)
                                 .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        )
-                        .into(itemView.imgFile)
+                        ).into(itemView.imgFile)
                 }
                 // Other file types
                 else {
@@ -113,6 +112,24 @@ class BrochureMultipleAttachmentListAdapter(
 
             itemView.txtname.setText(model.AttachmentName)
 
+            if (remove) {
+                itemView.imgRemove.visible()
+            } else {
+                itemView.imgRemove.gone()
+
+                val readMoreOption = ReadMoreOption.Builder(mContext)
+                    .textLength(20, ReadMoreOption.TYPE_CHARACTER)
+                    .moreLabel("More")
+                    .lessLabel("Less")
+                    .moreLabelColor(mContext.getColor(R.color.color5))
+                    .lessLabelColor(mContext.getColor(R.color.color5))
+                    .labelUnderLine(true)
+                    .expandAnimation(true)
+                    .build()
+
+                readMoreOption.addReadMoreTo(itemView.txtname, model.AttachmentName)
+            }
+
             itemView.imgRemove.setOnClickListener {
                 if (model.ID != null && model.ID != 0) {
                     recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 1)
@@ -130,17 +147,13 @@ class BrochureMultipleAttachmentListAdapter(
                         mContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
                     val downloadUri = Uri.parse(model.AttachmentURL)
 
-                    val request = DownloadManager.Request(downloadUri)
-                        .setAllowedNetworkTypes(
+                    val request = DownloadManager.Request(downloadUri).setAllowedNetworkTypes(
                             DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE
-                        )
-                        .setAllowedOverRoaming(false)
-                        .setTitle(model.AttachmentName)
+                        ).setAllowedOverRoaming(false).setTitle(model.AttachmentName)
                         .setDescription("Downloading ${model.AttachmentName}")
                         .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                         .setDestinationInExternalPublicDir(
-                            Environment.DIRECTORY_DOWNLOADS,
-                            fileName // Use the unique filename
+                            Environment.DIRECTORY_DOWNLOADS, fileName // Use the unique filename
                         )
 
                     // Enqueue the download request
@@ -159,9 +172,7 @@ class BrochureMultipleAttachmentListAdapter(
 
                     // Create a Uri from the file
                     val uri = FileProvider.getUriForFile(
-                        mContext,
-                        mContext.applicationContext.packageName + ".provider",
-                        file
+                        mContext, mContext.applicationContext.packageName + ".provider", file
                     )
 
                     val shareIntent = Intent(Intent.ACTION_SEND)

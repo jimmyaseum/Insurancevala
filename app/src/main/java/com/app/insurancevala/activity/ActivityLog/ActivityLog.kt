@@ -40,7 +40,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import kotlinx.android.synthetic.main.activity_log.*
-import kotlinx.android.synthetic.main.activity_particular_inquiry_log.layout
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -50,7 +49,6 @@ class ActivityLog : BaseActivity(), View.OnClickListener, RecyclerClickListener 
     lateinit var adapter: ParticularInquiryAdapter
     var arrayListActivity: ArrayList<ActivityLogModel>? = ArrayList()
     var arrayListActivityNew: ArrayList<ActivityLogModel>? = ArrayList()
-    var LeadID: Int? = null
 
     var tabPosition = 0
 
@@ -71,6 +69,8 @@ class ActivityLog : BaseActivity(), View.OnClickListener, RecyclerClickListener 
 
     var sharedPreference: SharedPreference? = null
 
+    var NBActivityType: String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log)
@@ -80,7 +80,12 @@ class ActivityLog : BaseActivity(), View.OnClickListener, RecyclerClickListener 
     }
 
     private fun getIntentData() {
-        LeadID = intent.getIntExtra("ID", 0)
+        NBActivityType = intent.getStringExtra("NBActivityType").toString()
+        if (NBActivityType == "Inquiry") {
+            txtHearderText.text = "Inquiry Activity Log"
+        } else {
+            txtHearderText.text = "Inquiry Activity Log"
+        }
     }
 
     override fun initializeView() {
@@ -468,10 +473,8 @@ class ActivityLog : BaseActivity(), View.OnClickListener, RecyclerClickListener 
         var jsonObject = JSONObject()
         jsonObject.put("PastActivityFilters", tabPosition)
         jsonObject.put("NBInquiryTypeGUID", null)
-        jsonObject.put(
-            "CreatedBy",
-            mUserID
-        )
+        jsonObject.put("NBActivityType", NBActivityType)
+        jsonObject.put("CreatedBy", mUserID)
         jsonObject.put("FromDate", FromDate)
         jsonObject.put("ToDate", ToDate)
 

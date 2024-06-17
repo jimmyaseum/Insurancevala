@@ -57,7 +57,6 @@ class AllRecordingsListAdapter(
             }
 
             itemView.audioPlay.setOnClickListener {
-                preventTwoClick(itemView.audioPlay)
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 100)
             }
 
@@ -102,13 +101,13 @@ class AllRecordingsListAdapter(
         if (position == currentPlayingPosition && mediaPlayer?.isPlaying == true) {
             mediaPlayer?.pause()
         } else {
-            startAudio(arrayList?.get(position)?.RecodingFiles)
+            startAudio(arrayList?.get(position)?.RecodingFiles, position)
             currentPlayingPosition = position
         }
-        notifyDataSetChanged()
+        notifyItemChanged(position)
     }
 
-    private fun startAudio(url: String?) {
+    private fun startAudio(url: String?, position: Int) {
         mediaPlayer?.release()
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(
@@ -121,7 +120,7 @@ class AllRecordingsListAdapter(
             start()
             setOnCompletionListener {
                 currentPlayingPosition = -1
-                notifyDataSetChanged()
+                notifyItemChanged(position)
             }
         }
     }

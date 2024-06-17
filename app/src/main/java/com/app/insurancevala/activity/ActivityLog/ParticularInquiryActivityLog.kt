@@ -27,6 +27,7 @@ import com.app.insurancevala.model.pojo.DocumentsModel
 import com.app.insurancevala.model.pojo.DocumentsResponse
 import com.app.insurancevala.model.response.ActivityLogModel
 import com.app.insurancevala.model.response.ActivityLogResponse
+import com.app.insurancevala.model.response.NBInquiryTypeAddUpdateResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.ferfalk.simplesearchview.SimpleSearchView
@@ -43,6 +44,9 @@ class ParticularInquiryActivityLog : BaseActivity(), View.OnClickListener, Recyc
     var arrayListActivity: ArrayList<ActivityLogModel>? = ArrayList()
     var arrayListActivityNew: ArrayList<ActivityLogModel>? = ArrayList()
     var NBInquiryTypeGUID: String? = null
+    var NBLeadsGUID: String? = null
+
+    var Lead: Boolean = false
 
     var arrayListAttachment: ArrayList<DocumentsModel>? = ArrayList()
     lateinit var adapterAttachment: AttachmentListAdapter
@@ -61,6 +65,11 @@ class ParticularInquiryActivityLog : BaseActivity(), View.OnClickListener, Recyc
 
     private fun getIntentData() {
         NBInquiryTypeGUID = intent.getStringExtra("NBInquiryTypeGUID")
+
+        if (intent.hasExtra("Lead")) {
+            Lead = intent.getBooleanExtra("Lead", false)
+            NBLeadsGUID = intent.getStringExtra("NBLeadsGUID")
+        }
     }
 
     override fun initializeView() {
@@ -222,14 +231,29 @@ class ParticularInquiryActivityLog : BaseActivity(), View.OnClickListener, Recyc
         showProgress()
 
         var jsonObject = JSONObject()
-        jsonObject.put("PastActivityFilters", tabPosition)
-        jsonObject.put("NBInquiryTypeGUID", NBInquiryTypeGUID)
-        jsonObject.put("CreatedBy", 0)
-        jsonObject.put("FromDate", "")
-        jsonObject.put("ToDate", "")
 
-        val call =
-            ApiUtils.apiInterface.ActivityLogFindAll(getRequestJSONBody(jsonObject.toString()))
+        if (!Lead) {
+            jsonObject.put("PastActivityFilters", tabPosition)
+            jsonObject.put("NBInquiryTypeGUID", NBInquiryTypeGUID)
+            jsonObject.put("CreatedBy", 0)
+            jsonObject.put("FromDate", "")
+            jsonObject.put("ToDate", "")
+        } else {
+            jsonObject.put("PastActivityFilters", tabPosition)
+            jsonObject.put("NBLeadsGUID", NBLeadsGUID)
+            jsonObject.put("NBActivityType", "Lead")
+            jsonObject.put("CreatedBy", 0)
+            jsonObject.put("FromDate", "")
+            jsonObject.put("ToDate", "")
+        }
+
+        var call: Call<ActivityLogResponse>? = null
+
+        if (!Lead) {
+            call = ApiUtils.apiInterface.ActivityLogFindAll(getRequestJSONBody(jsonObject.toString()))
+        } else {
+            call = ApiUtils.apiInterface.ActivityLogGUID(getRequestJSONBody(jsonObject.toString()))
+        }
         call.enqueue(object : Callback<ActivityLogResponse> {
             override fun onResponse(
                 call: Call<ActivityLogResponse>,

@@ -23,6 +23,8 @@ data class NBModel (
     val NBInquiryGUID: String? = null,
     @SerializedName("LeadID")
     val LeadID: Int? = null,
+    @SerializedName("InquiryNo")
+    val InquiryNo: Int? = null,
     @SerializedName("LeadName")
     val LeadName: String? = null,
     @SerializedName("LeadGUID")
@@ -51,14 +53,16 @@ data class NBModel (
     val UpdatedOn: String? = null,
     @SerializedName("NBInquiryList")
     val NBInquiryList: ArrayList<NBInquiryModel>? = null,
-    @SerializedName("NBInquirySUb")
-    val NBInquirySUb: NBInquiryModel? = null
+    @SerializedName("NBInquirySub")
+    val NBInquirySub: NBInquiryModel? = null
 )
 data class NBInquiryModel (
     @SerializedName("ID")
     val ID: Int? = null,
     @SerializedName("NBInquiryTypeGUID")
     val NBInquiryTypeGUID: String? = null,
+    @SerializedName("InquiryNo")
+    val InquiryNo: Int? = null,
     @SerializedName("NBInquiryID")
     val NBInquiryID: Int? = null,
     @SerializedName("NBInquiryBy")

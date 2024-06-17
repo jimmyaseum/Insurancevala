@@ -49,6 +49,7 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
     var state: String? = null
     var ID: Int? = null
     var LeadID: Int? = null
+    var Lead: Boolean? = false
     var CallGUID: String? = null
 
     // get from intent data
@@ -101,7 +102,9 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
     }
 
     private fun getIntentData() {
-
+        if (intent.hasExtra("Lead")) {
+            Lead = intent.getBooleanExtra("Lead", false)
+        }
         state = intent.getStringExtra(AppConstant.STATE)
         LeadID = intent.getIntExtra("LeadID",0)
         ID = intent.getIntExtra("ID",0)
@@ -342,7 +345,13 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
         var isreminder = false
 
         val jsonObject = JSONObject()
-        jsonObject.put("NBInquiryTypeID", ID)
+        if (Lead!!) {
+            jsonObject.put("NBLeadTypeID", ID)
+            jsonObject.put("NBInquiryTypeID", null)
+        } else {
+            jsonObject.put("NBLeadTypeID", null)
+            jsonObject.put("NBInquiryTypeID", ID)
+        }
         jsonObject.put("LeadID", LeadID)
         jsonObject.put("CallTypeID", mCalltypeID)
         jsonObject.put("CallPurposeID", mCallpurposeID)

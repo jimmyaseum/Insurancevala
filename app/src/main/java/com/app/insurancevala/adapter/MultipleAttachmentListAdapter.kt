@@ -17,6 +17,8 @@ import com.app.insurancevala.R
 import com.app.insurancevala.activity.AddBrochureActivity
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.pojo.DocumentsModel
+import com.app.insurancevala.utils.LogUtil
+import com.app.insurancevala.utils.TAG
 import com.app.insurancevala.utils.gone
 import com.app.insurancevala.utils.visible
 import com.bumptech.glide.Glide
@@ -63,7 +65,9 @@ class MultipleAttachmentListAdapter(
 
         fun bindItems(
             mContext: Context,
-            model: DocumentsModel, recyclerItemClickListener: RecyclerClickListener, position: Int
+            model: DocumentsModel,
+            recyclerItemClickListener: RecyclerClickListener,
+            position: Int
         ) {
             if (!model.AttachmentURL.isNullOrEmpty()) {
                 if (!model.AttachmentName.isNullOrEmpty()) {
@@ -75,7 +79,9 @@ class MultipleAttachmentListAdapter(
                     itemView.imgFile.setImageResource(R.drawable.pdficon)
                 }
                 // Excel
-                else if (model.AttachmentURL.contains(".xls")) {
+                else if (model.AttachmentURL.contains(".xls") ||
+                    model.AttachmentURL.contains(".xlsx")
+                ) {
                     itemView.imgFile.setImageResource(R.drawable.excel_icon)
                 }
                 // Image
@@ -84,15 +90,10 @@ class MultipleAttachmentListAdapter(
                     model.AttachmentURL.endsWith(".png") ||
                     model.AttachmentURL.endsWith(".gif")
                 ) {
-                    Glide.with(mContext)
-                        .load(model.AttachmentURL)
-                        .apply(
-                            RequestOptions()
-                                .placeholder(R.drawable.ic_profile)
-                                .error(R.drawable.ic_profile)
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        )
-                        .into(itemView.imgFile)
+                    Glide.with(mContext).load(model.AttachmentURL).apply(
+                        RequestOptions().placeholder(R.drawable.ic_profile)
+                            .error(R.drawable.ic_profile).diskCacheStrategy(DiskCacheStrategy.ALL)
+                    ).into(itemView.imgFile)
                 }
                 // Other file types
                 else {
@@ -108,9 +109,20 @@ class MultipleAttachmentListAdapter(
             }
 
             itemView.rlItemContent.setOnClickListener {
-                if (!model.AttachmentURL.isNullOrEmpty()) {
-                    if (model.AttachmentURL!!.contains(".pdf")) {
+                if (!model.AttachmentURL.isNullOrEmpty() && model.ID != null && model.ID != 0) {
+                    LogUtil.d(TAG, "" + model.AttachmentURL)
+                    LogUtil.d(TAG, "" + model.ID)
+                    LogUtil.d(TAG, "" + model.AttachmentGUID)
+                    if (model.AttachmentURL.contains(".pdf")) {
                         var format = "https://docs.google.com/gview?embedded=true&url=%s"
+                        val fullPath: String =
+                            java.lang.String.format(Locale.ENGLISH, format, model.AttachmentURL)
+                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(fullPath))
+                        mContext.startActivity(browserIntent)
+                    } else if (model.AttachmentURL.contains(".xls") ||
+                        model.AttachmentURL.contains(".xlsx")
+                    ) {
+                        val format = "https://docs.google.com/gview?embedded=true&url=%s"
                         val fullPath: String =
                             java.lang.String.format(Locale.ENGLISH, format, model.AttachmentURL)
                         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(fullPath))
@@ -143,6 +155,22 @@ class MultipleAttachmentListAdapter(
             AttachmentURL = uri.toString(),
             AttachmentType = if (attachmentType == 1) "Document" else "Image"
         )
+        arrayList?.add(newItem)
+        notifyDataSetChanged()
+    }
+
+    fun addItemExcel(name: String, fileUri: Uri, attachmentType: Int) {
+        clearAndAddItem(
+            DocumentsModel(
+                AttachmentName = name,
+                AttachmentURL = fileUri.toString(),
+                AttachmentType = if (attachmentType == 1) "Document" else "Image"
+            )
+        )
+    }
+
+    fun clearAndAddItem(newItem: DocumentsModel) {
+        arrayList?.clear()
         arrayList?.add(newItem)
         notifyDataSetChanged()
     }

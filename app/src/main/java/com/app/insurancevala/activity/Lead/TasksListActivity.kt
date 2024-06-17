@@ -41,6 +41,7 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
     var arrayListTasks: ArrayList<TasksModel>? = ArrayList()
     var arrayListTasksNew: ArrayList<TasksModel>? = ArrayList()
     var LeadID: Int? = null
+    var Lead: Boolean? = false
     var ID: Int? = null
 
     val arrayListtaskstatus  = ArrayList<SingleSelectionModel>()
@@ -63,6 +64,9 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
         if (!ClosedTask.isNullOrEmpty()) {
             txtHearderText.text = "Closed Tasks"
             imgAddTasks.gone()
+        }
+        if (intent.hasExtra("Lead")) {
+            Lead = intent.getBooleanExtra("Lead", false)
         }
     }
 
@@ -182,6 +186,7 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 val intent = Intent(this, AddTaskLogsActivity::class.java)
                 intent.putExtra("ID",ID)
                 intent.putExtra("LeadID",LeadID)
+                intent.putExtra("Lead", Lead)
                 intent.putExtra(AppConstant.STATE,AppConstant.S_ADD)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
             }
@@ -202,6 +207,7 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 val intent = Intent(this, AddTaskLogsActivity::class.java)
                 intent.putExtra(AppConstant.STATE,AppConstant.S_EDIT)
                 intent.putExtra("LeadID",LeadID)
+                intent.putExtra("Lead", Lead)
                 intent.putExtra("ID",ID)
                 intent.putExtra("TaskGUID",arrayListTasksNew!![position].TaskGUID)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
@@ -232,7 +238,13 @@ class TasksListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
         var jsonObject = JSONObject()
 
         jsonObject.put("LeadID", LeadID)
-        jsonObject.put("NBInquiryTypeID", ID)
+        if (Lead!!) {
+            jsonObject.put("NBLeadTypeID", ID)
+            jsonObject.put("NBInquiryTypeID", null)
+        } else {
+            jsonObject.put("NBLeadTypeID", null)
+            jsonObject.put("NBInquiryTypeID", ID)
+        }
 
         if(!ClosedTask.isNullOrEmpty()) {
             jsonObject.put("TaskStatus", ClosedTask)

@@ -45,6 +45,7 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
     var arrayListMeetingsNew: ArrayList<MeetingsModel>? = ArrayList()
     var ID: Int? = null
     var LeadID: Int? = null
+    var Lead: Boolean? = false
 
     var arrayListmeetingstatus  : ArrayList<MeetingStatusModel>? = ArrayList()
     var mMeetingstatus : String = ""
@@ -67,6 +68,9 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
         if (ClosedMeeting != 0) {
             txtHearderText.text = "Closed Meetings"
             imgAddMeeting.gone()
+        }
+        if (intent.hasExtra("Lead")) {
+            Lead = intent.getBooleanExtra("Lead", false)
         }
     }
 
@@ -174,6 +178,7 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
                 intent.putExtra("ID",ID)
                 intent.putExtra("LeadID",LeadID)
                 intent.putExtra(AppConstant.STATE,AppConstant.S_ADD)
+                intent.putExtra("Lead", Lead)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
             }
         }
@@ -196,6 +201,7 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
                 intent.putExtra("ID",ID)
                 intent.putExtra("LeadID",LeadID)
                 intent.putExtra("MeetingGUID",arrayListMeetingsNew!![position].MeetingGUID)
+                intent.putExtra("Lead", Lead)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
             }
             103 -> {
@@ -223,7 +229,13 @@ class MeetingsListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
 
         var jsonObject = JSONObject()
 
-        jsonObject.put("NBInquiryTypeID", ID)
+        if (Lead!!) {
+            jsonObject.put("NBLeadTypeID", ID)
+            jsonObject.put("NBInquiryTypeID", null)
+        } else {
+            jsonObject.put("NBLeadTypeID", null)
+            jsonObject.put("NBInquiryTypeID", ID)
+        }
         jsonObject.put("LeadID", LeadID)
 
         if(ClosedMeeting != 0) {

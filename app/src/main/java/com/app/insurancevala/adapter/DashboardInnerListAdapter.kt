@@ -39,12 +39,18 @@ class DashboardInnerListAdapter(private val context: Context?, private val array
         ) {
             this.context = context
 
-            if(!arrayList[position].LeadName.isNullOrEmpty()) {
+            if(!arrayList[position].LeadName.isNullOrEmpty() && !arrayList[position].GroupCode.isNullOrEmpty()) {
                 itemView.txtLeadName.text = arrayList[position].LeadName + " - " + arrayList[position].GroupCode
+            } else if (!arrayList[position].LeadName.isNullOrEmpty()) {
+                itemView.txtLeadName.text = arrayList[position].LeadName
             }
 
             if(!arrayList[position].InquiryDate.isNullOrEmpty()) {
                 itemView.txtInquiryDate.text = arrayList[position].InquiryDate
+            }
+
+            if(arrayList[position].InquiryNo != null && arrayList[position].InquiryNo != 0) {
+                itemView.txtInquiryNo.text = arrayList[position].InquiryNo.toString()
             }
 
             if(!arrayList[position].InquiryType.isNullOrEmpty()) {

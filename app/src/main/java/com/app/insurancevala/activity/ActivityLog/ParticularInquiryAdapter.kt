@@ -10,16 +10,13 @@ import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.ActivityLogModel
 import com.app.insurancevala.utils.AppConstant
 import com.app.insurancevala.utils.convertDateStringToString
-import kotlinx.android.synthetic.main.adapter_inquiry_item.view.v1
-import kotlinx.android.synthetic.main.adapter_inquiry_type_attachment.view.txtAttachmentDate
-import kotlinx.android.synthetic.main.adapter_inquiry_type_attachment.view.txtAttachmentLog
-import kotlinx.android.synthetic.main.adapter_inquiry_type_attachment.view.txtAttachmentTitle
+import com.app.insurancevala.utils.gone
+import com.app.insurancevala.utils.visible
+import kotlinx.android.synthetic.main.adapter_inquiry_type_attachment.view.*
 import kotlinx.android.synthetic.main.adapter_inquiry_type_call.view.*
 import kotlinx.android.synthetic.main.adapter_inquiry_type_meeting.view.*
 import kotlinx.android.synthetic.main.adapter_inquiry_type_note.view.*
-import kotlinx.android.synthetic.main.adapter_inquiry_type_recording.view.txtRecordingDate
-import kotlinx.android.synthetic.main.adapter_inquiry_type_recording.view.txtRecordingLog
-import kotlinx.android.synthetic.main.adapter_inquiry_type_recording.view.txtRecordingTitle
+import kotlinx.android.synthetic.main.adapter_inquiry_type_recording.view.*
 import kotlinx.android.synthetic.main.adapter_inquiry_type_task.view.*
 
 class ParticularInquiryAdapter(
@@ -121,8 +118,17 @@ class ParticularInquiryAdapter(
 
             if (tabPosition == 0) {
                 itemView.txtCallDate.text = item.FollowupDate
+                itemView.txtCallLog.text = "Call - Follow Up"
+                itemView.txtCallTime.text = "Time - " + convertDateStringToString(
+                    item.FollowupTime!!,
+                    AppConstant.HH_MM_SS_FORMAT,
+                    AppConstant.HH_MM_AA_FORMAT
+                )
+                itemView.txtCallTime.visible()
             } else {
                 itemView.txtCallDate.text = item.ActivityDate
+                itemView.txtCallLog.text = "Call"
+                itemView.txtCallTime.gone()
             }
         }
     }
@@ -133,15 +139,23 @@ class ParticularInquiryAdapter(
         override fun bind(item: ActivityLogModel, recyclerItemClickListener: RecyclerClickListener, tabPosition: Int) {
             // Use recyclerItemClickListener here
             itemView.txtMeetingPurpose.text = "Purpose - " + item.ActivityPurpose
-            itemView.txtMeetingTime.text = "Time - " + convertDateStringToString(
-                item.ActivityStartTime!!,
-                AppConstant.HH_MM_SS_FORMAT,
-                AppConstant.HH_MM_AA_FORMAT
-            ) + " To " + convertDateStringToString(
-                item.ActivityEndTime!!,
-                AppConstant.HH_MM_SS_FORMAT,
-                AppConstant.HH_MM_AA_FORMAT
-            )
+            if (tabPosition == 0) {
+                itemView.txtMeetingTime.text = "Time - " + convertDateStringToString(
+                    item.FollowupTime!!,
+                    AppConstant.HH_MM_SS_FORMAT,
+                    AppConstant.HH_MM_AA_FORMAT
+                )
+            } else {
+                itemView.txtMeetingTime.text = "Time - " + convertDateStringToString(
+                    item.ActivityStartTime!!,
+                    AppConstant.HH_MM_SS_FORMAT,
+                    AppConstant.HH_MM_AA_FORMAT
+                ) + " To " + convertDateStringToString(
+                    item.ActivityEndTime!!,
+                    AppConstant.HH_MM_SS_FORMAT,
+                    AppConstant.HH_MM_AA_FORMAT
+                )
+            }
             itemView.txtMeetingLocation.text = "Location - " + item.ActivityLocation
             itemView.txtMeetingType.text = "Type - " + item.ActivityType
             itemView.txtMeetingOutcome.text = "OutCome - " + item.ActivityOutCome
@@ -151,8 +165,10 @@ class ParticularInquiryAdapter(
 
             if (tabPosition == 0) {
                 itemView.txtMeetingDate.text = item.FollowupDate
+                itemView.txtMeetingLog.text = "Meeting - Follow Up"
             } else {
                 itemView.txtMeetingDate.text = item.ActivityDate
+                itemView.txtMeetingLog.text = "Meeting"
             }
             // Set click listener
             itemView.setOnClickListener {
@@ -190,8 +206,10 @@ class ParticularInquiryAdapter(
 
             if (tabPosition == 0) {
                 itemView.txtTaskDate.text = item.FollowupDate
+                itemView.txtTaskLog.text = "Task - Reminder"
             } else {
                 itemView.txtTaskDate.text = item.ActivityDate
+                itemView.txtTaskLog.text = "Task"
             }
 
             // Set click listener

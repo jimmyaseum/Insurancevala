@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerClickListener
@@ -48,6 +49,19 @@ class PlanBrochuresListAdapter(private val context: Context?, private val arrayL
 
             if(!arrayList[position].PlanName.isNullOrEmpty()) {
                 itemView.txtPlanName.text = arrayList[position].PlanName
+            }
+
+            itemView.rvAttachment.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            itemView.rvAttachment.isNestedScrollingEnabled = false
+
+            if(!arrayList[position].PlanBrochureAttachmentList.isNullOrEmpty()) {
+                val arrayListAttachment = arrayList[position].PlanBrochureAttachmentList!!
+                val adapter = BrochureMultipleAttachmentListAdapter(context, arrayListAttachment, recyclerItemClickListener, false)
+                itemView.rvAttachment.adapter = adapter
+
+                itemView.rvAttachment.visible()
+            } else {
+                itemView.rvAttachment.gone()
             }
 
             if(arrayList[position].UpdatedBy == 0 || arrayList[position].UpdatedBy == null) {

@@ -160,7 +160,7 @@ class AddBrochureActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         rvAttachment.isNestedScrollingEnabled = false
 
         arrayListAttachment = ArrayList()
-        adapter = BrochureMultipleAttachmentListAdapter(this, arrayListAttachment, this)
+        adapter = BrochureMultipleAttachmentListAdapter(this, arrayListAttachment, this, true)
         rvAttachment.adapter = adapter
 
         edtCompanyName.setOnClickListener(this)
@@ -852,7 +852,7 @@ class AddBrochureActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         if (!model.PlanBrochureAttachmentList.isNullOrEmpty()) {
             arrayListAttachment = java.util.ArrayList()
             arrayListAttachment = model.PlanBrochureAttachmentList
-            adapter = BrochureMultipleAttachmentListAdapter(this, arrayListAttachment, this)
+            adapter = BrochureMultipleAttachmentListAdapter(this, arrayListAttachment, this, true)
 
             rvAttachment.adapter = adapter
         }

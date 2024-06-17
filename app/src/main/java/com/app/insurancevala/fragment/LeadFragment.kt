@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
@@ -15,13 +15,21 @@ import kotlinx.android.synthetic.main.fragment_lead.view.*
 import kotlinx.android.synthetic.main.fragment_lead.*
 import com.app.insurancevala.activity.Lead.AddLeadActivity
 import com.app.insurancevala.activity.Lead.LeadDashboardActivity
-import com.app.insurancevala.adapter.LeadListAdapter
+import com.app.insurancevala.adapter.ClientListAdapter
 import com.app.insurancevala.helper.PaginationScrollListener
 import com.app.insurancevala.interFase.RecyclerClickListener
+import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.response.LeadModel
 import com.app.insurancevala.model.response.LeadResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
+import com.example.awesomedialog.AwesomeDialog
+import com.example.awesomedialog.body
+import com.example.awesomedialog.icon
+import com.example.awesomedialog.onNegative
+import com.example.awesomedialog.onPositive
+import com.example.awesomedialog.position
+import com.example.awesomedialog.title
 import com.ferfalk.simplesearchview.SimpleSearchView
 import com.google.android.material.snackbar.Snackbar
 import org.json.JSONObject
@@ -35,13 +43,15 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
     var arrayListLead: ArrayList<LeadModel>? = ArrayList()
     var arrayListLeadNew: ArrayList<LeadModel>? = ArrayList()
 
+    var tabPosition = 1
+
     var skip = 0
     var isLastPage: Boolean = false
     var isLoading: Boolean = false
 
     var searchText: String = ""
 
-    lateinit var adapter: LeadListAdapter
+    lateinit var adapter: ClientListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -62,6 +72,9 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
 
         views!!.imgAddLead.setOnClickListener(this)
         views!!.imgSortBy.setOnClickListener(this)
+
+        views!!.llExisting.setOnClickListener(this)
+        views!!.llProspect.setOnClickListener(this)
 
         val manager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
         views!!.RvLeadList.layoutManager = manager
@@ -167,6 +180,33 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
         })
     }
 
+    private fun changeTabColor(position: Int) {
+        tabPosition = position
+        when (position) {
+
+            1 -> {
+                llExisting.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_upcoming)
+                tvExisting.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+
+                llProspect.background = null
+                tvProspect.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorBlack))
+
+                callAPIDefaultData(true, true)
+            }
+
+            2 -> {
+
+                llExisting. background = null
+                tvExisting.setTextColor(ContextCompat.getColor(requireContext(), R.color.colorBlack))
+
+                llProspect.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_upcoming)
+                tvProspect.setTextColor(ContextCompat.getColor(requireContext(), R.color.white))
+
+                callAPIDefaultData(true, true)
+            }
+        }
+    }
+
     private fun callAPIDefaultData(search: Boolean, progress: Boolean) {
         skip = 0
         isLoading = false
@@ -197,6 +237,20 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
                 }
 
             }
+
+            R.id.llExisting -> {
+                if (tabPosition != 1) {
+                    tabPosition = 1
+                    changeTabColor(tabPosition)
+                }
+            }
+
+            R.id.llProspect -> {
+                if (tabPosition != 2) {
+                    tabPosition = 2
+                    changeTabColor(tabPosition)
+                }
+            }
         }
     }
 
@@ -207,8 +261,9 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
         }
 
         var jsonObject = JSONObject()
-        jsonObject.put("Limit", 10)
+        jsonObject.put("Limit", 50)
         jsonObject.put("Skip", skip)
+        jsonObject.put("LeadStage", tabPosition)
         jsonObject.put("LeadSearch", LeadSearch)
 
         val call = ApiUtils.apiInterface.LeadsFindAllActive(getRequestJSONBody(jsonObject.toString()))
@@ -217,8 +272,22 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
                 hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
-                        val arrayList = response.body()?.Data!!
 
+                        if (LeadSearch != "" && tabPosition == 1) {
+                            tvExisting.setText("Existing  (" + response.body()?.Data!!.get(0).SearchCount + ")")
+                        } else if (LeadSearch != "" && tabPosition == 2){
+                            tvProspect.setText("Prospect  (" + response.body()?.Data!!.get(0).SearchCount + ")")
+                        } else if (LeadSearch == "") {
+                            if (response.body()?.Data!!.get(0).ExistingCount != null && response.body()?.Data!!.get(0).ExistingCount != "") {
+                                tvExisting.setText("Existing  (" + response.body()?.Data!!.get(0).ExistingCount + ")")
+                            }
+
+                            if (response.body()?.Data!!.get(0).ProspectCount != null && response.body()?.Data!!.get(0).ProspectCount != "") {
+                                tvProspect.setText("Prospect  (" + response.body()?.Data!!.get(0).ProspectCount + ")")
+                            }
+                        }
+
+                        val arrayList = response.body()?.Data!!
                         if (skip > 0) {
                             arrayListLeadNew!!.addAll(arrayList)
                         } else {
@@ -239,7 +308,7 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
                                 views!!.shimmer.gone()
 
                                 if (arrayListLeadNew.isNullOrEmpty().not()) {
-                                    if (arrayListLeadNew!!.size < 10) {
+                                    if (arrayListLeadNew!!.size < 50) {
                                         isLastPage = true
                                     }
                                 }
@@ -304,7 +373,7 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
     }
 
     private fun setData() {
-        adapter = LeadListAdapter(context, arrayListLeadNew!!, this)
+        adapter = ClientListAdapter(context, arrayListLeadNew!!, tabPosition, this)
         views!!.RvLeadList.adapter = adapter
     }
 
@@ -334,7 +403,45 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
                     startActivity(browserIntent)
                 }
             }
+
+            104 -> {
+                preventTwoClick(view)
+                AwesomeDialog.build(requireActivity()).title("Warning !!!")
+                    .body("Are you sure want to delete this Client?")
+                    .icon(R.drawable.ic_delete).position(AwesomeDialog.POSITIONS.CENTER)
+                    .onNegative("No") {
+
+                    }.onPositive("Yes") {
+                        CallDeleteAPI(arrayListLeadNew!![position].LeadGUID!!)
+                    }
+            }
         }
+    }
+
+    private fun CallDeleteAPI(GUID: String) {
+
+        var jsonObject = JSONObject()
+        jsonObject.put("LeadGUID", GUID)
+
+        val call = ApiUtils.apiInterface.ManageLeadsDelete(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<CommonResponse> {
+            override fun onResponse(
+                call: Call<CommonResponse>, response: Response<CommonResponse>
+            ) {
+                if (response.code() == 200) {
+                    if (response.body()?.Status == 200) {
+                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                        callAPIDefaultData(true, true)
+                    } else {
+                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
+                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+            }
+        })
     }
 
     @Suppress("DEPRECATION")
@@ -362,7 +469,7 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
 
             override fun loadMoreItems() {
                 isLoading = true
-                skip = skip + 10
+                skip = skip + 50
                 callManageLead(searchText, true)
             }
         })

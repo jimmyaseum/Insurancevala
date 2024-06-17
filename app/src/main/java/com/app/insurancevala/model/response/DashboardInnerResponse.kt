@@ -19,6 +19,8 @@ class DashboardInnerResponse {
 data class DashboardInnerModel (
     @SerializedName("ID")
     val ID: Int? = null,
+    @SerializedName("InquiryNo")
+    val InquiryNo: Int? = null,
     @SerializedName("NBInquiryTypeGUID")
     val NBInquiryTypeGUID: String? = null,
     @SerializedName("LeadID")

@@ -27,6 +27,7 @@ class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
     var arrayListNotes: ArrayList<NoteModel>? = ArrayList()
     var arrayListNotesNew: ArrayList<NoteModel>? = ArrayList()
     var LeadID: Int? = null
+    var Lead: Boolean? = false
     var ID: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,6 +41,9 @@ class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
     private fun getIntentData() {
         LeadID = intent.getIntExtra("LeadID",0)
         ID = intent.getIntExtra("ID",0)
+        if (intent.hasExtra("Lead")) {
+            Lead = intent.getBooleanExtra("Lead", false)
+        }
     }
 
     override fun initializeView() {
@@ -140,6 +144,7 @@ class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 intent.putExtra(AppConstant.STATE,AppConstant.S_ADD)
                 intent.putExtra("ID",ID)
                 intent.putExtra("LeadID",LeadID)
+                intent.putExtra("Lead", Lead)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
             }
         }
@@ -156,6 +161,7 @@ class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 intent.putExtra(AppConstant.STATE,AppConstant.S_EDIT)
                 intent.putExtra("ID",ID)
                 intent.putExtra("LeadID",LeadID)
+                intent.putExtra("Lead", Lead)
                 intent.putExtra("NoteGUID",arrayListNotesNew!![position].NoteGUID)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
             }
@@ -178,7 +184,13 @@ class NotesListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
         showProgress()
 
         var jsonObject = JSONObject()
-        jsonObject.put("NBInquiryTypeID",ID)
+        if (Lead!!) {
+            jsonObject.put("NBLeadTypeID", ID)
+            jsonObject.put("NBInquiryTypeID", null)
+        } else {
+            jsonObject.put("NBLeadTypeID", null)
+            jsonObject.put("NBInquiryTypeID", ID)
+        }
         jsonObject.put("LeadID",LeadID)
 
         val call = ApiUtils.apiInterface.ManageNoteFindAll(getRequestJSONBody(jsonObject.toString()))

@@ -58,9 +58,8 @@
                 android:paddingTop="@dimen/_10sdp">
 
                 <RelativeLayout
-                    android:layout_width="@dimen/_75sdp"
-                    android:layout_height="@dimen/_75sdp"
-                    android:gravity="center">
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_75sdp">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/imgprofileimage"
@@ -68,7 +67,22 @@
                         android:layout_height="@dimen/_70sdp"
                         android:src="@drawable/ic_profile"
                         app:civ_border_color="@color/colorBlack"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"
                         app:civ_border_width="1dp" />
+
+                    <TextView
+                        android:id="@+id/txtEditProfile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Edit Profile"
+                        android:padding="@dimen/_5sdp"
+                        android:layout_alignParentEnd="true"
+                        android:textColor="@color/colorBlack"
+                        android:drawablePadding="@dimen/_5sdp"
+                        app:drawableEndCompat="@drawable/ic_edit"
+                        android:drawableTint="@color/colorGray500"
+                        android:fontFamily="@font/poppins_semibold" />
 
                 </RelativeLayout>
 
@@ -125,23 +139,6 @@
                         android:textColor="@color/colorGradish"
                         android:textSize="@dimen/_12sdp" />
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/llEditProfile"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_card_gray"
-                    android:backgroundTint="@color/colorGray100"
-                    android:orientation="horizontal"
-                    android:paddingLeft="@dimen/_10sdp"
-                    android:paddingRight="@dimen/_10sdp">
-
-                    <TextView
-                        android:id="@+id/txtEditProfile"
-                        style="@style/ButtonText"
-                        android:text="Edit Profile"
-                        android:textColor="@color/colorBlack" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -297,7 +294,7 @@
                     android:layout_marginLeft="@dimen/_10sdp"
                     android:layout_weight="1"
                     android:fontFamily="@font/poppins_semibold"
-                    android:text="Brochure"
+                    android:text="Plan Brochure"
                     android:textColor="@color/colorBlack"
                     android:textSize="@dimen/_13sdp" />
 
@@ -340,6 +337,50 @@
                     android:layout_weight="1"
                     android:fontFamily="@font/poppins_semibold"
                     android:text="User Activity Log"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/_13sdp" />
+
+                <ImageView
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_gravity="center_vertical|right"
+                    android:background="@drawable/bg_edittext"
+                    android:rotation="270"
+                    android:src="@drawable/ic_down"
+                    app:tint="@color/colorTextHint" />
+            </LinearLayout>
+
+            <View
+                android:id="@+id/V3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:background="@color/colorGray100"
+                android:visibility="visible"/>
+
+            <LinearLayout
+                android:id="@+id/LLExcelUpload"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/_10sdp"
+                android:visibility="visible">
+
+                <ImageView
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_gravity="center_vertical|right"
+                    android:src="@drawable/excel_icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Excel Upload"
                     android:textColor="@color/colorBlack"
                     android:textSize="@dimen/_13sdp" />
 

@@ -30,6 +30,7 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
     var arrayListCallsNew: ArrayList<CallsModel>? = ArrayList()
     var ID: Int? = null
     var LeadID: Int? = null
+    var Lead: Boolean? = false
 
     var ClosedCall : String? = ""
 
@@ -48,6 +49,9 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
         if (!ClosedCall.isNullOrEmpty()) {
             txtHearderText.text = "Closed Calls"
             imgAddCalls.gone()
+        }
+        if (intent.hasExtra("Lead")) {
+            Lead = intent.getBooleanExtra("Lead", false)
         }
     }
 
@@ -169,6 +173,7 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 intent.putExtra(AppConstant.STATE, AppConstant.S_EDIT)
                 intent.putExtra("ID",ID)
                 intent.putExtra("LeadID",LeadID)
+                intent.putExtra("Lead", Lead)
                 intent.putExtra("CallGUID",arrayListCallsNew!![position].CallGUID)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
             }
@@ -207,6 +212,7 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
             intent.putExtra(AppConstant.STATE,AppConstant.S_ADD)
             intent.putExtra("ID",ID)
             intent.putExtra("LeadID",LeadID)
+            intent.putExtra("Lead", Lead)
             intent.putExtra("CALLTYPE","SCHEDULE")
             startActivityForResult(intent, AppConstant.INTENT_1001)
 
@@ -218,6 +224,7 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
             intent.putExtra(AppConstant.STATE,AppConstant.S_ADD)
             intent.putExtra("ID",ID)
             intent.putExtra("LeadID",LeadID)
+            intent.putExtra("Lead", Lead)
             intent.putExtra("CALLTYPE","LOGCALL")
             startActivityForResult(intent, AppConstant.INTENT_1001)
 
@@ -231,7 +238,13 @@ class CallsListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
 
         var jsonObject = JSONObject()
 
-        jsonObject.put("NBInquiryTypeID", ID)
+        if (Lead!!) {
+            jsonObject.put("NBLeadTypeID", ID)
+            jsonObject.put("NBInquiryTypeID", null)
+        } else {
+            jsonObject.put("NBLeadTypeID", null)
+            jsonObject.put("NBInquiryTypeID", ID)
+        }
         jsonObject.put("LeadID", LeadID)
 
         if(ClosedCall != "") {

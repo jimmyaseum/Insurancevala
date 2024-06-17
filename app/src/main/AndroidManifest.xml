@@ -49,7 +49,10 @@
         <!--Welcome Activity-->
         <activity
             android:name=".activity.Login.WelcomeActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"  />
 
         <!--Login Activity-->
         <activity
@@ -62,236 +65,436 @@
         <!--Registration Activity-->
         <activity
             android:name=".activity.Login.RegistrationActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Forgot Password Activity-->
         <activity
             android:name=".activity.Login.ForgotPasswordActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:exported="true"
-            android:windowSoftInputMode="adjustResize" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Reset New Password Activity-->
         <activity
             android:name=".activity.Login.ChangePasswordActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"  />
 
         <!--Home Activity-->
         <activity
             android:name=".activity.DashBoard.HomeActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:exported="true"
-            android:theme="@style/AppThemeHome"
-            android:windowSoftInputMode="adjustPan"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:theme="@style/AppThemeHome"/>
 
         <!--Home Inner List Activity-->
         <activity
             android:name=".activity.DashBoard.HomeInnerListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <!--Home Inner Lead List Activity-->
+        <activity android:name=".activity.DashBoard.HomeInnerLeadListActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Lead Dashboard Activity-->
         <activity
             android:name=".activity.Lead.LeadDashboardActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             android:theme="@style/AppThemeHome" />
 
         <!--Add Lead List Activity-->
         <activity
             android:name=".activity.Lead.AddLeadActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"  />
 
         <!--Note List Activity-->
         <activity
             android:name=".activity.Lead.NotesListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"  />
 
         <!--Add Note Log Activity-->
         <activity
             android:name=".activity.Lead.AddNotesActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Add Attachment Activity-->
         <activity
             android:name=".activity.Lead.AddAttachmentsActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Attachment List Activity-->
         <activity
             android:name=".activity.Lead.AttachmentsListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"  />
 
         <!--Calls List Activity-->
         <activity
             android:name=".activity.Lead.CallsListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Add Calls Log Activity-->
         <activity
             android:name=".activity.Lead.AddCallLogsActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Calls Detail Activity-->
         <activity
             android:name=".activity.Lead.CallsDetailsActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Meeting List Activity-->
         <activity
             android:name=".activity.Lead.MeetingsListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Add Meeting Activity-->
         <activity
             android:name=".activity.Lead.AddMeetingsActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Meeting Detail Activity-->
         <activity
             android:name=".activity.Lead.MeetingsDetailsActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"  />
 
         <!--Add Task Activity-->
         <activity
             android:name=".activity.Lead.AddTaskLogsActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"  />
 
         <!--Task List Activity-->
         <activity
             android:name=".activity.Lead.TasksListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Task Details Activity-->
         <activity
             android:name=".activity.Lead.TasksDetailsActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"  />
 
         <!--Add NBInquiry Activity-->
         <activity
             android:name=".activity.NBInquiry.AddNBActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:exported="true"
-            android:windowSoftInputMode="stateHidden|adjustPan" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <!--Add Lead Activity-->
+        <activity android:name=".activity.LeadList.AddLeadListActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+
+        <!--Lead List Activity-->
+        <activity android:name=".activity.LeadList.LeadListActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+
+        <!--Lead Edit Activity-->
+        <activity android:name=".activity.LeadList.LeadEditActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
+
+        <!--Lead Activity Log-->
+        <activity android:name=".activity.Lead.LeadActivityLog"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"/>
 
         <!--NBInquiry List Activity-->
         <activity
             android:name=".activity.NBInquiry.InquiryListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".activity.NBInquiry.InquiryTypeListActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".activity.NBInquiry.InquiryEditActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--UsersList Activity-->
         <activity
             android:name=".activity.Users.UsersListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".activity.Users.AddUsersActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Master List-->
         <activity android:name=".master.MastersListActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--InquiryType Masters-->
         <activity
             android:name=".master.InquiryTypeListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".master.AddInquiryTypeActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--InquirySubType Masters-->
         <activity
             android:name=".master.InquirySubTypeListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".master.AddInquirySubTypeActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--LeadType Masters-->
         <activity
             android:name=".master.LeadTypeListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".master.AddLeadTypeActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--LeadStatus Masters-->
         <activity
             android:name=".master.LeadStatusListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".master.AddLeadStatusActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--UserType Masters-->
         <activity
             android:name=".master.UserTypeListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".master.AddUserTypeActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--InitialType Masters-->
         <activity
             android:name=".master.InitialTypeListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".master.AddInitialTypeActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--LeadSource Masters-->
         <activity
             android:name=".master.LeadSourceListActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".master.AddLeadSourceActivity"
-            android:exported="true" />
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--CategoryType Masters-->
         <activity android:name=".master.CategoryTypeListActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".master.AddCategoryTypeActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Company Masters-->
         <activity android:name=".master.CompanyListActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".master.AddCompanyActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--OccupationType Masters-->
         <activity android:name=".master.OccupationTypeListActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".master.AddOccupationTypeActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--RelationType Masters-->
         <activity android:name=".master.RelationTypeListActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".master.AddRelationTypeActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Country Masters-->
         <activity android:name=".master.CountryListActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".master.AddCountryActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--State Masters-->
         <activity android:name=".master.StateListActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".master.AddStateActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--City Masters-->
         <activity android:name=".master.CityListActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".master.AddCityActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Recording List-->
         <activity android:name=".activity.Lead.RecordingsListActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!-- FilePicker -->
         <provider
@@ -307,20 +510,47 @@
         <!-- Crop Image -->
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize"
             android:theme="@style/Base.Theme.AppCompat" />
 
         <!--Brochure Activity-->
         <activity android:name=".activity.BrochureListActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".activity.AddBrochureActivity"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!--Particular Inquiry Activity Log-->
+        <activity android:name=".activity.ActivityLog.ActivityLogType"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".activity.ActivityLog.ParticularInquiryActivityLog"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity android:name=".activity.ActivityLog.ActivityLog"
-            android:exported="true"/>
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+
+        <!--Excel Upload-->
+        <activity android:name=".activity.ExcelUploadActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
         <!-- FCM -->
         <service

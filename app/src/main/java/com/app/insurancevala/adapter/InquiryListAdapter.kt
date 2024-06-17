@@ -67,6 +67,10 @@ class InquiryListAdapter(private val context: Context?, private val arrayList: A
                 itemView.txtInquiryPerson.text = arrayList[position].NBInquiryByName
             }
 
+            if(arrayList[position].InquiryNo != null && arrayList[position].InquiryNo != 0) {
+                itemView.txtInquiryNo.text = arrayList[position].InquiryNo.toString()
+            }
+
             if(!arrayList[position].InquiryAllotmentName.isNullOrEmpty()) {
                 itemView.txtAllotedPerson.text = arrayList[position].InquiryAllotmentName
             }

@@ -14,6 +14,7 @@ import java.util.*
 
 class EmployeeWiseCountsAdapter(val mContext: Context,
                                 val arrayList: ArrayList<EmployeeWiseCountsModel>?,
+                                val type: Int,
                                 private val recyclerItemClickListener: RecyclerClickListener
 ) : RecyclerView.Adapter<EmployeeWiseCountsAdapter.ViewHolder>() {
 
@@ -23,7 +24,7 @@ class EmployeeWiseCountsAdapter(val mContext: Context,
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindItems(mContext, arrayList!![position]!!, position, recyclerItemClickListener)
+        holder.bindItems(mContext, arrayList!![position]!!, position, type, recyclerItemClickListener)
     }
 
     override fun getItemCount(): Int {
@@ -36,6 +37,7 @@ class EmployeeWiseCountsAdapter(val mContext: Context,
             mContext: Context,
             model: EmployeeWiseCountsModel,
             position: Int,
+            type: Int,
             recyclerItemClickListener: RecyclerClickListener
         ) {
 
@@ -44,12 +46,23 @@ class EmployeeWiseCountsAdapter(val mContext: Context,
             if (!model.UserName.isNullOrEmpty()) {
                 itemView.txtEmployeeName.text = model.UserName
             }
-            if (model.InquiryTotalCount != null) {
-                itemView.txtValue.text = model.InquiryTotalCount.toString()
-            }
 
-            itemView.ll3.setOnClickListener {
-                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 103)
+            if (type == 1) {
+                if (model.InquiryTotalCount != null) {
+                    itemView.txtValue.text = model.InquiryTotalCount.toString()
+                }
+
+                itemView.ll3.setOnClickListener {
+                    recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 103)
+                }
+            } else {
+                if (model.ProsepectTotalCount != null) {
+                    itemView.txtValue.text = model.ProsepectTotalCount.toString()
+                }
+
+                itemView.ll3.setOnClickListener {
+                    recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 104)
+                }
             }
         }
     }

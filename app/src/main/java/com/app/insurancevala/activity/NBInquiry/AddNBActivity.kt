@@ -211,7 +211,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
     }
 
     private fun setAdapterData(arrayList: ArrayList<InquiryInformationModel>?) {
-        adapter = AddMoreInquiryAdapter(arrayList, AddMore!!, View!!,this@AddNBActivity)
+        adapter = AddMoreInquiryAdapter(arrayList, AddMore!!, View!!, this@AddNBActivity)
         rvInquiry.adapter = adapter
 
         Handler().postDelayed({
@@ -1809,17 +1809,19 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
     private fun SetAPIData(model: NBModel) {
 
 
-        if (model.AllotmentID == sharedPreference!!.getPreferenceString(PrefConstants.PREF_USER_ID)!!.toInt() ||
-            sharedPreference!!.getPreferenceString(PrefConstants.PREF_USER_TYPE_ID)!!.toInt() == 1) {
+        if (model.AllotmentID == sharedPreference!!.getPreferenceString(PrefConstants.PREF_USER_ID)!!
+                .toInt() ||
+            sharedPreference!!.getPreferenceString(PrefConstants.PREF_USER_TYPE_ID)!!.toInt() == 1
+        ) {
             AddMore = true
             txtSave.visible()
-            enableDisableViewGroup(llContent,true)
+            enableDisableViewGroup(llContent, true)
         } else {
             AddMore = false
             View = true
             txtSave.gone()
             txtHearderText.text = "View NB Inquiry"
-            enableDisableViewGroup(llContent,false)
+            enableDisableViewGroup(llContent, false)
         }
 
 

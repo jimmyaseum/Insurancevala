@@ -1,82 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/layout">
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/llTop"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_40sdp"
-        android:orientation="horizontal"
         android:layout_alignParentTop="true"
-        android:padding="@dimen/_5sdp"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        android:padding="@dimen/_5sdp">
 
         <ImageView
             android:id="@+id/imgSortBy"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             android:padding="@dimen/_5sdp"
             android:src="@drawable/ic_sort"
-            app:tint="@color/colorWhite"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true" />
+            app:tint="@color/colorWhite" />
 
         <TextView
             android:id="@+id/txtHearderText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Clients"
-            android:textColor="@color/white"
+            android:layout_centerInParent="true"
             android:fontFamily="@font/poppins_regular"
             android:gravity="center"
-            android:textSize="@dimen/_12sdp"
-            android:layout_centerInParent="true"/>
+            android:text="Clients"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp" />
 
         <ImageView
             android:id="@+id/imgAddLead"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
+            android:layout_toLeftOf="@+id/imgSearch"
             android:padding="@dimen/_5sdp"
             android:src="@drawable/ic_add"
-            app:tint="@color/colorWhite"
-            android:layout_toLeftOf="@+id/imgSearch"/>
+            app:tint="@color/colorWhite" />
 
         <ImageView
             android:id="@+id/imgSearch"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:padding="@dimen/_5sdp"
             android:src="@drawable/ic_search"
-            app:tint="@color/colorWhite"
-            android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"/>
+            app:tint="@color/colorWhite" />
 
         <com.ferfalk.simplesearchview.SimpleSearchView
             android:id="@+id/searchView"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_40sdp"
             android:layout_alignParentRight="true"
-            app:searchBackground="@color/colorBlack"
-            app:iconsTint="@color/colorWhite"
-            app:backIconTint="@color/colorWhite"
             android:textColor="@color/colorWhite"
             android:visibility="gone"
-            app:hintColor="@color/white"/>
+            app:backIconTint="@color/colorWhite"
+            app:hintColor="@color/white"
+            app:iconsTint="@color/colorWhite"
+            app:searchBackground="@color/colorBlack" />
 
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/llType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/llTop"
+        android:layout_marginHorizontal="@dimen/_5sdp"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:background="@drawable/bg">
+
+        <LinearLayout
+            android:id="@+id/llExisting"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/bg_upcoming">
+
+            <TextView
+                android:id="@+id/tvExisting"
+                style="@style/TextViewStyleRegular"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="@dimen/_8sdp"
+                android:text="Existing  (0)"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_14sdp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/llProspect"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/tvProspect"
+                style="@style/TextViewStyleRegular"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:padding="@dimen/_8sdp"
+                android:text="Prospect  (0)"
+                android:textAllCaps="true"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_14sdp" />
+        </LinearLayout>
+    </LinearLayout>
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/llTop">
+        android:layout_below="@+id/llType">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <FrameLayout
                 android:id="@+id/FL"
                 android:layout_width="match_parent"
@@ -114,14 +162,16 @@
                         <include layout="@layout/adapter_lead_shimmer_item" />
                     </LinearLayout>
                 </com.facebook.shimmer.ShimmerFrameLayout>
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/RvLeadList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="@dimen/_5sdp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    android:orientation="vertical"/>
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
             </FrameLayout>
+
             <RelativeLayout
                 android:id="@+id/RLNoData"
                 android:layout_width="match_parent"

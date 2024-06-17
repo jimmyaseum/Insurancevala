@@ -23,12 +23,16 @@ data class DashboardModel (
     val OpenNBInquiry: Int? = null,
     @SerializedName("OwnInquiry")
     val OwnInquiry: Int? = null,
+    @SerializedName("GroupCode")
+    val GroupCode: String? = null,
     @SerializedName("InquiryTypeWiseCounts")
     var InquiryTypeWiseCounts: ArrayList<InquiryTypeWiseCountsModel>? = null,
     @SerializedName("LeadStatusWiseCount")
     var LeadStatusWiseCount: ArrayList<LeadStatusWiseCountModel>? = null,
     @SerializedName("EmployeeWiseCounts")
-    var EmployeeWiseCounts: ArrayList<EmployeeWiseCountsModel>? = null
+    var EmployeeWiseCounts: ArrayList<EmployeeWiseCountsModel>? = null,
+    @SerializedName("EmployeeWiseProspectsCounts")
+    var EmployeeWiseProspectsCounts: ArrayList<EmployeeWiseCountsModel>? = null
 )
 data class InquiryTypeWiseCountsModel (
     @SerializedName("InquiryType")
@@ -55,4 +59,6 @@ data class EmployeeWiseCountsModel (
     val UserID: Int? = null,
     @SerializedName("InquiryTotalCount")
     val InquiryTotalCount: Int? = null,
+    @SerializedName("ProsepectTotalCount")
+    val ProsepectTotalCount: Int? = null,
 )

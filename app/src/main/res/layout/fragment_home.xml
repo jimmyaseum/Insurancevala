@@ -206,6 +206,18 @@
                     </LinearLayout>
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/tvGroupCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/HeaderText"
+                    android:gravity="center_vertical"
+                    android:textSize="@dimen/_14sdp"
+                    android:text="Group Code"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="@color/button_primary"
+                    android:layout_marginHorizontal="@dimen/_10sdp"/>
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -391,6 +403,74 @@
                         android:background="@color/colorGray200"/>
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/RvDashEmpList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        tools:listitem="@layout/adapter_dashboard_employee_item"/>
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:padding="@dimen/_10sdp"
+                    android:background="@drawable/bg_shadow_gray">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        style="@style/HeaderText"
+                        android:gravity="center_vertical"
+                        android:textSize="@dimen/_14sdp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textColor="@color/button_primary"
+                        android:text="Employee Wise Prospect Leads" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:background="@color/colorGray200"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_margin="@dimen/_3sdp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:text="Sr.No"
+                            android:gravity="center"
+                            android:textColor="@color/colorGray500"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textSize="@dimen/_12sdp"/>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="3"
+                            android:layout_height="wrap_content"
+                            android:text="Employee Name"
+                            android:gravity="center"
+                            android:textColor="@color/colorGray500"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textSize="@dimen/_11sdp"/>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1.5"
+                            android:layout_height="wrap_content"
+                            android:text="Value"
+                            android:gravity="center"
+                            android:textColor="@color/colorGray500"
+                            android:fontFamily="@font/poppins_medium"
+                            android:textSize="@dimen/_11sdp"/>
+                    </LinearLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1px"
+                        android:background="@color/colorGray200"/>
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/RvDashEmpListProspect"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"

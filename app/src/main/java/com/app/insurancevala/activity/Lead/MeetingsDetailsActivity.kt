@@ -93,6 +93,7 @@ class MeetingsDetailsActivity  : BaseActivity(), View.OnClickListener {
         showProgress()
 
         var jsonObject = JSONObject()
+
         jsonObject.put("NBInquiryTypeID", ID)
         jsonObject.put("MeetingGUID", MeetingGUID)
 

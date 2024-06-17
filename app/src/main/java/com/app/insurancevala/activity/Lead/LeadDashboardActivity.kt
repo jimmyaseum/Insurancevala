@@ -16,6 +16,8 @@ import androidx.core.content.ContextCompat
 import com.app.insurancevala.FilePickerBuilder
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
+import com.app.insurancevala.activity.LeadList.AddLeadListActivity
+import com.app.insurancevala.activity.LeadList.LeadListActivity
 import com.app.insurancevala.activity.NBInquiry.AddNBActivity
 import com.app.insurancevala.activity.NBInquiry.InquiryListActivity
 import com.app.insurancevala.adapter.FamilyMemberAdapter
@@ -92,6 +94,7 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
         imgProfilePic.setOnClickListener(this)
 
         imgInquiry.setOnClickListener(this)
+        imgLead.setOnClickListener(this)
 
         txtNotes.setOnClickListener(this)
         imgNotes.setOnClickListener(this)
@@ -112,6 +115,9 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
         imgOpenTasks.setOnClickListener(this)
 
         txtInquiry.setOnClickListener(this)
+        txtLead.setOnClickListener(this)
+
+        LLActivityLog.setOnClickListener(this)
 
     }
 
@@ -185,6 +191,18 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
                 preventTwoClick(v)
                 val intent = Intent(this@LeadDashboardActivity, AddNBActivity::class.java)
                 intent.putExtra(AppConstant.STATE,AppConstant.S_ADD)
+                intent.putExtra("LeadID", LeadID)
+                intent.putExtra("LeadGUID", LeadGUID)
+                intent.putExtra("LeadName", txtName.text.toString())
+                intent.putExtra("LeadType", arrayListLead!!.LeadStage)
+                intent.putExtra("LeadOwnerID", LeadOwnerID)
+                intent.putExtra("LeadOwnerName", LeadOwnerName)
+                intent.putExtra("AddMore",false)
+                startActivityForResult(intent, AppConstant.INTENT_1001)
+            }
+            R.id.imgLead -> {
+                preventTwoClick(v)
+                val intent = Intent(this@LeadDashboardActivity, AddLeadListActivity::class.java)
                 intent.putExtra("LeadID", LeadID)
                 intent.putExtra("LeadGUID", LeadGUID)
                 intent.putExtra("LeadName", txtName.text.toString())
@@ -283,7 +301,20 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
                 intent.putExtra("LeadID",LeadID)
                 intent.putExtra("GUID",LeadGUID)
                 startActivity(intent)
-
+            }
+            R.id.txtLead -> {
+                preventTwoClick(v)
+                val intent = Intent(this, LeadListActivity::class.java)
+                intent.putExtra("LeadID",LeadID)
+                intent.putExtra("GUID",LeadGUID)
+                startActivity(intent)
+            }
+            R.id.LLActivityLog -> {
+                preventTwoClick(v)
+                val intent = Intent(this, LeadActivityLog::class.java)
+                intent.putExtra("LeadID",LeadID)
+                intent.putExtra("GUID",LeadGUID)
+                startActivity(intent)
             }
         }
     }

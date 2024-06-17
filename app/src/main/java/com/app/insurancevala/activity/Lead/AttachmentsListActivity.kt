@@ -56,6 +56,7 @@ class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
     var arrayListAttachmentNew: ArrayList<DocumentsModel>? = ArrayList()
     var ID: Int? = null
     var LeadID: Int? = null
+    var Lead: Boolean? = false
 
     val RC_FILE_PICKER_PERM = 900
     var ImagePaths = ArrayList<String>()
@@ -77,6 +78,9 @@ class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
     }
 
     private fun getIntentData() {
+        if (intent.hasExtra("Lead")) {
+            Lead = intent.getBooleanExtra("Lead", false)
+        }
         ID = intent.getIntExtra("ID", 0)
         LeadID = intent.getIntExtra("LeadID", 0)
     }
@@ -199,6 +203,7 @@ class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
                 val intent = Intent(this, AddAttachmentsActivity::class.java)
                 intent.putExtra("ID",ID)
                 intent.putExtra("LeadID",LeadID)
+                intent.putExtra("Lead", Lead)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
             }
         }
@@ -236,7 +241,13 @@ class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
         showProgress()
 
         var jsonObject = JSONObject()
-        jsonObject.put("NBInquiryTypeID", ID)
+        if (Lead!!) {
+            jsonObject.put("NBLeadTypeID", ID)
+            jsonObject.put("NBInquiryTypeID", null)
+        } else {
+            jsonObject.put("NBLeadTypeID", null)
+            jsonObject.put("NBInquiryTypeID", ID)
+        }
         jsonObject.put("LeadID", LeadID)
         jsonObject.put("AttachmentType", "")
 

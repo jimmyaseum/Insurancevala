@@ -2,8 +2,8 @@
   <library name="Gradle: ir.mahozad.android:pie-chart:0.7.0@aar">
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/65f7189d14a82c4eb738348d45200d65/jetified-pie-chart-0.7.0/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/65f7189d14a82c4eb738348d45200d65/jetified-pie-chart-0.7.0/AndroidManifest.xml" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/65f7189d14a82c4eb738348d45200d65/jetified-pie-chart-0.7.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/65f7189d14a82c4eb738348d45200d65/jetified-pie-chart-0.7.0/AndroidManifest.xml" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/ir.mahozad.android/pie-chart/0.7.0/c21dcefe8668bfb9b40947a1519dc409108b9c7e/pie-chart-0.7.0-javadoc.jar!/" />

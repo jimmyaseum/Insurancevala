@@ -42,8 +42,8 @@ class NBListAdapter(private val context: Context?,private val arrayList: ArrayLi
             recyclerItemClickListener: RecyclerClickListener
         ) {
 
-            if(arrayList.ID != 0 && arrayList.ID != null) {
-                itemView.txtInquiryNo.text = "Inquiry No : "+ arrayList.ID
+            if(arrayList.InquiryNo != 0 && arrayList.InquiryNo != null) {
+                itemView.txtInquiryNo.text = "Inquiry No : "+ arrayList.InquiryNo
             }
 
             if(!arrayList.LeadName.isNullOrEmpty()) {
