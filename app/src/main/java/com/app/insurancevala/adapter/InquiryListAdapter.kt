@@ -72,7 +72,11 @@ class InquiryListAdapter(private val context: Context?, private val arrayList: A
             }
 
             if(!arrayList[position].InquiryAllotmentName.isNullOrEmpty()) {
-                itemView.txtAllotedPerson.text = arrayList[position].InquiryAllotmentName
+                itemView.txtAllottedPerson.text = arrayList[position].InquiryAllotmentName
+            }
+
+            if(!arrayList[position].CreatedByName.isNullOrEmpty()) {
+                itemView.txtAllottedToPerson.text = arrayList[position].CreatedByName
             }
 
             if(!arrayList[position].InquiryDate.isNullOrEmpty()) {

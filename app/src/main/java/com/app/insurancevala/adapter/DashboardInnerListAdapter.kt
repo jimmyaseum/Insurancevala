@@ -78,7 +78,11 @@ class DashboardInnerListAdapter(private val context: Context?, private val array
             }
 
             if(!arrayList[position].InquiryAllotmentName.isNullOrEmpty()) {
-                itemView.txtName.text = arrayList[position].InquiryAllotmentName + " - " + arrayList[position].ID
+                itemView.txtAllottedToName.text = arrayList[position].InquiryAllotmentName
+            }
+
+            if(!arrayList[position].CreatedByName.isNullOrEmpty()) {
+                itemView.txtAllottedByName.text = arrayList[position].CreatedByName
             }
 
             var colors = arrayOf(R.drawable.bg_shadow_orange, R.drawable.bg_shadow_purple, R.drawable.bg_shadow_blue)

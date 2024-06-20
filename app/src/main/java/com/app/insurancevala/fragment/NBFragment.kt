@@ -1,7 +1,9 @@
 package com.app.insurancevala.fragment
 
+import android.content.ClipData.Item
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -12,6 +14,7 @@ import kotlinx.android.synthetic.main.fragment_nb.view.*
 import kotlinx.android.synthetic.main.fragment_nb.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.app.insurancevala.activity.DashBoard.HomeActivity
 import com.app.insurancevala.activity.NBInquiry.AddNBActivity
 import com.app.insurancevala.activity.NBInquiry.InquiryListActivity
 import com.app.insurancevala.activity.NBInquiry.InquiryTypeListActivity
@@ -183,6 +186,11 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
     }
     private fun callManageNB(InquirySearch: String, progress: Boolean) {
 
+        HomeActivity.isNavigationEnabled = false
+        HomeActivity.homeMenu.isEnabled = false
+        HomeActivity.leadMenu.isEnabled = false
+        HomeActivity.moreMenu.isEnabled = false
+
         if (progress) {
             showProgress()
         }
@@ -196,7 +204,6 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
         val call = ApiUtils.apiInterface.ManageNBInquiryFindAllActive(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<NBResponse> {
             override fun onResponse(call: Call<NBResponse>, response: Response<NBResponse>) {
-                hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arrayList = response.body()?.Data!!
@@ -238,16 +245,35 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
                             views!!.shimmer.gone()
                             views!!.FL.gone()
                             views!!.RLNoData.visible()
+                            HomeActivity.isNavigationEnabled = true
+                            HomeActivity.homeMenu.isEnabled = true
+                            HomeActivity.leadMenu.isEnabled = true
+                            HomeActivity.moreMenu.isEnabled = true
                         }
                     } else if (response.body()!!.Status == 1010 ||  response.body()?.Status == 201) {
+                        hideProgress()
                         views!!.shimmer.stopShimmer()
                         views!!.shimmer.gone()
                         views!!.FL.gone()
                         views!!.RLNoData.visible()
+                        HomeActivity.isNavigationEnabled = true
+                        HomeActivity.homeMenu.isEnabled = true
+                        HomeActivity.leadMenu.isEnabled = true
+                        HomeActivity.moreMenu.isEnabled = true
                     } else if (response.body()!!.Status == 1013) {
+                        hideProgress()
                         isLastPage = true
+                        HomeActivity.isNavigationEnabled = true
+                        HomeActivity.homeMenu.isEnabled = true
+                        HomeActivity.leadMenu.isEnabled = true
+                        HomeActivity.moreMenu.isEnabled = true
                         context!!.toast(response.body()?.Message.toString(), AppConstant.TOAST_SHORT)
                     } else {
+                        hideProgress()
+                        HomeActivity.isNavigationEnabled = true
+                        HomeActivity.homeMenu.isEnabled = true
+                        HomeActivity.leadMenu.isEnabled = true
+                        HomeActivity.moreMenu.isEnabled = true
                         if (searchText != "" && skip == 0) {
                             views!!.RLNoData.visible()
                             views!!.FL.gone()
@@ -270,6 +296,10 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
                     getString(R.string.error_failed_to_connect),
                     Snackbar.LENGTH_LONG
                 ).show()
+                HomeActivity.isNavigationEnabled = true
+                HomeActivity.homeMenu.isEnabled = true
+                HomeActivity.leadMenu.isEnabled = true
+                HomeActivity.moreMenu.isEnabled = true
             }
         })
     }
@@ -288,6 +318,14 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
     private fun setData() {
         adapter = NBListAdapter(context, arrayListNBNew!!, this)
         views!!.RvNBList.adapter = adapter
+
+        Handler().postDelayed({
+            HomeActivity.isNavigationEnabled = true
+            HomeActivity.homeMenu.isEnabled = true
+            HomeActivity.leadMenu.isEnabled = true
+            HomeActivity.moreMenu.isEnabled = true
+            hideProgress()
+        }, 1000)
     }
 
     override fun onItemClickEvent(view: View, position: Int, type: Int) {

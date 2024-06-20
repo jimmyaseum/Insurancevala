@@ -25,6 +25,8 @@
             android:layout_height="wrap_content"
             android:elevation="@dimen/_10sdp"
             android:padding="@dimen/_2sdp"
+            android:clickable="false"
+            android:enabled="false"
             app:bubbletab_menuResource="@menu/bottom_menu"
             app:bubbletab_custom_font="@font/poppins_medium"
             app:bubbletab_disabled_icon_color="@color/colorPrimary"

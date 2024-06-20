@@ -6,6 +6,9 @@ import com.google.gson.annotations.SerializedName
 
 data class InquiryInformationModel (
 
+    @SerializedName("ID")
+    var ID: Int = 0,
+
     @SerializedName("FamilyMember")
     var FamilyMember: String = "",
 

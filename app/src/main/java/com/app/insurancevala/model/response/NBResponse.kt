@@ -85,6 +85,10 @@ data class NBInquiryModel (
     val InquiryAllotmentID: Int? = null,
     @SerializedName("InquiryAllotmentName")
     val InquiryAllotmentName: String? = null,
+    @SerializedName("CreatedBy")
+    val CreatedBy: Int? = null,
+    @SerializedName("CreatedByName")
+    val CreatedByName: String? = null,
     @SerializedName("LeadStatusID")
     val LeadStatusID: Int? = null,
     @SerializedName("LeadStatus")

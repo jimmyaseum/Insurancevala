@@ -25,14 +25,23 @@ import com.app.insurancevala.fragment.MoreFragment
 import com.app.insurancevala.fragment.NBFragment
 import com.app.insurancevala.utils.*
 import com.example.awesomedialog.*
+import io.ak1.BubbleTabBar
 import io.ak1.OnBubbleClickListener
 import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : AppCompatActivity(), View.OnClickListener {
 
+    companion object {
+        var isNavigationEnabled = true
+        lateinit var homeMenu: View
+        lateinit var leadMenu: View
+        lateinit var nbMenu: View
+        lateinit var moreMenu: View
+    }
+
     private lateinit var fragmentManager: FragmentManager
     private var sharedPreference: SharedPreference? = null
-    private var isNavigationEnabled = true
+
     private val handler = Handler()
 
     private val PERMISSION_REQUEST_CODE = 1001
@@ -48,9 +57,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             sharedPreference = SharedPreference(applicationContext)
         }
         AppConstant.TOKEN = sharedPreference?.getPreferenceString(PrefConstants.PREF_TOKEN).toString()
-
-        // Set default fragment
-        SetDefaultFragment()
 
         SetInitListner()
 
@@ -78,6 +84,10 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun SetInitListner() {
+        homeMenu = bubbleTabBar.findViewById(R.id.bottom_home)
+        leadMenu = bubbleTabBar.findViewById(R.id.bottom_lead)
+        nbMenu = bubbleTabBar.findViewById(R.id.bottom_nb)
+        moreMenu = bubbleTabBar.findViewById(R.id.bottom_more)
         bubbleTabBar.addBubbleListener(object : OnBubbleClickListener {
             override fun onBubbleClick(id: Int) {
                 if (!isNavigationEnabled) {
@@ -132,6 +142,8 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             }
         })
 
+        // Set default fragment
+        SetDefaultFragment()
     }
 
     override fun onClick(v: View?) {
@@ -192,7 +204,6 @@ class HomeActivity : AppCompatActivity(), View.OnClickListener {
             }
         }
     }
-
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun RequestNotificationPermission() {

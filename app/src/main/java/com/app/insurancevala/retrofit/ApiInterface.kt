@@ -145,6 +145,9 @@ interface ApiInterface {
     @POST("NBInquiry/NBInquiryTypeUpdate")
     fun ManageNBInquiryTypeUpdate(@Body body: RequestBody?): retrofit2.Call<NBInquiryTypeAddUpdateResponse>
 
+    @POST("NBInquiry/NBInquiryTypeIDDelete")
+    fun ManageNBInquiryDelete(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
+
     @POST("NBInquiry/NBInquiryTypeByGUID")
     fun ManageNBInquiryTypeByGUID(@Body body: RequestBody?): retrofit2.Call<NBInquiryTypeByGUIDResponse>
 

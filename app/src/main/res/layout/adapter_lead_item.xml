@@ -134,6 +134,29 @@
                         android:fontFamily="@font/poppins_medium"/>
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Allotted By Person :- "
+                        android:textColor="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/poppins_medium"/>
+                    <TextView
+                        android:id="@+id/txtAllottedToPerson"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorBlue"
+                        android:textSize="@dimen/_10sdp"
+                        android:text=""
+                        android:fontFamily="@font/poppins_medium"/>
+                </LinearLayout>
+
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -285,12 +308,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_medium"
-                            android:text="Alloted Person :"
+                            android:text="Allotted To Person :"
                             android:textColor="@color/colorGray500"
                             android:textSize="@dimen/_10sdp" />
 
                         <TextView
-                            android:id="@+id/txtAllotedPerson"
+                            android:id="@+id/txtAllottedPerson"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"

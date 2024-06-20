@@ -28,11 +28,19 @@ import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.adapter.bottomsheetadapter.*
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.interFase.RecyclerItemClickListener
+import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.api.LeadCountResponse
 import com.app.insurancevala.model.pojo.InquiryInformationModel
 import com.app.insurancevala.model.response.*
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
+import com.example.awesomedialog.AwesomeDialog
+import com.example.awesomedialog.body
+import com.example.awesomedialog.icon
+import com.example.awesomedialog.onNegative
+import com.example.awesomedialog.onPositive
+import com.example.awesomedialog.position
+import com.example.awesomedialog.title
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_add_lead.layout
 import kotlinx.android.synthetic.main.activity_add_nbinquiry.*
@@ -41,6 +49,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.math.BigDecimal
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -128,7 +137,7 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
             edtAllotmentTo.setText(mAllotmentTo)
         }
 
-        callManageAllotmentTo(0, "AllotedName")
+        callManageAllotmentTo(0, "AllottedName")
 
         if (mClientID != 0) {
             callManageFamilyDetails(mClientID)
@@ -305,15 +314,20 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
             if (!arrayList.isNullOrEmpty()) {
                 for (i in 0 until arrayList!!.size) {
                     val jsonObjectEducation = JSONObject()
-                    jsonObjectEducation.put("NBInquiryBy", arrayList!![i].FamilyMemberId)
-                    jsonObjectEducation.put("InquiryTypeID", arrayList!![i].InquirytypeId)
-                    jsonObjectEducation.put("InquirySubTypeID", arrayList!![i].InquirysubtypeId)
-                    jsonObjectEducation.put("LeadTypeID", arrayList!![i].LeadtypeId)
-                    jsonObjectEducation.put("LeadStatusID", arrayList!![i].LeadstatusId)
-                    jsonObjectEducation.put("ProposedAmount", arrayList!![i].Proposed.toDouble())
-                    jsonObjectEducation.put("Frequency", arrayList!![i].Frequency)
-                    jsonObjectEducation.put("InquiryAllotmentID", arrayList!![i].AllotmentToId)
-                    jsonObjectEducation.put("InquiryDate", arrayList!![i].mInquiryDate)
+                    if (arrayList[i].ID != 0 && arrayList[i].ID != null) {
+                        jsonObjectEducation.put("ID", arrayList[i].ID)
+                    } else {
+                        jsonObjectEducation.put("ID", 0)
+                    }
+                    jsonObjectEducation.put("NBInquiryBy", arrayList[i].FamilyMemberId)
+                    jsonObjectEducation.put("InquiryTypeID", arrayList[i].InquirytypeId)
+                    jsonObjectEducation.put("InquirySubTypeID", arrayList[i].InquirysubtypeId)
+                    jsonObjectEducation.put("LeadTypeID", arrayList[i].LeadtypeId)
+                    jsonObjectEducation.put("LeadStatusID", arrayList[i].LeadstatusId)
+                    jsonObjectEducation.put("ProposedAmount", arrayList[i].Proposed.toDouble())
+                    jsonObjectEducation.put("Frequency", arrayList[i].Frequency)
+                    jsonObjectEducation.put("InquiryAllotmentID", arrayList[i].AllotmentToId)
+                    jsonObjectEducation.put("InquiryDate", arrayList[i].mInquiryDate)
                     jsonArrayEducation.put(jsonObjectEducation)
                 }
             }
@@ -1750,7 +1764,18 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
             R.id.imgDelete -> {
                 if (::adapter.isInitialized) {
-                    adapter.remove(position)
+                    AwesomeDialog.build(this).title("Warning !!!")
+                        .body("Are you sure want to delete this Inquiry?")
+                        .icon(R.drawable.ic_delete).position(AwesomeDialog.POSITIONS.CENTER)
+                        .onNegative("No") {
+
+                        }.onPositive("Yes") {
+                            if (adapter.arrayList!!.get(position).ID == 0) {
+                                adapter.remove(position)
+                            } else{
+                                callDeleteInquiry(adapter.arrayList!!.get(position).ID, position)
+                            }
+                        }
                 }
             }
 
@@ -1765,6 +1790,43 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
                 }
             }
         }
+    }
+
+    private fun callDeleteInquiry(ID: Int, position: Int) {
+
+        showProgress()
+
+        var jsonObject = JSONObject()
+        jsonObject.put("ID", ID)
+        val call = ApiUtils.apiInterface.ManageNBInquiryDelete(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<CommonResponse> {
+            override fun onResponse(
+                call: Call<CommonResponse>,
+                response: Response<CommonResponse>
+            ) {
+                hideProgress()
+                if (response.code() == 200) {
+                    if (response.body()?.Status == 200) {
+                        adapter.remove(position)
+                    } else {
+                        Snackbar.make(
+                            layout,
+                            response.body()?.Details.toString(),
+                            Snackbar.LENGTH_LONG
+                        ).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
+                hideProgress()
+                Snackbar.make(
+                    layout,
+                    getString(R.string.error_failed_to_connect),
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+        })
     }
 
     override fun onItemClickEvent(view: View, position: Int, type: Int) {
@@ -1868,13 +1930,14 @@ class AddNBActivity : BaseActivity(), View.OnClickListener, RecyclerClickListene
 
                 arrayListInquiryInfo?.add(
                     InquiryInformationModel(
+                        ID = model.NBInquiryList[i].ID!!,
                         FamilyMemberId = model.NBInquiryList[i].NBInquiryBy!!,
                         FamilyMember = model.NBInquiryList[i].NBInquiryByName!!,
                         InquirytypeId = model.NBInquiryList[i].InquiryTypeID!!,
                         Inquirytype = model.NBInquiryList[i].InquiryType!!,
                         InquirysubtypeId = model.NBInquiryList[i].InquirySubTypeID!!,
                         Inquirysubtype = model.NBInquiryList[i].InquirySubType!!,
-                        Proposed = model.NBInquiryList[i].ProposedAmount!!.toString(),
+                        Proposed = BigDecimal.valueOf(model.NBInquiryList[i].ProposedAmount!!).toPlainString(),
                         Frequency = model.NBInquiryList[i].Frequency!!,
                         LeadtypeId = model.NBInquiryList[i].LeadTypeID!!,
                         Leadtype = model.NBInquiryList[i].LeadType!!,

@@ -92,6 +92,10 @@ data class NBLeadListModel(
     var LeadDate: String? = null,
     @SerializedName("LeadAllotmentName")
     var LeadAllotmentName: String? = null,
+    @SerializedName("CreatedBy")
+    var CreatedBy: Int? = null,
+    @SerializedName("CreatedByName")
+    var CreatedByName: String? = null,
     @SerializedName("InquiryType")
     var InquiryType: String? = null,
     @SerializedName("InquirySubType")

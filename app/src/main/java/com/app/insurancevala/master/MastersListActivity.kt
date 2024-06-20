@@ -61,6 +61,7 @@ class MastersListActivity : BaseActivity(), View.OnClickListener {
             R.id.LLInquiryType -> {
                 preventTwoClick(v)
                 val intent = Intent(this, InquiryTypeListActivity::class.java)
+                intent.putExtra("Type",false)
                 startActivity(intent)
             }
 

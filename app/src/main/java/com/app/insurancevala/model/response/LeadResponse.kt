@@ -42,11 +42,11 @@ data class LeadModel (
     @SerializedName("ID")
     val ID: Int? = null,
     @SerializedName("ExistingCount")
-    var ExistingCount: String? = null,
+    var ExistingCount: Int? = null,
     @SerializedName("ProspectCount")
-    var ProspectCount: String? = null,
+    var ProspectCount: Int? = null,
     @SerializedName("SearchCount")
-    var SearchCount: String? = null,
+    var SearchCount: Int? = null,
     @SerializedName("LeadGUID")
     val LeadGUID: String? = null,
     @SerializedName("FirstName")

@@ -366,7 +366,7 @@
                                 android:layout_weight="1.2"
                                 android:layout_height="wrap_content"
                                 android:textColor="@color/colorGray500"
-                                android:text="Allotment To"
+                                android:text="Allotted To"
                                 android:textSize="@dimen/_10sdp"
                                 android:fontFamily="@font/poppins_regular"/>
                             <LinearLayout

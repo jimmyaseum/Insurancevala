@@ -223,7 +223,7 @@ class AttachmentsListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
                 preventTwoClick(view)
                 AwesomeDialog.build(this)
                     .title("Warning !!!")
-                    .body("Are you sure want to delete this file?")
+                    .body("Are you sure want to delete this File?")
                     .icon(R.drawable.ic_delete)
                     .position(AwesomeDialog.POSITIONS.CENTER)
                     .onNegative("No") {

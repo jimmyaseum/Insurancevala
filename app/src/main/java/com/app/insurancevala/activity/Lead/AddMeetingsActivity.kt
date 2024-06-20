@@ -766,11 +766,12 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                         if (mode == 1) {
                             selectTypeDialog()
                         } else {
-                            mMeetingtype = arrayListmeetingtype!![0].MeetingType!!
-                            mMeetingtypeID = arrayListmeetingtype!![0].ID!!
-                            edtMeetingType.setText(mMeetingtype)
-                            arrayListmeetingtype!![0].IsSelected = true
-
+                            if (state == AppConstant.S_ADD) {
+                                mMeetingtype = arrayListmeetingtype!![0].MeetingType!!
+                                mMeetingtypeID = arrayListmeetingtype!![0].ID!!
+                                edtMeetingType.setText(mMeetingtype)
+                                arrayListmeetingtype!![0].IsSelected = true
+                            }
                         }
                     } else {
                         Snackbar.make(

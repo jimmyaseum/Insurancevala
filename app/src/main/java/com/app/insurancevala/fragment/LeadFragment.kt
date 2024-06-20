@@ -3,6 +3,7 @@ package com.app.insurancevala.fragment
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
+import com.app.insurancevala.activity.DashBoard.HomeActivity
 import kotlinx.android.synthetic.main.fragment_lead.view.*
 import kotlinx.android.synthetic.main.fragment_lead.*
 import com.app.insurancevala.activity.Lead.AddLeadActivity
@@ -256,6 +258,11 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
 
     private fun callManageLead(LeadSearch: String, progress: Boolean) {
 
+        HomeActivity.isNavigationEnabled = false
+        HomeActivity.homeMenu.isEnabled = false
+        HomeActivity.nbMenu.isEnabled = false
+        HomeActivity.moreMenu.isEnabled = false
+
         if (progress) {
             showProgress()
         }
@@ -269,7 +276,6 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
         val call = ApiUtils.apiInterface.LeadsFindAllActive(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<LeadResponse> {
             override fun onResponse(call: Call<LeadResponse>, response: Response<LeadResponse>) {
-                hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
 
@@ -278,11 +284,11 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
                         } else if (LeadSearch != "" && tabPosition == 2){
                             tvProspect.setText("Prospect  (" + response.body()?.Data!!.get(0).SearchCount + ")")
                         } else if (LeadSearch == "") {
-                            if (response.body()?.Data!!.get(0).ExistingCount != null && response.body()?.Data!!.get(0).ExistingCount != "") {
+                            if (response.body()?.Data!!.get(0).ExistingCount != null && response.body()?.Data!!.get(0).ExistingCount != 0) {
                                 tvExisting.setText("Existing  (" + response.body()?.Data!!.get(0).ExistingCount + ")")
                             }
 
-                            if (response.body()?.Data!!.get(0).ProspectCount != null && response.body()?.Data!!.get(0).ProspectCount != "") {
+                            if (response.body()?.Data!!.get(0).ProspectCount != null && response.body()?.Data!!.get(0).ProspectCount != 0) {
                                 tvProspect.setText("Prospect  (" + response.body()?.Data!!.get(0).ProspectCount + ")")
                             }
                         }
@@ -325,16 +331,35 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
                             views!!.shimmer.gone()
                             views!!.FL.gone()
                             views!!.RLNoData.visible()
+                            HomeActivity.isNavigationEnabled = true
+                            HomeActivity.homeMenu.isEnabled = true
+                            HomeActivity.leadMenu.isEnabled = true
+                            HomeActivity.moreMenu.isEnabled = true
                         }
                     } else if (response.body()!!.Status == 1010 ||  response.body()?.Status == 201) {
+                        hideProgress()
                         views!!.shimmer.stopShimmer()
                         views!!.shimmer.gone()
                         views!!.FL.gone()
                         views!!.RLNoData.visible()
+                        HomeActivity.isNavigationEnabled = true
+                        HomeActivity.homeMenu.isEnabled = true
+                        HomeActivity.leadMenu.isEnabled = true
+                        HomeActivity.moreMenu.isEnabled = true
                     } else if (response.body()!!.Status == 1013) {
+                        hideProgress()
                         isLastPage = true
+                        HomeActivity.isNavigationEnabled = true
+                        HomeActivity.homeMenu.isEnabled = true
+                        HomeActivity.leadMenu.isEnabled = true
+                        HomeActivity.moreMenu.isEnabled = true
                         context!!.toast(response.body()?.Message.toString(), AppConstant.TOAST_SHORT)
                     } else {
+                        hideProgress()
+                        HomeActivity.isNavigationEnabled = true
+                        HomeActivity.homeMenu.isEnabled = true
+                        HomeActivity.nbMenu.isEnabled = true
+                        HomeActivity.moreMenu.isEnabled = true
                         if (LeadSearch != "" && skip == 0) {
                             views!!.RLNoData.visible()
                             views!!.FL.gone()
@@ -357,6 +382,10 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
                     getString(R.string.error_failed_to_connect),
                     Snackbar.LENGTH_LONG
                 ).show()
+                HomeActivity.isNavigationEnabled = true
+                HomeActivity.homeMenu.isEnabled = true
+                HomeActivity.nbMenu.isEnabled = true
+                HomeActivity.moreMenu.isEnabled = true
             }
         })
     }
@@ -375,6 +404,14 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
     private fun setData() {
         adapter = ClientListAdapter(context, arrayListLeadNew!!, tabPosition, this)
         views!!.RvLeadList.adapter = adapter
+
+        Handler().postDelayed({
+            HomeActivity.isNavigationEnabled = true
+            HomeActivity.homeMenu.isEnabled = true
+            HomeActivity.nbMenu.isEnabled = true
+            HomeActivity.moreMenu.isEnabled = true
+            hideProgress()
+        }, 1000)
     }
 
     override fun onItemClickEvent(view: View, position: Int, type: Int) {

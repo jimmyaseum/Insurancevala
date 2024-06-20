@@ -317,6 +317,4 @@ class AddInquiryTypeActivity : BaseActivity(), View.OnClickListener {
             }
         }
     }
-
-
 }

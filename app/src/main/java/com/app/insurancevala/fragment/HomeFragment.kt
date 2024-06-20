@@ -3,10 +3,12 @@ package com.app.insurancevala.fragment
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.app.insurancevala.R
+import com.app.insurancevala.activity.DashBoard.HomeActivity
 import com.app.insurancevala.activity.DashBoard.HomeInnerLeadListActivity
 import com.app.insurancevala.activity.DashBoard.HomeInnerListActivity
 import com.app.insurancevala.adapter.dashboard.EmployeeWiseCountsAdapter
@@ -30,6 +32,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.android.synthetic.main.activity_home.bubbleTabBar
 import kotlinx.android.synthetic.main.fragment_home.*
 import kotlinx.android.synthetic.main.fragment_home.view.*
 import org.json.JSONObject
@@ -213,6 +216,11 @@ class HomeFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
 
     private fun CallDashboardAPI() {
 
+        HomeActivity.isNavigationEnabled = false
+        HomeActivity.leadMenu.isEnabled = false
+        HomeActivity.nbMenu.isEnabled = false
+        HomeActivity.moreMenu.isEnabled = false
+
         showProgress()
 
         var jsonObject = JSONObject()
@@ -222,12 +230,16 @@ class HomeFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
         val call = ApiUtils.apiInterface.ManageDashboard(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<DashboardResponse> {
             override fun onResponse(call: Call<DashboardResponse>, response: Response<DashboardResponse>) {
-                hideProgress()
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arrayListDashboard = response.body()?.Data!!
                         setAPIData(arrayListDashboard)
                     } else {
+                        hideProgress()
+                        HomeActivity.isNavigationEnabled = true
+                        HomeActivity.leadMenu.isEnabled = true
+                        HomeActivity.nbMenu.isEnabled = true
+                        HomeActivity.moreMenu.isEnabled = true
                         Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
                     }
                 }
@@ -274,6 +286,15 @@ class HomeFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
             val adapter = EmployeeWiseCountsAdapter(requireActivity(), arrayListEmployeeWiseProspectCounts, 2, this@HomeFragment)
             views!!.RvDashEmpListProspect.adapter = adapter
         }
+
+        Handler().postDelayed({
+            hideProgress()
+            HomeActivity.isNavigationEnabled = true
+            HomeActivity.leadMenu.isEnabled = true
+            HomeActivity.nbMenu.isEnabled = true
+            HomeActivity.moreMenu.isEnabled = true
+        }, 1000)
+
     }
 
     override fun onItemClickEvent(view: View, position: Int, type: Int) {

@@ -273,15 +273,6 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
         var emptyBox = true
         if (!arrayList.isNullOrEmpty()) {
             for (model in arrayList) {
-                LogUtil.d(TAG,"===>111 = "+model.tilFamilyMember?.text!!.trim())
-                LogUtil.d(TAG,"===>111 = "+model.tilInquiryType?.text!!.trim())
-                LogUtil.d(TAG,"===>222 = "+model.tilInquirysubtype?.text!!.trim())
-                LogUtil.d(TAG,"===>333 = "+model.tilLeadstatus?.text!!.trim())
-                LogUtil.d(TAG,"===>444 = "+model.tilLeadtype?.text!!.trim())
-                LogUtil.d(TAG,"===>555 = "+model.tilAllotmentTo?.text!!.trim())
-                LogUtil.d(TAG,"===>666 = "+model.tilFrequency?.text!!.trim())
-                LogUtil.d(TAG,"===>777 = "+model.tilProposed?.text!!.trim())
-                LogUtil.d(TAG,"===>888 = "+model.tilInquiryDate?.text!!.trim())
                 if (TextUtils.isEmpty(model.tilFamilyMember?.text!!.trim())) {
                     model.tilFamilyMember?.setError("Select Family Member", errortint(context!!))
                     emptyBox = false

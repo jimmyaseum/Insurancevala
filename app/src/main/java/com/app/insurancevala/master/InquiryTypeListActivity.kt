@@ -40,6 +40,7 @@ class InquiryTypeListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
         setContentView(R.layout.activity_inquiry_type_list)
         overridePendingTransition(R.anim.fadein, R.anim.fadeout)
         initializeView()
+        getIntentData()
     }
 
     override fun onRestart() {
@@ -59,6 +60,14 @@ class InquiryTypeListActivity : BaseActivity(), View.OnClickListener, RecyclerCl
             internetErrordialog(this@InquiryTypeListActivity)
         }
         SetInitListner()
+    }
+
+    private fun getIntentData() {
+        if (intent.hasExtra("Type")) {
+            if (!intent.getBooleanExtra("Type", false)) {
+                llInquiryType.gone()
+            }
+        }
     }
 
     private fun SetInitListner() {

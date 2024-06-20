@@ -163,7 +163,7 @@ class UsersListActivity : BaseActivity(), View.OnClickListener, RecyclerClickLis
                 preventTwoClick(view)
                 AwesomeDialog.build(this)
                     .title("Warning !!!")
-                    .body("Are you sure want to delete this user?")
+                    .body("Are you sure want to delete this User?")
                     .icon(R.drawable.ic_delete)
                     .position(AwesomeDialog.POSITIONS.CENTER)
                     .onNegative("No") {
