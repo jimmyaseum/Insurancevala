@@ -46,6 +46,7 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
         arrayList[position].tilLeadtype = holder.itemView.edtLeadType
         arrayList[position].tilLeadstatus = holder.itemView.edtLeadStatus
         arrayList[position].tilAllotmentTo = holder.itemView.edtAllotmentTo
+        arrayList[position].tilCoPersonAllotmentTo = holder.itemView.edtCoPersonAllotmentTo
         arrayList[position].tilInquiryDate = holder.itemView.edtInquiryDate
 
         if (AddMore){
@@ -82,17 +83,15 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
             arrayList: ArrayList<InquiryInformationModel>?,
             recyclerItemClickListener: RecyclerItemClickListener
         ) {
-
-            itemView.edtAllotmentTo.setText(arrayList!![position].AllotmentTo)
-
             itemView.edtFamilyMember.setText(arrayList!![position].FamilyMember)
             itemView.edtInquiryType.setText(arrayList!![position].Inquirytype)
             itemView.edtInquirySub.setText(arrayList!![position].Inquirysubtype)
-            itemView.edtProposedAmount.setText(arrayList!![position].Proposed.toString())
+            itemView.edtProposedAmount.setText(arrayList!![position].Proposed)
             itemView.edtFrequency.setText(arrayList!![position].Frequency)
             itemView.edtLeadType.setText(arrayList!![position].Leadtype)
             itemView.edtLeadStatus.setText(arrayList!![position].Leadstatus)
             itemView.edtAllotmentTo.setText(arrayList!![position].AllotmentTo)
+            itemView.edtCoPersonAllotmentTo.setText(arrayList!![position].CoPersonAllotmentTo)
             itemView.edtInquiryDate.setText(arrayList!![position].InquiryDate)
 
             itemView.edtFamilyMember.setOnClickListener {
@@ -159,6 +158,14 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
                 }
             }
 
+            itemView.edtCoPersonAllotmentTo.setOnClickListener {
+                if(!arrayList[adapterPosition].CoPersonAllotmentTo!!.isEmpty()) {
+                    recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 1, arrayList[adapterPosition].CoPersonAllotmentTo)
+                } else{
+                    recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 1, arrayList[adapterPosition].CoPersonAllotmentTo)
+                }
+            }
+
             itemView.tvAddMore.setOnClickListener {
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 1, "")
             }
@@ -173,36 +180,42 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
                     itemView.edtFamilyMember.setError(null)
                 }
             }
+
             itemView.edtInquiryType.setSimpleListener {
                 arrayList[adapterPosition].Inquirytype = it.toString()
                 if (!arrayList[adapterPosition].Inquirytype.isNullOrEmpty()) {
                     itemView.edtInquiryType.setError(null)
                 }
             }
+
             itemView.edtInquirySub.setSimpleListener {
                 arrayList[adapterPosition].Inquirysubtype = it.toString()
                 if (!arrayList[adapterPosition].Inquirysubtype.isNullOrEmpty()) {
                     itemView.edtInquirySub.setError(null)
                 }
             }
+
             itemView.edtFrequency.setSimpleListener {
                 if (!arrayList[adapterPosition].Frequency.isNullOrEmpty()) {
                     arrayList[adapterPosition].Frequency = it.toString()
                     itemView.edtFrequency.setError(null)
                 }
             }
+
             itemView.edtInquiryDate.setSimpleListener {
                 if (!arrayList[adapterPosition].InquiryDate.isNullOrEmpty()) {
                     arrayList[adapterPosition].InquiryDate = it.toString()
                     itemView.edtInquiryDate.setError(null)
                 }
             }
+
             itemView.edtLeadType.setSimpleListener {
                 if (!arrayList[adapterPosition].Leadtype.isNullOrEmpty()) {
                     arrayList[adapterPosition].Leadtype = it.toString()
                     itemView.edtLeadType.setError(null)
                 }
             }
+
             itemView.edtLeadStatus.setSimpleListener {
                 if (!arrayList[adapterPosition].Leadstatus.isNullOrEmpty()) {
                     arrayList[adapterPosition].Leadstatus = it.toString()
@@ -216,6 +229,14 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
                     itemView.edtAllotmentTo.setError(null)
                 }
             }
+
+            itemView.edtCoPersonAllotmentTo.setSimpleListener {
+                if (!arrayList[adapterPosition].CoPersonAllotmentTo.isNullOrEmpty()) {
+                    arrayList[adapterPosition].CoPersonAllotmentTo = it.toString()
+                    itemView.edtCoPersonAllotmentTo.setError(null)
+                }
+            }
+
             itemView.edtProposedAmount.setSimpleListener {
                 arrayList[adapterPosition].Proposed = it.toString()
                 itemView.edtProposedAmount.setError(null)
@@ -366,6 +387,11 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
         arrayList!![position].AllotmentToId = id
         arrayList!![position].tilAllotmentTo?.setText(name)
     }
+    fun updateCoPersonAllotmentToItem(position: Int , name: String , id: Int) {
+        arrayList!![position].CoPersonAllotmentTo = name
+        arrayList!![position].CoPersonAllotmentToId = id
+        arrayList!![position].tilCoPersonAllotmentTo?.setText(name)
+    }
     fun updateInquiryDateItem(position: Int , date: String , mdate: String) {
         arrayList!![position].InquiryDate = date
         arrayList!![position].mInquiryDate = mdate
@@ -381,6 +407,7 @@ class AddMoreInquiryAdapter (val arrayList: ArrayList<InquiryInformationModel>?,
                 arrayList[i].tilLeadstatus?.setError(null)
                 arrayList[i].tilFrequency?.setError(null)
                 arrayList[i].tilAllotmentTo?.setError(null)
+                arrayList[i].tilCoPersonAllotmentTo?.setError(null)
                 arrayList[i].tilProposed?.setError(null)
             }
         }

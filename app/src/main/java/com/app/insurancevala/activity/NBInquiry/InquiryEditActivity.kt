@@ -15,7 +15,6 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
@@ -24,9 +23,7 @@ import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.*
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.activity_add_nbinquiry.llContent
 import kotlinx.android.synthetic.main.activity_edit_nbinquiry.*
 import org.json.JSONObject
 import retrofit2.Call
@@ -68,6 +65,10 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
     var arrayListInquiryAllotmentTo: ArrayList<UserModel>? = ArrayList()
     var mInquiryAllotmentTo: String = ""
     var mInquiryAllotmentToID: Int = 0
+
+    var arrayListInquiryCoPersonAllotmentTo: ArrayList<UserModel>? = ArrayList()
+    var mInquiryCoPersonAllotmentTo: String = ""
+    var mInquiryCoPersonAllotmentToID: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,7 +130,7 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         edtLeadStatus.setOnClickListener(this)
         edtFrequency.setOnClickListener(this)
         edtAllotmentTo.setOnClickListener(this)
-
+        edtCoPersonAllotmentTo.setOnClickListener(this)
     }
 
     override fun onClick(v: View?) {
@@ -193,9 +194,18 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
             R.id.edtAllotmentTo -> {
                 preventTwoClick(v)
                 if (arrayListInquiryAllotmentTo.isNullOrEmpty()) {
-                    callManageInquiryAllotmentTo(1)
+                    callManageInquiryAllotmentTo(1, 1)
                 } else {
                     selectInquiryAllotmentToDialog()
+                }
+            }
+
+            R.id.edtCoPersonAllotmentTo -> {
+                preventTwoClick(v)
+                if (arrayListInquiryCoPersonAllotmentTo.isNullOrEmpty()) {
+                    callManageInquiryAllotmentTo(1, 2)
+                } else {
+                    selectInquiryCoPersonAllotmentToDialog()
                 }
             }
 
@@ -236,6 +246,10 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         }
         if (edtLeadType.text.isEmpty()) {
             edtLeadType.setError("Select Lead Type", errortint(this))
+            isValidate = false
+        }
+        if (edtAllotmentTo.text.isEmpty()) {
+            edtAllotmentTo.setError("Select Allotment To", errortint(this))
             isValidate = false
         }
         if (edtLeadStatus.text.isEmpty()) {
@@ -305,6 +319,7 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         jsonObject.put("InquiryTypeID", mInquiryTypeID)
         jsonObject.put("InquirySubTypeID", mInquirySubTypeID)
         jsonObject.put("InquiryAllotmentID", mInquiryAllotmentToID)
+        jsonObject.put("CoPersonAllotmentID", mInquiryCoPersonAllotmentToID)
         jsonObject.put("LeadTypeID", mLeadtypeID)
         jsonObject.put("LeadStatusID", mLeadstatusID)
         jsonObject.put("ProposedAmount", edtProposedAmount.text.toString().toDouble())
@@ -412,7 +427,14 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
             mInquiryAllotmentTo = arraylist.InquiryAllotmentName!!
             mInquiryAllotmentToID = arraylist.InquiryAllotmentID
             edtAllotmentTo.setText(mInquiryAllotmentTo)
-            callManageInquiryAllotmentTo(0)
+            callManageInquiryAllotmentTo(0, 0)
+        }
+
+        if (arraylist.CoPersonAllotmentID != null && arraylist.CoPersonAllotmentID != 0) {
+            mInquiryCoPersonAllotmentTo = arraylist.CoPersonAllotmentName!!
+            mInquiryCoPersonAllotmentToID = arraylist.CoPersonAllotmentID.toInt()
+            edtCoPersonAllotmentTo.setText(mInquiryCoPersonAllotmentTo)
+            callManageInquiryAllotmentTo(0, 0)
         }
 
     }
@@ -1225,7 +1247,7 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         dialogSelectLeadStatus!!.show()
     }
 
-    private fun callManageInquiryAllotmentTo(mode: Int) {
+    private fun callManageInquiryAllotmentTo(mode: Int, type: Int) {
         if (mode == 1) {
             showProgress()
         }
@@ -1247,8 +1269,11 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         arrayListInquiryAllotmentTo = response.body()?.Data!!
-                        if (mode == 1) {
+                        arrayListInquiryCoPersonAllotmentTo = response.body()?.Data!!
+                        if (mode == 1 && type == 1) {
                             selectInquiryAllotmentToDialog()
+                        } else if (mode == 1 && type == 2) {
+                            selectInquiryCoPersonAllotmentToDialog()
                         }
                     } else {
                         Snackbar.make(
@@ -1312,6 +1337,7 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                 mInquiryAllotmentTo =
                     arrayListInquiryAllotmentTo!![pos].FirstName!! + " " + arrayListInquiryAllotmentTo!![pos].LastName!!
                 edtAllotmentTo.setText(mInquiryAllotmentTo)
+                edtAllotmentTo.setError(null)
                 dialogSelectInquiryAllotmentTo!!.dismiss()
             }
         })
@@ -1353,6 +1379,7 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                             mInquiryAllotmentTo =
                                 arrItemsFinal1!![pos].FirstName!! + " " + arrItemsFinal1!![pos].LastName!!
                             edtAllotmentTo.setText(mInquiryAllotmentTo)
+                            edtAllotmentTo.setError(null)
                             dialogSelectInquiryAllotmentTo!!.dismiss()
                         }
                     })
@@ -1370,6 +1397,7 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                             mInquiryAllotmentTo =
                                 arrayListInquiryAllotmentTo!![pos].FirstName!! + " " + arrayListInquiryAllotmentTo!![pos].LastName!!
                             edtAllotmentTo.setText(mInquiryAllotmentTo)
+                            edtAllotmentTo.setError(null)
                             dialogSelectInquiryAllotmentTo!!.dismiss()
 
                         }
@@ -1380,6 +1408,115 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         })
 
         dialogSelectInquiryAllotmentTo!!.show()
+    }
+
+    private fun selectInquiryCoPersonAllotmentToDialog() {
+        var dialogSelectInquiryCoPersonAllotmentTo = Dialog(this)
+        dialogSelectInquiryCoPersonAllotmentTo.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_select, null)
+        dialogSelectInquiryCoPersonAllotmentTo.setContentView(dialogView)
+
+        val lp = WindowManager.LayoutParams()
+        lp.copyFrom(dialogSelectInquiryCoPersonAllotmentTo.window!!.attributes)
+
+        dialogSelectInquiryCoPersonAllotmentTo.window!!.attributes = lp
+        dialogSelectInquiryCoPersonAllotmentTo.setCancelable(true)
+        dialogSelectInquiryCoPersonAllotmentTo.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialogSelectInquiryCoPersonAllotmentTo.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        dialogSelectInquiryCoPersonAllotmentTo.window!!.setGravity(Gravity.CENTER)
+
+        val rvDialogCustomer =
+            dialogSelectInquiryCoPersonAllotmentTo.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectInquiryCoPersonAllotmentTo.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectInquiryCoPersonAllotmentTo.findViewById(R.id.txtid) as TextView
+        val imgClear = dialogSelectInquiryCoPersonAllotmentTo.findViewById(R.id.imgClear) as ImageView
+
+        imgClear.setOnClickListener {
+            dialogSelectInquiryCoPersonAllotmentTo.dismiss()
+        }
+
+        txtid.text = "Select Co-Person Allotment"
+
+        val itemAdapter = BottomSheetUsersListAdapter(this, arrayListInquiryCoPersonAllotmentTo!!)
+        itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+                itemAdapter.updateItem(pos)
+                mInquiryCoPersonAllotmentToID = arrayListInquiryCoPersonAllotmentTo!![pos].ID!!
+                mInquiryCoPersonAllotmentTo = arrayListInquiryCoPersonAllotmentTo!![pos].FirstName!! + " " + arrayListInquiryCoPersonAllotmentTo!![pos].LastName!!
+                edtCoPersonAllotmentTo.setText(mInquiryCoPersonAllotmentTo)
+                edtCoPersonAllotmentTo.setError(null)
+                dialogSelectInquiryCoPersonAllotmentTo!!.dismiss()
+            }
+        })
+
+        rvDialogCustomer.adapter = itemAdapter
+
+        if (arrayListInquiryCoPersonAllotmentTo!!.size > 6) {
+            edtSearchCustomer.visible()
+        } else {
+            edtSearchCustomer.gone()
+        }
+
+        edtSearchCustomer.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(char: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                val arrItemsFinal1: ArrayList<UserModel> = ArrayList()
+                if (char.toString().trim().isNotEmpty()) {
+                    val strSearch = char.toString()
+                    for (model in arrayListInquiryCoPersonAllotmentTo!!) {
+                        if (model.FirstName!!.toLowerCase()
+                                .contains(strSearch.toLowerCase()) || model.LastName!!.toLowerCase()
+                                .contains(strSearch.toLowerCase())
+                        ) {
+                            arrItemsFinal1.add(model)
+                        }
+                    }
+
+                    val itemAdapter =
+                        BottomSheetUsersListAdapter(this@InquiryEditActivity, arrItemsFinal1)
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+
+                            mInquiryCoPersonAllotmentToID = arrItemsFinal1!![pos].ID!!
+                            mInquiryCoPersonAllotmentTo = arrItemsFinal1!![pos].FirstName!! + " " + arrItemsFinal1!![pos].LastName!!
+                            edtCoPersonAllotmentTo.setText(mInquiryCoPersonAllotmentTo)
+                            edtCoPersonAllotmentTo.setError(null)
+
+                            dialogSelectInquiryCoPersonAllotmentTo!!.dismiss()
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                } else {
+                    val itemAdapter = BottomSheetUsersListAdapter(
+                        this@InquiryEditActivity, arrayListInquiryCoPersonAllotmentTo!!
+                    )
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+
+                            mInquiryCoPersonAllotmentToID = arrayListInquiryCoPersonAllotmentTo!![pos].ID!!
+                            mInquiryCoPersonAllotmentTo = arrayListInquiryCoPersonAllotmentTo!![pos].FirstName!! + " " + arrayListInquiryCoPersonAllotmentTo!![pos].LastName!!
+                            edtCoPersonAllotmentTo.setText(mInquiryCoPersonAllotmentTo)
+                            edtCoPersonAllotmentTo.setError(null)
+
+                            dialogSelectInquiryCoPersonAllotmentTo!!.dismiss()
+
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                }
+            }
+        })
+        dialogSelectInquiryCoPersonAllotmentTo!!.show()
     }
 
     private fun selectFrequencyDialog() {

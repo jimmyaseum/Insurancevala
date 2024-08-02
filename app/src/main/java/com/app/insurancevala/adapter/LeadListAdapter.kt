@@ -78,6 +78,10 @@ class LeadListAdapter(private val context: Context?, private val arrayList: Arra
                 itemView.txtAllottedToPerson.text = arrayList[position].CreatedByName
             }
 
+            if(!arrayList[position].CoPersonAllotmentName.isNullOrEmpty()) {
+                itemView.txtCoAllottedPerson.text = arrayList[position].CoPersonAllotmentName
+            }
+
             if(!arrayList[position].LeadDate.isNullOrEmpty()) {
                 itemView.txtLeadDate.text = arrayList[position].LeadDate
             }

@@ -27,6 +27,8 @@ import com.app.insurancevala.utils.SharedPreference
 import com.app.insurancevala.utils.convertDateStringToString
 import com.app.insurancevala.utils.getRequestJSONBody
 import com.app.insurancevala.utils.hideKeyboard
+import com.app.insurancevala.utils.internetErrordialog
+import com.app.insurancevala.utils.isOnline
 import com.app.insurancevala.utils.preventTwoClick
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -95,7 +97,11 @@ class HomeFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
             )
             .into(views!!.imgprofile)
 
-        CallDashboardAPI()
+        if (isOnline(requireActivity())) {
+            CallDashboardAPI()
+        } else {
+            internetErrordialog(requireContext())
+        }
         SetInitListner()
     }
 

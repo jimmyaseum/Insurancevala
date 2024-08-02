@@ -110,7 +110,7 @@
                     android:id="@+id/RvLeadList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    tools:listitem="@layout/adapter_inquiry_item"/>
+                    tools:listitem="@layout/adapter_lead_item"/>
             </FrameLayout>
             <RelativeLayout
                 android:id="@+id/RLNoData"

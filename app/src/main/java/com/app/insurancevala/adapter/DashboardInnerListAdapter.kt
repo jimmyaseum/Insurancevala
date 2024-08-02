@@ -77,12 +77,22 @@ class DashboardInnerListAdapter(private val context: Context?, private val array
                 itemView.txtFrequency.text = arrayList[position].Frequency
             }
 
+            if(!arrayList[position].CoPersonAllotmentName.isNullOrEmpty()) {
+                itemView.txtCoAllottedToName.text = arrayList[position].CoPersonAllotmentName
+            } else {
+                itemView.txtCoAllottedToName.text = ""
+            }
+
             if(!arrayList[position].InquiryAllotmentName.isNullOrEmpty()) {
                 itemView.txtAllottedToName.text = arrayList[position].InquiryAllotmentName
+            } else {
+                itemView.txtAllottedToName.text = ""
             }
 
             if(!arrayList[position].CreatedByName.isNullOrEmpty()) {
                 itemView.txtAllottedByName.text = arrayList[position].CreatedByName
+            } else {
+                itemView.txtAllottedByName.text = ""
             }
 
             var colors = arrayOf(R.drawable.bg_shadow_orange, R.drawable.bg_shadow_purple, R.drawable.bg_shadow_blue)

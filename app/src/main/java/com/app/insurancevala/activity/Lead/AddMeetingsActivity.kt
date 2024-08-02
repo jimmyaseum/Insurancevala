@@ -255,6 +255,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                             AppConstant.dd_LLL_yyyy
                         )
                         edtMeetingDate.setText(mDate)
+                        edtMeetingDate.setError(null)
                     },
                     CalenderDate.get(Calendar.YEAR),
                     CalenderDate.get(Calendar.MONTH),
@@ -282,6 +283,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                         AppConstant.HH_MM_SS_FORMAT
                     )!!
                     edtMeetingStartTime.setText(mTime)
+                    edtMeetingStartTime.setError(null)
                 }, hour, minute, false)
 
                 timePickerDialog.show()
@@ -304,6 +306,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                         AppConstant.HH_MM_SS_FORMAT
                     )!!
                     edtMeetingEndTime.setText(mTime)
+                    edtMeetingEndTime.setError(null)
                 }, hour, minute, false)
 
                 timePickerDialog.show()

@@ -2,67 +2,6 @@ package com.app.insurancevala.model.response
 
 import com.google.gson.annotations.SerializedName
 
-class NBLeadResponse {
-    @SerializedName("Data")
-    var Data: ArrayList<NBLeadModel>? = null
-
-    @SerializedName("Details")
-    var Details: String? = null
-
-    @SerializedName("Message")
-    var Message: String? = null
-
-    @SerializedName("Status")
-    var Status: Int? = null
-
-    @SerializedName("ItemCount")
-    var ItemCount: Int? = null
-
-    @SerializedName("ErrorMessage")
-    var ErrorMessage: String? = null
-}
-
-data class NBLeadModel(
-    @SerializedName("ID")
-    val ID: Int? = null,
-    @SerializedName("NBInquiryGUID")
-    val NBInquiryGUID: String? = null,
-    @SerializedName("LeadID")
-    val LeadID: Int? = null,
-    @SerializedName("InquiryNo")
-    val InquiryNo: Int? = null,
-    @SerializedName("LeadName")
-    val LeadName: String? = null,
-    @SerializedName("LeadGUID")
-    val LeadGUID: String? = null,
-    @SerializedName("MobileNo")
-    val MobileNo: String? = null,
-    @SerializedName("LeadStageID")
-    val LeadStageID: Int? = null,
-    @SerializedName("AllotmentID")
-    val AllotmentID: Int? = null,
-    @SerializedName("AllotmentName")
-    val AllotmentName: String? = null,
-    @SerializedName("FamilyID")
-    val FamilyID: Int? = null,
-    @SerializedName("FamilyMemberName")
-    val FamilyMemberName: String? = null,
-    @SerializedName("IsActive")
-    val IsActive: Boolean? = null,
-    @SerializedName("CreatedBy")
-    val CreatedBy: Int? = null,
-    @SerializedName("UpdatedBy")
-    val UpdatedBy: Int? = null,
-    @SerializedName("CreatedOn")
-    val CreatedOn: String? = null,
-    @SerializedName("UpdatedOn")
-    val UpdatedOn: String? = null,
-    @SerializedName("NBInquiryList")
-    val NBInquiryList: ArrayList<NBLeadListModel>? = null,
-    @SerializedName("NBInquirySub")
-    val NBInquirySub: NBLeadListModel? = null
-)
-
 data class NBLeadListModel(
     @SerializedName("ID")
     var ID: Int? = null,
@@ -92,6 +31,10 @@ data class NBLeadListModel(
     var LeadDate: String? = null,
     @SerializedName("LeadAllotmentName")
     var LeadAllotmentName: String? = null,
+    @SerializedName("CoPersonAllotmentID")
+    var CoPersonAllotmentID: Int? = null,
+    @SerializedName("CoPersonAllotmentName")
+    var CoPersonAllotmentName: String? = null,
     @SerializedName("CreatedBy")
     var CreatedBy: Int? = null,
     @SerializedName("CreatedByName")

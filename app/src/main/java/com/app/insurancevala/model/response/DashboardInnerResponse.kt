@@ -31,10 +31,14 @@ data class DashboardInnerModel (
     val LeadGUID: String? = null,
     @SerializedName("CreatedByName")
     val CreatedByName: String? = null,
-    @SerializedName("InquiryAllotmentName")
-    val InquiryAllotmentName: String? = null,
+    @SerializedName("CoPersonAllotmentID")
+    val CoPersonAllotmentID: Int? = null,
+    @SerializedName("CoPersonAllotmentName")
+    val CoPersonAllotmentName: String? = null,
     @SerializedName("InquiryAllotmentID")
     val InquiryAllotmentID: Int? = null,
+    @SerializedName("InquiryAllotmentName")
+    val InquiryAllotmentName: String? = null,
     @SerializedName("InquiryTypeID")
     val InquiryTypeID: Int? = null,
     @SerializedName("InquiryType")

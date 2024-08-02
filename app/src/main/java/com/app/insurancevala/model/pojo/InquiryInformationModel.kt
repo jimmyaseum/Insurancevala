@@ -51,6 +51,12 @@ data class InquiryInformationModel (
     @SerializedName("AllotmentTo")
     var AllotmentTo: String = "",
 
+    @SerializedName("CoPersonAllotmentToId")
+    var CoPersonAllotmentToId: Int = 0,
+
+    @SerializedName("CoPersonAllotmentTo")
+    var CoPersonAllotmentTo: String = "",
+
     @SerializedName("InquiryDate")
     var InquiryDate: String = "",
 
@@ -82,6 +88,9 @@ data class InquiryInformationModel (
 
     @SerializedName("tilAllotmentTo")
     var tilAllotmentTo: EditText? = null,
+
+    @SerializedName("tilCoPersonAllotmentTo")
+    var tilCoPersonAllotmentTo: EditText? = null,
 
     @SerializedName("tilInquiryDate")
     var tilInquiryDate: EditText? = null,

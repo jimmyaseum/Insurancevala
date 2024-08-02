@@ -196,7 +196,7 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
         }
 
         var jsonObject = JSONObject()
-        jsonObject.put("Limit", 10)
+        jsonObject.put("Limit", 50)
         jsonObject.put("Skip", skip)
         jsonObject.put("InquirySearch", InquirySearch)
 //        jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
@@ -228,7 +228,7 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
                                 views!!.shimmer.gone()
 
                                 if (arrayListNBNew.isNullOrEmpty().not()) {
-                                    if (arrayListNBNew!!.size < 10) {
+                                    if (arrayListNBNew!!.size < 50) {
                                         isLastPage = true
                                     }
                                 }
@@ -241,6 +241,7 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
                                 response.body()?.Details.toString(),
                                 Snackbar.LENGTH_LONG
                             ).show()
+                            hideProgress()
                             views!!.shimmer.stopShimmer()
                             views!!.shimmer.gone()
                             views!!.FL.gone()
@@ -308,6 +309,13 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
         if (::adapter.isInitialized) {
             adapter.notifyDataSetChanged()
             isLoading = false
+
+            HomeActivity.isNavigationEnabled = true
+            HomeActivity.homeMenu.isEnabled = true
+            HomeActivity.leadMenu.isEnabled = true
+            HomeActivity.moreMenu.isEnabled = true
+
+            hideProgress()
         } else {
             setData()
             views!!.RvNBList.adapter = adapter
@@ -397,7 +405,7 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
 
             override fun loadMoreItems() {
                 isLoading = true
-                skip = skip + 10
+                skip = skip + 50
                 callManageNB(searchText, true)
             }
         })

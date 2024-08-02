@@ -78,6 +78,10 @@ class AddLeadListActivity : BaseActivity(), View.OnClickListener{
     var mInquiryAllotmentTo: String = ""
     var mInquiryAllotmentToID: Int = 0
 
+    var arrayListInquiryCoPersonAllotmentTo: ArrayList<UserModel>? = ArrayList()
+    var mInquiryCoPersonAllotmentTo: String = ""
+    var mInquiryCoPersonAllotmentToID: Int = 0
+
     var mLeadDate: String = ""
     var calendarNow: Calendar? = Calendar.getInstance()
 
@@ -95,6 +99,9 @@ class AddLeadListActivity : BaseActivity(), View.OnClickListener{
 
         mInquiryAllotmentToID = intent.getIntExtra("LeadOwnerID", 0)
         mInquiryAllotmentTo = intent.getStringExtra("LeadOwnerName").toString()
+
+        mInquiryCoPersonAllotmentToID = intent.getIntExtra("LeadOwnerID", 0)
+        mInquiryCoPersonAllotmentTo = intent.getStringExtra("LeadOwnerName").toString()
 
         if (mClientID != 0) {
             callManageFamilyDetails(mClientID)
@@ -114,7 +121,7 @@ class AddLeadListActivity : BaseActivity(), View.OnClickListener{
 
     private fun setMasterData() {
         if (isOnline(this)) {
-            callManageInquiryAllotmentTo(0)
+            callManageInquiryAllotmentTo(0, 0)
             callManageInquiryType(0)
             callManageLeadType(0)
             callManageLeadStatus(0)
@@ -139,6 +146,7 @@ class AddLeadListActivity : BaseActivity(), View.OnClickListener{
         edtInquirySub.setOnClickListener(this)
         edtFrequency.setOnClickListener(this)
         edtAllotmentTo.setOnClickListener(this)
+        edtCoPersonAllotmentTo.setOnClickListener(this)
         edtLeadType.setOnClickListener(this)
         edtLeadStatus.setOnClickListener(this)
         edtLeadDate.setOnClickListener(this)
@@ -189,9 +197,18 @@ class AddLeadListActivity : BaseActivity(), View.OnClickListener{
             R.id.edtAllotmentTo -> {
                 preventTwoClick(v)
                 if (arrayListInquiryAllotmentTo.isNullOrEmpty()) {
-                    callManageInquiryAllotmentTo(1)
+                    callManageInquiryAllotmentTo(1, 1)
                 } else {
                     selectInquiryAllotmentToDialog()
+                }
+            }
+
+            R.id.edtCoPersonAllotmentTo -> {
+                preventTwoClick(v)
+                if (arrayListInquiryCoPersonAllotmentTo.isNullOrEmpty()) {
+                    callManageInquiryAllotmentTo(1, 2)
+                } else {
+                    selectInquiryCoPersonAllotmentToDialog()
                 }
             }
 
@@ -290,6 +307,7 @@ class AddLeadListActivity : BaseActivity(), View.OnClickListener{
         jsonObject.put("LeadID", mClientID)
         jsonObject.put("NBLeadBy", mFamilyMemberID)
         jsonObject.put("LeadAllotmentID", mInquiryAllotmentToID)
+        jsonObject.put("CoPersonAllotmentID", mInquiryCoPersonAllotmentToID)
         jsonObject.put("InquiryTypeID", mInquiryTypeID)
         jsonObject.put("InquirySubTypeID", mInquirySubTypeID)
         jsonObject.put("InquirySubTypeID", mInquirySubTypeID)
@@ -1043,7 +1061,7 @@ class AddLeadListActivity : BaseActivity(), View.OnClickListener{
         dialogSelectLeadStatus!!.show()
     }
 
-    private fun callManageInquiryAllotmentTo(mode: Int) {
+    private fun callManageInquiryAllotmentTo(mode: Int, type: Int) {
         if (mode == 1) {
             showProgress()
         }
@@ -1064,8 +1082,11 @@ class AddLeadListActivity : BaseActivity(), View.OnClickListener{
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         arrayListInquiryAllotmentTo = response.body()?.Data!!
-                        if (mode == 1) {
+                        arrayListInquiryCoPersonAllotmentTo = response.body()?.Data!!
+                        if (mode == 1 && type == 1) {
                             selectInquiryAllotmentToDialog()
+                        } else if (mode == 1 && type == 2) {
+                            selectInquiryCoPersonAllotmentToDialog()
                         }
                     } else {
                         Snackbar.make(
@@ -1191,6 +1212,115 @@ class AddLeadListActivity : BaseActivity(), View.OnClickListener{
             }
         })
         dialogSelectInquiryAllotmentTo!!.show()
+    }
+
+    private fun selectInquiryCoPersonAllotmentToDialog() {
+        var dialogSelectInquiryCoPersonAllotmentTo = Dialog(this)
+        dialogSelectInquiryCoPersonAllotmentTo.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_select, null)
+        dialogSelectInquiryCoPersonAllotmentTo.setContentView(dialogView)
+
+        val lp = WindowManager.LayoutParams()
+        lp.copyFrom(dialogSelectInquiryCoPersonAllotmentTo.window!!.attributes)
+
+        dialogSelectInquiryCoPersonAllotmentTo.window!!.attributes = lp
+        dialogSelectInquiryCoPersonAllotmentTo.setCancelable(true)
+        dialogSelectInquiryCoPersonAllotmentTo.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialogSelectInquiryCoPersonAllotmentTo.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        dialogSelectInquiryCoPersonAllotmentTo.window!!.setGravity(Gravity.CENTER)
+
+        val rvDialogCustomer =
+            dialogSelectInquiryCoPersonAllotmentTo.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectInquiryCoPersonAllotmentTo.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectInquiryCoPersonAllotmentTo.findViewById(R.id.txtid) as TextView
+        val imgClear = dialogSelectInquiryCoPersonAllotmentTo.findViewById(R.id.imgClear) as ImageView
+
+        imgClear.setOnClickListener {
+            dialogSelectInquiryCoPersonAllotmentTo.dismiss()
+        }
+
+        txtid.text = "Select Co-Person Allotment"
+
+        val itemAdapter = BottomSheetUsersListAdapter(this, arrayListInquiryCoPersonAllotmentTo!!)
+        itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+                itemAdapter.updateItem(pos)
+                mInquiryCoPersonAllotmentToID = arrayListInquiryCoPersonAllotmentTo!![pos].ID!!
+                mInquiryCoPersonAllotmentTo = arrayListInquiryCoPersonAllotmentTo!![pos].FirstName!! + " " + arrayListInquiryCoPersonAllotmentTo!![pos].LastName!!
+                edtCoPersonAllotmentTo.setText(mInquiryCoPersonAllotmentTo)
+                edtCoPersonAllotmentTo.setError(null)
+                dialogSelectInquiryCoPersonAllotmentTo!!.dismiss()
+            }
+        })
+
+        rvDialogCustomer.adapter = itemAdapter
+
+        if (arrayListInquiryCoPersonAllotmentTo!!.size > 6) {
+            edtSearchCustomer.visible()
+        } else {
+            edtSearchCustomer.gone()
+        }
+
+        edtSearchCustomer.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(char: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                val arrItemsFinal1: ArrayList<UserModel> = ArrayList()
+                if (char.toString().trim().isNotEmpty()) {
+                    val strSearch = char.toString()
+                    for (model in arrayListInquiryCoPersonAllotmentTo!!) {
+                        if (model.FirstName!!.toLowerCase()
+                                .contains(strSearch.toLowerCase()) || model.LastName!!.toLowerCase()
+                                .contains(strSearch.toLowerCase())
+                        ) {
+                            arrItemsFinal1.add(model)
+                        }
+                    }
+
+                    val itemAdapter =
+                        BottomSheetUsersListAdapter(this@AddLeadListActivity, arrItemsFinal1)
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+
+                            mInquiryCoPersonAllotmentToID = arrItemsFinal1!![pos].ID!!
+                            mInquiryCoPersonAllotmentTo = arrItemsFinal1!![pos].FirstName!! + " " + arrItemsFinal1!![pos].LastName!!
+                            edtCoPersonAllotmentTo.setText(mInquiryCoPersonAllotmentTo)
+                            edtCoPersonAllotmentTo.setError(null)
+
+                            dialogSelectInquiryCoPersonAllotmentTo!!.dismiss()
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                } else {
+                    val itemAdapter = BottomSheetUsersListAdapter(
+                        this@AddLeadListActivity, arrayListInquiryCoPersonAllotmentTo!!
+                    )
+                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
+                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
+
+                            mInquiryCoPersonAllotmentToID = arrayListInquiryCoPersonAllotmentTo!![pos].ID!!
+                            mInquiryCoPersonAllotmentTo = arrayListInquiryCoPersonAllotmentTo!![pos].FirstName!! + " " + arrayListInquiryCoPersonAllotmentTo!![pos].LastName!!
+                            edtCoPersonAllotmentTo.setText(mInquiryCoPersonAllotmentTo)
+                            edtCoPersonAllotmentTo.setError(null)
+
+                            dialogSelectInquiryCoPersonAllotmentTo!!.dismiss()
+
+                        }
+                    })
+                    rvDialogCustomer.adapter = itemAdapter
+                }
+            }
+        })
+        dialogSelectInquiryCoPersonAllotmentTo!!.show()
     }
 
     private fun selectFrequencyDialog() {

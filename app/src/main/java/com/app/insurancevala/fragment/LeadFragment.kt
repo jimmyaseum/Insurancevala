@@ -134,7 +134,7 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
             override fun onSearchViewClosedAnimation() {
                 AnimationUtils.loadAnimation(activity, R.anim.searchview_close_anim)
                 searchText = ""
-                callAPIDefaultData(false, true)
+                callAPIDefaultData(true, true)
             }
 
             override fun onSearchViewShown() {
@@ -225,6 +225,7 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
         hideKeyboard(requireContext(), v)
         when (v?.id) {
             R.id.imgAddLead -> {
+                searchText = ""
                 preventTwoClick(v)
                 val intent = Intent(getActivity(), AddLeadActivity::class.java)
                 intent.putExtra(AppConstant.STATE, AppConstant.S_ADD)
@@ -327,13 +328,14 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
                                 response.body()?.Details.toString(),
                                 Snackbar.LENGTH_LONG
                             ).show()
+                            hideProgress()
                             views!!.shimmer.stopShimmer()
                             views!!.shimmer.gone()
                             views!!.FL.gone()
                             views!!.RLNoData.visible()
                             HomeActivity.isNavigationEnabled = true
                             HomeActivity.homeMenu.isEnabled = true
-                            HomeActivity.leadMenu.isEnabled = true
+                            HomeActivity.nbMenu.isEnabled = true
                             HomeActivity.moreMenu.isEnabled = true
                         }
                     } else if (response.body()!!.Status == 1010 ||  response.body()?.Status == 201) {
@@ -344,14 +346,14 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
                         views!!.RLNoData.visible()
                         HomeActivity.isNavigationEnabled = true
                         HomeActivity.homeMenu.isEnabled = true
-                        HomeActivity.leadMenu.isEnabled = true
+                        HomeActivity.nbMenu.isEnabled = true
                         HomeActivity.moreMenu.isEnabled = true
                     } else if (response.body()!!.Status == 1013) {
                         hideProgress()
                         isLastPage = true
                         HomeActivity.isNavigationEnabled = true
                         HomeActivity.homeMenu.isEnabled = true
-                        HomeActivity.leadMenu.isEnabled = true
+                        HomeActivity.nbMenu.isEnabled = true
                         HomeActivity.moreMenu.isEnabled = true
                         context!!.toast(response.body()?.Message.toString(), AppConstant.TOAST_SHORT)
                     } else {
@@ -394,6 +396,13 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
         if (::adapter.isInitialized) {
             adapter.notifyDataSetChanged()
             isLoading = false
+
+            HomeActivity.isNavigationEnabled = true
+            HomeActivity.homeMenu.isEnabled = true
+            HomeActivity.nbMenu.isEnabled = true
+            HomeActivity.moreMenu.isEnabled = true
+
+            hideProgress()
         } else {
             setData()
             views!!.RvLeadList.adapter = adapter
@@ -417,6 +426,7 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
     override fun onItemClickEvent(view: View, position: Int, type: Int) {
         when (type) {
             101 -> {
+                searchText = ""
                 preventTwoClick(view)
                 val intent = Intent(getActivity(), LeadDashboardActivity::class.java)
                 intent.putExtra("LeadID", arrayListLeadNew!![position].ID)
@@ -425,6 +435,7 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
             }
 
             102 -> {
+                searchText = ""
                 preventTwoClick(view)
                 val intent = Intent(getActivity(), AddLeadActivity::class.java)
                 intent.putExtra(AppConstant.STATE, AppConstant.S_EDIT)
@@ -486,10 +497,10 @@ class LeadFragment : BaseFragment(), View.OnClickListener, RecyclerClickListener
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == AppConstant.INTENT_1001) {
-            if (isOnline(requireActivity())) {
+            if (isOnline(requireContext())) {
                 callAPIDefaultData(true, true)
             } else {
-                internetErrordialog(requireActivity())
+                internetErrordialog(requireContext())
             }
         }
     }

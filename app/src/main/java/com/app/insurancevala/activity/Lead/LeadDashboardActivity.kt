@@ -694,7 +694,11 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
                                     arrayListUsers!![i].IsSelected = true
 
                                     mUsersName = arrayListUsers!![i].FirstName!! + " "+ arrayListUsers!![i].LastName!!
-                                    txtLeadOwerName.setText(mUsersName)
+                                    txtLeadOwerName.setText(mUsersName + " (Owner)")
+                                    if (mUsersName != "") {
+                                        txtLeadOwerName.visible()
+                                        view.visible()
+                                    }
                                 }
                             }
                         }
