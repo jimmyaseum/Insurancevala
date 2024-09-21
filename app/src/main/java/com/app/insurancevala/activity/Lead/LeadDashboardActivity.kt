@@ -195,8 +195,6 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
                 intent.putExtra("LeadGUID", LeadGUID)
                 intent.putExtra("LeadName", txtName.text.toString())
                 intent.putExtra("LeadType", arrayListLead!!.LeadStage)
-                intent.putExtra("LeadOwnerID", LeadOwnerID)
-                intent.putExtra("LeadOwnerName", LeadOwnerName)
                 intent.putExtra("AddMore",false)
                 startActivityForResult(intent, AppConstant.INTENT_1001)
             }

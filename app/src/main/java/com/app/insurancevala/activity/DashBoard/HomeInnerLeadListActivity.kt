@@ -7,17 +7,13 @@ import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
-import com.app.insurancevala.activity.NBInquiry.InquiryEditActivity
 import com.app.insurancevala.activity.NBInquiry.InquiryListActivity
 import com.app.insurancevala.adapter.DashboardInnerLeadListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.DashboardInnerLeadModel
 import com.app.insurancevala.model.response.DashboardInnerLeadResponse
-import com.app.insurancevala.model.response.DashboardInnerResponse
-import com.app.insurancevala.model.response.NBInquiryTypeAddUpdateResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.AppConstant
-import com.app.insurancevala.utils.PrefConstants
 import com.app.insurancevala.utils.SharedPreference
 import com.app.insurancevala.utils.getRequestJSONBody
 import com.app.insurancevala.utils.gone

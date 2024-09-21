@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 class NBResponse {
     @SerializedName("Data")
-    var Data: ArrayList<NBModel>? = null
+    var Data: ArrayList<NewNBModel>? = null
     @SerializedName("Details")
     var Details: String? = null
     @SerializedName("Message")
@@ -16,6 +16,42 @@ class NBResponse {
     @SerializedName("ErrorMessage")
     var ErrorMessage: String? = null
 }
+data class NewNBModel (
+    @SerializedName("ID")
+    val ID: Int? = null,
+    @SerializedName("NBInquiryGUID")
+    val NBInquiryGUID: String? = null,
+    @SerializedName("LeadID")
+    val LeadID: Int? = null,
+    @SerializedName("InquiryNo")
+    val InquiryNo: Int? = null,
+    @SerializedName("LeadName")
+    val LeadName: String? = null,
+    @SerializedName("LeadGUID")
+    val LeadGUID: String? = null,
+    @SerializedName("MobileNo")
+    val MobileNo: String? = null,
+    @SerializedName("LeadStageID")
+    val LeadStageID: Int? = null,
+    @SerializedName("AllotmentID")
+    val AllotmentID: Int? = null,
+    @SerializedName("AllotmentName")
+    val AllotmentName: String? = null,
+    @SerializedName("FamilyID")
+    val FamilyID: Int? = null,
+    @SerializedName("FamilyMemberName")
+    val FamilyMemberName: String? = null,
+    @SerializedName("IsActive")
+    val IsActive: Boolean? = null,
+    @SerializedName("CreatedBy")
+    val CreatedBy: Int? = null,
+    @SerializedName("UpdatedBy")
+    val UpdatedBy: Int? = null,
+    @SerializedName("CreatedOn")
+    val CreatedOn: String? = null,
+    @SerializedName("UpdatedOn")
+    val UpdatedOn: String? = null
+)
 data class NBModel (
     @SerializedName("ID")
     val ID: Int? = null,
@@ -70,11 +106,11 @@ data class NBInquiryModel (
     @SerializedName("NBInquiryByName")
     val NBInquiryByName: String? = null,
     @SerializedName("InquiryTypeID")
-    val InquiryTypeID: Int? = null,
+    val InquiryTypeID: String? = null,
     @SerializedName("InquiryType")
     val InquiryType: String? = null,
     @SerializedName("InquirySubTypeID")
-    val InquirySubTypeID: Int? = null,
+    val InquirySubTypeID: String? = null,
     @SerializedName("InquirySubType")
     val InquirySubType: String? = null,
     @SerializedName("LeadTypeID")
@@ -102,7 +138,9 @@ data class NBInquiryModel (
     @SerializedName("LeadStatus")
     val LeadStatus: String? = null,
     @SerializedName("ProposedAmount")
-    val ProposedAmount: Double? = null,
+    val ProposedAmount: String? = null,
+    @SerializedName("ClosingAmount")
+    val ClosingAmount: String? = null,
     @SerializedName("Frequency")
     val Frequency: String? = null,
     @SerializedName("InquiryDate")

@@ -8,12 +8,18 @@ import android.widget.PopupMenu
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerClickListener
+import com.app.insurancevala.model.pojo.ClosingAmountInfoModel
+import com.app.insurancevala.model.pojo.InquiryTypeModel
+import com.app.insurancevala.model.pojo.ProposedAmountInfoModel
 import com.app.insurancevala.model.response.NBLeadListModel
+import com.app.insurancevala.utils.LogUtil
 import com.app.insurancevala.utils.PrefConstants
 import com.app.insurancevala.utils.SharedPreference
+import com.app.insurancevala.utils.TAG
 import com.app.insurancevala.utils.gone
 import com.app.insurancevala.utils.preventTwoClick
 import com.app.insurancevala.utils.visible
+import kotlinx.android.synthetic.main.adapter_inquiry_item.view.rvInquiryList
 import kotlinx.android.synthetic.main.adapter_lead_item.view.*
 
 class LeadListAdapter(private val context: Context?, private val arrayList: ArrayList<NBLeadListModel>, private val sharedPreference: SharedPreference, private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<LeadListAdapter.ViewHolder>() {
@@ -50,10 +56,6 @@ class LeadListAdapter(private val context: Context?, private val arrayList: Arra
 
             this.context = context
 
-            if (!arrayList[position].InquiryType.isNullOrEmpty()) {
-                itemView.txtInquiryType.text = arrayList[position].InquiryType
-            }
-
             var colors = arrayOf(R.drawable.bg_shadow_orange, R.drawable.bg_shadow_purple, R.drawable.bg_shadow_blue)
             val reminder = position % 3
             itemView.v1.setBackgroundResource(colors[reminder])
@@ -71,7 +73,7 @@ class LeadListAdapter(private val context: Context?, private val arrayList: Arra
             }
 
             if(!arrayList[position].LeadAllotmentName.isNullOrEmpty()) {
-                itemView.txtAllottedPerson.text = arrayList[position].LeadAllotmentName
+                itemView.txtAllottedByPerson.text = arrayList[position].LeadAllotmentName
             }
 
             if(!arrayList[position].CreatedByName.isNullOrEmpty()) {
@@ -94,9 +96,34 @@ class LeadListAdapter(private val context: Context?, private val arrayList: Arra
                 itemView.txtLeadType.text = arrayList[position].LeadType
             }
 
-            if(arrayList[position].ProposedAmount != null && arrayList[position].ProposedAmount != 0.0) {
-                itemView.txtProposedAmount.text = arrayList[position].ProposedAmount.toString()
+            val arrayListProposedAmount = ArrayList<ProposedAmountInfoModel>()
+            val arrayListClosingAmount = ArrayList<ClosingAmountInfoModel>()
+            val arrayListInquiryType = ArrayList<InquiryTypeModel>()
+
+            val InquiryType = arrayList[position].InquiryType!!.split(", ")
+            val ProposedAmount = arrayList[position].ProposedAmount!!.split(", ")
+            val ClosingAmount = arrayList[position].ClosingAmount!!.split(", ")
+            for (i in InquiryType.indices) {
+                arrayListProposedAmount.add(ProposedAmountInfoModel(ProspectAmount = ProposedAmount[i]))
+                if (arrayList[position].ClosingAmount!!.isNotEmpty()) {
+                    arrayListClosingAmount.add(ClosingAmountInfoModel(ClosingAmount = ClosingAmount[i]))
+                } else {
+                    arrayListClosingAmount.add(ClosingAmountInfoModel(ClosingAmount = ""))
+                }
+                arrayListInquiryType.add(InquiryTypeModel(InquiryType = InquiryType[i]))
             }
+
+            val adapterInquiryTypeList = InquiryTypeListAdapter(
+                arrayListProposedAmount,
+                arrayListClosingAmount,
+                arrayListInquiryType,
+                recyclerItemClickListener
+            )
+            itemView.rvInquiryList.adapter = adapterInquiryTypeList
+
+            /*if(!arrayList[position].ProposedAmount.isNullOrEmpty()) {
+                itemView.txtProposedAmount.text = arrayList[position].ProposedAmount.toString()
+            }*/
 
             if(!arrayList[position].Frequency.isNullOrEmpty()) {
                 itemView.txtFrequency.text = arrayList[position].Frequency

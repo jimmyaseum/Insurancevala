@@ -219,23 +219,31 @@ class ParticularInquiryAdapter(
         }
     }
 
-    //----------------RecordingViewHolder | RecordingData-------------
-    inner class RecordingViewHolder(itemView: View) : BaseViewHolder<ActivityLogModel>(itemView) {
-
-        override fun bind(item: ActivityLogModel, recyclerItemClickListener: RecyclerClickListener, tabPosition: Int) {
-            // Use recyclerItemClickListener here
-            itemView.txtRecordingTitle.text = "Title - " + item.ActivityTitle
-            itemView.txtRecordingDate.text = convertDateStringToString(item.CreatedOn!! , AppConstant.ddMMyyyy_HHmmss, AppConstant.HH_MM_AA_FORMAT)
-        }
-    }
-
     //----------------AttachmentViewHolder | AttachmentData-------------
     inner class AttachmentViewHolder(itemView: View) : BaseViewHolder<ActivityLogModel>(itemView) {
 
         override fun bind(item: ActivityLogModel, recyclerItemClickListener: RecyclerClickListener, tabPosition: Int) {
             // Use recyclerItemClickListener here
             itemView.txtAttachmentTitle.text = "Title - " + item.ActivityTitle
-            itemView.txtAttachmentDate.text = convertDateStringToString(item.CreatedOn!! , AppConstant.ddMMyyyy_HHmmss, AppConstant.HH_MM_AA_FORMAT)
+            itemView.txtAttachmentDate.text = item.ActivityDate!!
+
+            itemView.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 104)
+            }
+        }
+    }
+
+    //----------------RecordingViewHolder | RecordingData-------------
+    inner class RecordingViewHolder(itemView: View) : BaseViewHolder<ActivityLogModel>(itemView) {
+
+        override fun bind(item: ActivityLogModel, recyclerItemClickListener: RecyclerClickListener, tabPosition: Int) {
+            // Use recyclerItemClickListener here
+            itemView.txtRecordingTitle.text = "Title - " + item.ActivityTitle
+            itemView.txtRecordingDate.text = item.ActivityDate
+
+            itemView.setOnClickListener {
+                recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 105)
+            }
         }
     }
 

@@ -187,8 +187,12 @@ class AddCallLogsActivity : BaseActivity(), View.OnClickListener {
                     CalenderLogCallDate.get(Calendar.MONTH),
                     CalenderLogCallDate.get(Calendar.DAY_OF_MONTH)
                 )
-                dpd.datePicker.minDate = System.currentTimeMillis()
-//                dpd.datePicker.maxDate = System.currentTimeMillis() - 1000
+                if(calltype.equals("SCHEDULE")) {
+                    dpd.datePicker.minDate = System.currentTimeMillis() - 1000
+                } else if(calltype.equals("LOGCALL")) {
+                    dpd.datePicker.maxDate = System.currentTimeMillis() - 1000
+                }
+//                dpd.datePicker.minDate = System.currentTimeMillis()
                 dpd.show()
             }
             R.id.edtLCallPurpose -> {

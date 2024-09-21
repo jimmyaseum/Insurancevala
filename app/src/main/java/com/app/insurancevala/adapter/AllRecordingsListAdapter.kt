@@ -57,6 +57,7 @@ class AllRecordingsListAdapter(
             }
 
             itemView.audioPlay.setOnClickListener {
+                preventTwoClick(itemView.imgEdit)
                 recyclerItemClickListener.onItemClickEvent(it, adapterPosition, 100)
             }
 

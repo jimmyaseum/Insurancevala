@@ -2,7 +2,6 @@ package com.app.insurancevala.activity.NBInquiry
 
 import android.content.Intent
 import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnimationUtils
@@ -19,7 +18,6 @@ import com.app.insurancevala.activity.Lead.RecordingsListActivity
 import com.app.insurancevala.activity.Lead.TasksListActivity
 import com.app.insurancevala.adapter.InquiryListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
-import com.app.insurancevala.model.response.NBInquiryByGUIDResponse
 import com.app.insurancevala.model.response.NBInquiryLeadStatusResponse
 import com.app.insurancevala.model.response.NBInquiryModel
 import com.app.insurancevala.retrofit.ApiUtils

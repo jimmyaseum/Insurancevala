@@ -233,6 +233,47 @@
                 android:background="@color/colorGray100" />
 
             <LinearLayout
+                android:id="@+id/LLNoActivity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="@dimen/_10sdp">
+
+                <ImageView
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_gravity="center_vertical|right"
+                    android:src="@drawable/ic_username" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/_10sdp"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="No Activity"
+                    android:textColor="@color/colorBlack"
+                    android:textSize="@dimen/_13sdp" />
+
+                <ImageView
+                    android:layout_width="@dimen/_20sdp"
+                    android:layout_height="@dimen/_20sdp"
+                    android:layout_gravity="center_vertical|right"
+                    android:background="@drawable/bg_edittext"
+                    android:rotation="270"
+                    android:src="@drawable/ic_down"
+                    app:tint="@color/colorTextHint" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:background="@color/colorGray100" />
+
+            <LinearLayout
                 android:id="@+id/LLChangePassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

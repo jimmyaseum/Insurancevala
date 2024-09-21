@@ -262,7 +262,7 @@ class AddMeetingsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                     CalenderDate.get(Calendar.DAY_OF_MONTH)
                 )
 //                dpd.datePicker.minDate = System.currentTimeMillis() - 1000
-//                dpd.datePicker.maxDate = System.currentTimeMillis() - 1000
+                dpd.datePicker.maxDate = System.currentTimeMillis() - 1000
                 dpd.show()
             }
 

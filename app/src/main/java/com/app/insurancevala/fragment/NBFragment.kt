@@ -21,8 +21,8 @@ import com.app.insurancevala.activity.NBInquiry.InquiryTypeListActivity
 import com.app.insurancevala.adapter.NBListAdapter
 import com.app.insurancevala.helper.PaginationScrollListener
 import com.app.insurancevala.interFase.RecyclerClickListener
-import com.app.insurancevala.model.response.NBModel
 import com.app.insurancevala.model.response.NBResponse
+import com.app.insurancevala.model.response.NewNBModel
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.ferfalk.simplesearchview.SimpleSearchView
@@ -35,8 +35,8 @@ import retrofit2.Response
 class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener {
 
     private var views: View? = null
-    var arrayListNB : ArrayList<NBModel>? = ArrayList()
-    var arrayListNBNew : ArrayList<NBModel>? = ArrayList()
+    var arrayListNB : ArrayList<NewNBModel>? = ArrayList()
+    var arrayListNBNew : ArrayList<NewNBModel>? = ArrayList()
 
     var skip = 0
     var isLastPage: Boolean = false
@@ -305,7 +305,7 @@ class NBFragment : BaseFragment(),  View.OnClickListener, RecyclerClickListener 
         })
     }
 
-    fun addLoadMoreData(arrayList: ArrayList<NBModel>) {
+    fun addLoadMoreData(arrayList: ArrayList<NewNBModel>) {
         if (::adapter.isInitialized) {
             adapter.notifyDataSetChanged()
             isLoading = false

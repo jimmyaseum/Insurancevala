@@ -14,9 +14,9 @@ data class NBLeadListModel(
     @SerializedName("NBLeadByName")
     var NBLeadByName: String? = null,
     @SerializedName("InquiryTypeID")
-    var InquiryTypeID: Int? = null,
+    var InquiryTypeID: String? = null,
     @SerializedName("InquirySubTypeID")
-    var InquirySubTypeID: Int? = null,
+    var InquirySubTypeID: String? = null,
     @SerializedName("LeadTypeID")
     var LeadTypeID: Int? = null,
     @SerializedName("LeadAllotmentID")
@@ -24,7 +24,9 @@ data class NBLeadListModel(
     @SerializedName("LeadStatusID")
     var LeadStatusID: Int? = null,
     @SerializedName("ProposedAmount")
-    var ProposedAmount: Double? = null,
+    var ProposedAmount: String? = null,
+    @SerializedName("ClosingAmount")
+    val ClosingAmount: String? = null,
     @SerializedName("Frequency")
     var Frequency: String? = null,
     @SerializedName("LeadDate")

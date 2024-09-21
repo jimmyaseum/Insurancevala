@@ -13,6 +13,7 @@ import com.app.insurancevala.activity.BrochureListActivity
 import com.app.insurancevala.activity.ExcelUploadActivity
 import com.app.insurancevala.activity.Login.LoginActivity
 import com.app.insurancevala.activity.Login.ChangePasswordActivity
+import com.app.insurancevala.activity.NBInquiry.NoInquiryLeadActivity
 import com.app.insurancevala.activity.Users.AddUsersActivity
 import com.app.insurancevala.activity.Users.UsersListActivity
 import com.app.insurancevala.master.MastersListActivity
@@ -114,6 +115,13 @@ class MoreFragment : BaseFragment() {
         views!!.LLMaster.setOnClickListener {
             preventTwoClick(it)
             val intent = Intent(requireActivity(), MastersListActivity::class.java)
+            startActivity(intent)
+
+        }
+
+        views!!.LLNoActivity.setOnClickListener {
+            preventTwoClick(it)
+            val intent = Intent(requireActivity(), NoInquiryLeadActivity::class.java)
             startActivity(intent)
 
         }

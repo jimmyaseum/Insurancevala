@@ -40,11 +40,11 @@ data class DashboardInnerModel (
     @SerializedName("InquiryAllotmentName")
     val InquiryAllotmentName: String? = null,
     @SerializedName("InquiryTypeID")
-    val InquiryTypeID: Int? = null,
+    val InquiryTypeID: String? = null,
     @SerializedName("InquiryType")
     val InquiryType: String? = null,
     @SerializedName("InquirySubTypeID")
-    val InquirySubTypeID: Int? = null,
+    val InquirySubTypeID: String? = null,
     @SerializedName("InquirySubType")
     val InquirySubType: String? = null,
     @SerializedName("LeadTypeID")
@@ -56,7 +56,7 @@ data class DashboardInnerModel (
     @SerializedName("LeadStatus")
     val LeadStatus: String? = null,
     @SerializedName("ProposedAmount")
-    val ProposedAmount: Double? = null,
+    val ProposedAmount: String? = null,
     @SerializedName("Frequency")
     val Frequency: String? = null,
     @SerializedName("LeadName")
@@ -64,5 +64,7 @@ data class DashboardInnerModel (
     @SerializedName("InquiryDate")
     val InquiryDate: String? = null,
     @SerializedName("GroupCode")
-    val GroupCode: String? = null
+    val GroupCode: String? = null,
+    @SerializedName("ClosingAmount")
+    val ClosingAmount: String? = null
     )

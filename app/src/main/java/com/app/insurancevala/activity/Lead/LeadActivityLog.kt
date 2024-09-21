@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -38,6 +39,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import kotlinx.android.synthetic.main.activity_lead_log.*
+import java.util.Locale
 
 class LeadActivityLog : BaseActivity(), View.OnClickListener, RecyclerClickListener {
 
@@ -399,6 +401,29 @@ class LeadActivityLog : BaseActivity(), View.OnClickListener, RecyclerClickListe
             103 -> {
                 preventTwoClick(view)
                 callAttachmentList(arrayListActivity!![position].LogGUID!!)
+            }
+
+            104 -> {
+                preventTwoClick(view)
+                if (!arrayListActivity!![position].ActivityDescription.isNullOrEmpty()){
+                    if(arrayListActivity!![position].ActivityDescription!!.contains(".pdf")) {
+                        var format = "https://docs.google.com/gview?embedded=true&url=%s"
+                        val fullPath: String = java.lang.String.format(Locale.ENGLISH, format, arrayListActivity!![position].ActivityDescription!!)
+                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(fullPath))
+                        startActivity(browserIntent)
+                    } else {
+                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(arrayListActivity!![position].ActivityDescription!!))
+                        startActivity(browserIntent)
+                    }
+                }
+            }
+
+            105 -> {
+                preventTwoClick(view)
+                if (!arrayListActivity!![position].ActivityDescription.isNullOrEmpty()){
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(arrayListActivity!![position].ActivityDescription!!))
+                    startActivity(browserIntent)
+                }
             }
         }
     }

@@ -14,7 +14,6 @@ import com.app.insurancevala.activity.Lead.MeetingsListActivity
 import com.app.insurancevala.activity.Lead.NotesListActivity
 import com.app.insurancevala.activity.Lead.RecordingsListActivity
 import com.app.insurancevala.activity.Lead.TasksListActivity
-import com.app.insurancevala.activity.NBInquiry.InquiryEditActivity
 import com.app.insurancevala.adapter.LeadListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.NBLeadByGUIDResponse

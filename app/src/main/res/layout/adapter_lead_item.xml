@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -22,7 +23,7 @@
                 android:id="@+id/v1"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_1sdp"
-                android:background="@color/color4"/>
+                android:background="@color/color4" />
 
             <LinearLayout
                 android:id="@+id/LLStart"
@@ -37,43 +38,84 @@
                     android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:layout_weight="1"
                         android:orientation="horizontal">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_medium"
-                            android:text="Type :"
-                            android:textColor="@color/colorGray500"
+                            android:text="Lead No : "
                             android:textSize="@dimen/_10sdp" />
 
                         <TextView
-                            android:id="@+id/txtInquiryType"
+                            android:id="@+id/txtLeadNo"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:layout_marginLeft="@dimen/_5sdp"
-                            android:fontFamily="@font/poppins_semibold"
+                            android:fontFamily="@font/poppins_medium"
                             android:text=""
                             android:textColor="@color/colorBlue"
-                            android:textSize="@dimen/_11sdp" />
-
-                        <ImageView
-                            android:id="@+id/imgMore"
-                            android:layout_width="@dimen/_20sdp"
-                            android:layout_height="@dimen/_20sdp"
-                            android:src="@drawable/ic_more"/>
+                            android:textSize="@dimen/_10sdp" />
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/_10sdp"
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="Lead Date : "
+                            android:textSize="@dimen/_10sdp" />
+
+                        <TextView
+                            android:id="@+id/txtLeadDate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="ghjgjh"
+                            android:textColor="@color/color11"
+                            android:textSize="@dimen/_10sdp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/imgMore"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/ic_more" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_2sdp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_medium"
+                        android:text="Lead Person : "
+                        android:textSize="@dimen/_10sdp" />
+
+                    <TextView
+                        android:id="@+id/txtInquiryPerson"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:text=""
+                        android:textColor="@color/color10"
+                        android:textSize="@dimen/_10sdp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
                     <TextView
@@ -81,66 +123,17 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/poppins_medium"
                         android:text="Sub-Type :"
-                        android:textColor="@color/colorGray500"
                         android:textSize="@dimen/_10sdp" />
 
                     <TextView
                         android:id="@+id/txtInquirySubType"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/_5sdp"
                         android:fontFamily="@font/poppins_semibold"
                         android:text=""
                         android:textColor="@color/color2"
-                        android:textSize="@dimen/_11sdp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:text="Inquiry Person :-  "
-                        android:textColor="@color/color10"
                         android:textSize="@dimen/_10sdp" />
-
-                    <TextView
-                        android:id="@+id/txtInquiryPerson"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:text=""
-                        android:textColor="@color/color10"
-                        android:textSize="@dimen/_10sdp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Lead No :- "
-                        android:textColor="@color/colorGray500"
-                        android:textSize="@dimen/_10sdp"
-                        android:fontFamily="@font/poppins_medium"/>
-                    <TextView
-                        android:id="@+id/txtLeadNo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/colorBlue"
-                        android:textSize="@dimen/_10sdp"
-                        android:text=""
-                        android:fontFamily="@font/poppins_medium"/>
                 </LinearLayout>
 
                 <View
@@ -166,18 +159,17 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_medium"
-                            android:text="Proposed Amount :"
-                            android:textColor="@color/colorGray500"
+                            android:text="Co Person Allotted :"
                             android:textSize="@dimen/_10sdp" />
 
                         <TextView
-                            android:id="@+id/txtProposedAmount"
+                            android:id="@+id/txtCoAllottedPerson"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
                             android:text=""
-                            android:textColor="@color/colorRed"
-                            android:textSize="@dimen/_11sdp" />
+                            android:textColor="@color/color1"
+                            android:textSize="@dimen/_10sdp" />
                     </LinearLayout>
 
                     <View
@@ -200,7 +192,6 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_medium"
                             android:text="Frequency :"
-                            android:textColor="@color/colorGray500"
                             android:textSize="@dimen/_10sdp" />
 
                         <TextView
@@ -231,7 +222,6 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_medium"
                             android:text="Lead Type :"
-                            android:textColor="@color/colorGray500"
                             android:textSize="@dimen/_10sdp" />
 
                         <TextView
@@ -264,7 +254,6 @@
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_medium"
                             android:text="Lead Status :"
-                            android:textColor="@color/colorGray500"
                             android:textSize="@dimen/_10sdp" />
 
                         <TextView
@@ -294,154 +283,178 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_medium"
-                            android:text="Allotted To Person :"
-                            android:textColor="@color/colorGray500"
+                            android:text="Allotted By Person :"
                             android:textSize="@dimen/_10sdp" />
 
                         <TextView
-                            android:id="@+id/txtAllottedPerson"
+                            android:id="@+id/txtAllottedByPerson"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text=""
+                            android:textColor="@color/colorBlue"
+                            android:textSize="@dimen/_10sdp" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="@dimen/_8sdp"
+                        android:layout_marginBottom="@dimen/_8sdp"
+                        android:background="@color/colorGray100" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_5sdp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_medium"
+                            android:text="Allotted To Person :"
+                            android:textSize="@dimen/_10sdp" />
+
+                        <TextView
+                            android:id="@+id/txtAllottedToPerson"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/poppins_semibold"
                             android:text=""
                             android:textColor="@color/color10"
-                            android:textSize="@dimen/_10sdp"  />
+                            android:textSize="@dimen/_10sdp" />
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginTop="@dimen/_8sdp"
-                        android:layout_marginBottom="@dimen/_8sdp"
-                        android:background="@color/colorGray100" />
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginLeft="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Allotted By Person :- "
-                            android:textColor="@color/colorGray500"
-                            android:textSize="@dimen/_10sdp"
-                            android:fontFamily="@font/poppins_medium"/>
-                        <TextView
-                            android:id="@+id/txtAllottedToPerson"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/colorBlue"
-                            android:textSize="@dimen/_10sdp"
-                            android:text=""
-                            android:fontFamily="@font/poppins_medium"/>
-                    </LinearLayout>
                 </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGray500" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="Co Person Allotted :"
-                            android:textColor="@color/colorGray500"
-                            android:textSize="@dimen/_10sdp" />
-
-                        <TextView
-                            android:id="@+id/txtCoAllottedPerson"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:text=""
-                            android:textColor="@color/color1"
-                            android:textSize="@dimen/_10sdp"  />
-                    </LinearLayout>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
 
                     <View
-                        android:layout_width="0dp"
+                        android:layout_width="1dp"
                         android:layout_height="match_parent"
-                        android:layout_marginTop="@dimen/_8sdp"
-                        android:layout_marginBottom="@dimen/_8sdp"
-                        android:background="@color/colorGray100" />
+                        android:background="@color/colorGray500" />
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/txtInquiryType"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/_10sdp"
-                        android:layout_marginTop="@dimen/_5sdp"
                         android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:fontFamily="@font/poppins_semibold"
+                        android:gravity="center"
+                        android:paddingVertical="@dimen/_5sdp"
+                        android:paddingHorizontal="@dimen/_3sdp"
+                        android:text="Inquiry Type"
+                        android:textColor="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/poppins_medium"
-                            android:text="Lead Date :"
-                            android:textColor="@color/colorGray500"
-                            android:textSize="@dimen/_10sdp" />
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorGray500" />
 
-                        <TextView
-                            android:id="@+id/txtLeadDate"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:text=""
-                            android:textColor="@color/color11"
-                            android:textSize="@dimen/_11sdp" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/txtProposedAmount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:gravity="center"
+                        android:paddingVertical="@dimen/_5sdp"
+                        android:paddingHorizontal="@dimen/_3sdp"
+                        android:text="Proposed Amount"
+                        android:textColor="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorGray500" />
+
+                    <TextView
+                        android:id="@+id/txtClosingAmount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:gravity="center"
+                        android:paddingVertical="@dimen/_5sdp"
+                        android:paddingHorizontal="@dimen/_3sdp"
+                        android:text="Closing Amount"
+                        android:textColor="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@color/colorGray500" />
                 </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/colorGray500" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvInquiryList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:overScrollMode="never"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/adapter_inquiry_type_list" />
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:background="@drawable/bg_top_corner"
                 android:layout_marginStart="@dimen/_1sdp"
-                android:layout_marginEnd="@dimen/_1sdp">
+                android:layout_marginEnd="@dimen/_1sdp"
+                android:background="@drawable/bg_top_corner"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/txtEdit"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text="EDIT"
-                    android:textColor="@color/white"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:gravity="center"
-                    android:padding="@dimen/_5sdp"/>
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@color/white"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:layout_marginBottom="@dimen/_2sdp"
-                    android:visibility="gone"/>
-                <TextView
-                    android:id="@+id/txtDelete"
-                    android:layout_width="0dp"
                     android:layout_weight="1"
-                    android:layout_height="wrap_content"
-                    android:text="Delete"
-                    android:textColor="@color/white"
                     android:fontFamily="@font/poppins_semibold"
                     android:gravity="center"
                     android:padding="@dimen/_5sdp"
-                    android:visibility="gone"/>
+                    android:text="EDIT"
+                    android:textColor="@color/white" />
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="@dimen/_2sdp"
+                    android:layout_marginBottom="@dimen/_2sdp"
+                    android:background="@color/white"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txtDelete"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:gravity="center"
+                    android:padding="@dimen/_5sdp"
+                    android:text="Delete"
+                    android:textColor="@color/white"
+                    android:visibility="gone" />
 
             </LinearLayout>
         </LinearLayout>

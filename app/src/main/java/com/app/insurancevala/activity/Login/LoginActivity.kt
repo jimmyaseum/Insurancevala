@@ -9,6 +9,7 @@ import android.view.inputmethod.EditorInfo
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.activity.DashBoard.HomeActivity
+import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.response.LoginModel
 import com.app.insurancevala.model.response.LoginResponse
 import com.app.insurancevala.retrofit.ApiUtils
@@ -18,8 +19,6 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_login.layout
-import kotlinx.android.synthetic.main.activity_login.imgBack
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,18 +30,23 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
     var sharedPreference: SharedPreference? = null
 
     var fcmDeviceToken = ""
+
+    var boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         sharedPreference = SharedPreference(applicationContext)
         overridePendingTransition(R.anim.fadein, R.anim.fadeout)
         initializeView()
-
         getDeviceToken()
 
     }
 
     override fun initializeView() {
+        boolean = intent.getBooleanExtra("Login", false)
+        if (boolean == true) {
+            CallLogoutAPI()
+        }
         SetAnimationControl()
         SetInitListner()
     }
@@ -118,6 +122,31 @@ class LoginActivity : BaseActivity(), View.OnClickListener {
                 }
             }
         }
+    }
+
+    private fun CallLogoutAPI() {
+
+        showProgress()
+
+        var jsonObject = JSONObject()
+        jsonObject.put("UserName", sharedPreference!!.getPreferenceString(PrefConstants.PREF_USER_EMAIL)!!)
+
+        val call = ApiUtils.apiInterface.ManageUserLogout(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<CommonResponse> {
+            override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
+                hideProgress()
+                if (response.code() == 200) {
+                    if (response.body()?.Status == 200) {
+                        sharedPreference!!.clearSharedPreference()
+                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                    }
+                }
+            }
+            override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
+                hideProgress()
+                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+            }
+        })
     }
 
     private fun getDeviceToken() {

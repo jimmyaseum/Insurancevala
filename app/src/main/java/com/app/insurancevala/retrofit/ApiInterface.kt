@@ -86,7 +86,7 @@ interface ApiInterface {
     @POST("Master/ManageMeetingOutcome")
     fun ManageMeetingOutcome(@Body body: RequestBody?): retrofit2.Call<MeetingOutcomeResponse>
 
-    @GET("MasterSub/TotalLeadCount")
+    @GET("Leads/TotalLeadCount")
     fun ManageLeadCount(): retrofit2.Call<LeadCountResponse>
 
     @POST("Master/ManageLead")
@@ -154,11 +154,17 @@ interface ApiInterface {
     @POST("NBInquiry/NBInquiryFindByID")
     fun ManageNBInquiryFindByID(@Body body: RequestBody?): retrofit2.Call<NBInquiryByGUIDResponse>
 
+    @POST("ActivityLog/FindAllInquiryLeadNotActivity")
+    fun ManageNoInquiryLead(@Body body: RequestBody?): retrofit2.Call<NBNoLeadInquiryResponse>
+
     @POST("NBInquiry/NBInquiryFindLeadStatus")
     fun ManageNBInquiryFindLeadStatus(@Body body: RequestBody?): retrofit2.Call<NBInquiryLeadStatusResponse>
 
     @POST("ActivityLog/ActivityLogFindAll")
     fun ActivityLogFindAll(@Body body: RequestBody?): retrofit2.Call<ActivityLogResponse>
+
+    @POST("ActivityLog/NBLeadActivityLogFindAll")
+    fun NBLeadActivityLogFindAll(@Body body: RequestBody?): retrofit2.Call<ActivityLogResponse>
 
     @POST("ActivityLog/NBLeadActivityLogFindAll")
     fun ActivityLogGUID(@Body body: RequestBody?): retrofit2.Call<ActivityLogResponse>

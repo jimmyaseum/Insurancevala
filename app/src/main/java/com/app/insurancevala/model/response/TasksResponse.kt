@@ -47,6 +47,8 @@ data class TasksModel (
     val LeadID: Int? = null,
     @SerializedName("TaskOwnerID")
     val TaskOwnerID: Int? = null,
+    @SerializedName("StartDate")
+    val StartDate: String? = null,
     @SerializedName("DueDate")
     val DueDate: String? = null,
     @SerializedName("TaskStatus")

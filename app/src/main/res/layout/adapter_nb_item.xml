@@ -79,7 +79,7 @@
                             android:layout_marginLeft="@dimen/_5sdp"
                             android:fontFamily="@font/poppins_medium"
                             android:gravity="center_vertical"
-                            android:text="sedgsd"
+                            android:text=""
                             android:textColor="@color/colorBlack"
                             android:textSize="@dimen/_10sdp" />
 

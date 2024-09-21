@@ -5,6 +5,7 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -84,7 +85,7 @@ class ActivityLog : BaseActivity(), View.OnClickListener, RecyclerClickListener 
         if (NBActivityType == "Inquiry") {
             txtHearderText.text = "Inquiry Activity Log"
         } else {
-            txtHearderText.text = "Inquiry Activity Log"
+            txtHearderText.text = "Lead Activity Log"
         }
     }
 
@@ -248,39 +249,52 @@ class ActivityLog : BaseActivity(), View.OnClickListener, RecyclerClickListener 
                     CalenderFromDate.get(Calendar.MONTH),
                     CalenderFromDate.get(Calendar.DAY_OF_MONTH)
                 )
+//                dpd.datePicker.minDate = System.currentTimeMillis() - 1000
+                dpd.datePicker.maxDate = System.currentTimeMillis() - 1000
                 dpd.show()
             }
 
             R.id.edtToDate -> {
                 preventTwoClick(v)
-                val dpd = DatePickerDialog(
-                    this,
-                    DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
-                        CalenderToDate.set(Calendar.YEAR, year)
-                        CalenderToDate.set(Calendar.MONTH, monthOfYear)
-                        CalenderToDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                if (edtFromDate.text.isNotEmpty()) {
+                    val dpd = DatePickerDialog(
+                        this,
+                        DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                            CalenderToDate.set(Calendar.YEAR, year)
+                            CalenderToDate.set(Calendar.MONTH, monthOfYear)
+                            CalenderToDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
-                        ToDate = SimpleDateFormat(AppConstant.yyyy_MM_dd_Dash, Locale.US).format(
-                            CalenderToDate.time
-                        )
+                            ToDate =
+                                SimpleDateFormat(AppConstant.yyyy_MM_dd_Dash, Locale.US).format(
+                                    CalenderToDate.time
+                                )
 
-                        val selecteddate =
-                            SimpleDateFormat(AppConstant.dd_MM_yyyy_HH_mm_ss, Locale.US).format(
-                                CalenderToDate.time
+                            val selecteddate =
+                                SimpleDateFormat(AppConstant.dd_MM_yyyy_HH_mm_ss, Locale.US).format(
+                                    CalenderToDate.time
+                                )
+                            val mDate = convertDateStringToString(
+                                selecteddate,
+                                AppConstant.dd_MM_yyyy_HH_mm_ss,
+                                AppConstant.dd_LLL_yyyy
                             )
-                        val mDate = convertDateStringToString(
-                            selecteddate, AppConstant.dd_MM_yyyy_HH_mm_ss, AppConstant.dd_LLL_yyyy
-                        )
-                        edtToDate.setText(mDate)
-                        if (!FromDate.equals("")) {
-                            callActivityLog()
-                        }
-                    },
-                    CalenderToDate.get(Calendar.YEAR),
-                    CalenderToDate.get(Calendar.MONTH),
-                    CalenderToDate.get(Calendar.DAY_OF_MONTH)
-                )
-                dpd.show()
+                            edtToDate.setText(mDate)
+                            if (!FromDate.equals("")) {
+                                callActivityLog()
+                            }
+                        },
+                        CalenderToDate.get(Calendar.YEAR),
+                        CalenderToDate.get(Calendar.MONTH),
+                        CalenderToDate.get(Calendar.DAY_OF_MONTH)
+                    )
+//                dpd.datePicker.minDate = System.currentTimeMillis() - 1000
+                    dpd.datePicker.maxDate = System.currentTimeMillis() - 1000
+                    dpd.show()
+                } else {
+                    Snackbar.make(
+                        layout, "Select From Date", Snackbar.LENGTH_LONG
+                    ).show()
+                }
             }
         }
     }
@@ -479,7 +493,7 @@ class ActivityLog : BaseActivity(), View.OnClickListener, RecyclerClickListener 
         jsonObject.put("ToDate", ToDate)
 
         val call =
-            ApiUtils.apiInterface.ActivityLogFindAll(getRequestJSONBody(jsonObject.toString()))
+            ApiUtils.apiInterface.NBLeadActivityLogFindAll(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<ActivityLogResponse> {
             override fun onResponse(
                 call: Call<ActivityLogResponse>, response: Response<ActivityLogResponse>
@@ -642,6 +656,29 @@ class ActivityLog : BaseActivity(), View.OnClickListener, RecyclerClickListener 
             103 -> {
                 preventTwoClick(view)
                 callAttachmentList(arrayListActivity!![position].LogGUID!!)
+            }
+
+            104 -> {
+                preventTwoClick(view)
+                if (!arrayListActivity!![position].ActivityDescription.isNullOrEmpty()){
+                    if(arrayListActivity!![position].ActivityDescription!!.contains(".pdf")) {
+                        var format = "https://docs.google.com/gview?embedded=true&url=%s"
+                        val fullPath: String = java.lang.String.format(Locale.ENGLISH, format, arrayListActivity!![position].ActivityDescription!!)
+                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(fullPath))
+                        startActivity(browserIntent)
+                    } else {
+                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(arrayListActivity!![position].ActivityDescription!!))
+                        startActivity(browserIntent)
+                    }
+                }
+            }
+
+            105 -> {
+                preventTwoClick(view)
+                if (!arrayListActivity!![position].ActivityDescription.isNullOrEmpty()){
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(arrayListActivity!![position].ActivityDescription!!))
+                    startActivity(browserIntent)
+                }
             }
         }
     }

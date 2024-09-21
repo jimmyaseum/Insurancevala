@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f5f2f2">
+
+    <RelativeLayout
+        android:id="@+id/llTop"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        android:padding="@dimen/_5sdp">
+
+        <ImageView
+            android:id="@+id/imgBack"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/ic_back"
+            app:tint="@color/colorWhite" />
+
+        <TextView
+            android:id="@+id/txtHearderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/poppins_regular"
+            android:gravity="center"
+            android:text="No Activity List"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_12sdp" />
+
+        <ImageView
+            android:id="@+id/imgSearch"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:padding="@dimen/_5sdp"
+            android:src="@drawable/ic_search"
+            android:visibility="visible"
+            app:tint="@color/colorWhite" />
+
+        <com.ferfalk.simplesearchview.SimpleSearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentRight="true"
+            android:textColor="@color/colorWhite"
+            app:backIconTint="@color/colorWhite"
+            app:hintColor="@color/white"
+            app:iconsTint="@color/colorWhite"
+            app:searchBackground="@color/colorBlack" />
+
+    </RelativeLayout>
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/llTop">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/llType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:background="@drawable/bg">
+
+                <LinearLayout
+                    android:id="@+id/llInquiry"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_upcoming">
+
+                    <TextView
+                        android:id="@+id/tvInquiry"
+                        style="@style/TextViewStyleRegular"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:padding="@dimen/_8sdp"
+                        android:text="Inquiry"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_14sdp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/llLead"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1">
+
+                    <TextView
+                        android:id="@+id/tvLead"
+                        style="@style/TextViewStyleRegular"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:padding="@dimen/_8sdp"
+                        android:text="Lead"
+                        android:textAllCaps="true"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="@dimen/_14sdp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/LLInquiryType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:layout_below="@+id/llType"
+                android:orientation="vertical"
+                android:layout_marginHorizontal="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp">
+
+                <TextView
+                    android:id="@+id/txtInquiryType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_regular"
+                    android:text="Inquiry Type"
+                    android:textColor="@color/colorGray500"
+                    android:textSize="@dimen/_10sdp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/edtInquiryType"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@null"
+                        android:clickable="true"
+                        android:drawableRight="@drawable/ic_down"
+                        android:drawableTint="@color/colorGray500"
+                        android:editable="false"
+                        android:focusable="false"
+                        android:fontFamily="@font/poppins_regular"
+                        android:singleLine="true"
+                        android:textColor="@color/colorBlack"
+                        android:textColorHint="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/_1sdp"
+                        android:background="@color/colorGradish" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/llDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_5sdp"
+                android:layout_below="@+id/LLInquiryType"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/edtFromDate"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:hint="From Date"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:textColorHint="@color/colorGray500"
+                    android:textSize="@dimen/_12sdp"
+                    android:padding="@dimen/_5sdp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:background="@drawable/bg_button"
+                    android:backgroundTint="@color/shadow_gray"
+                    android:singleLine="true"
+                    android:clickable="true"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:layout_margin="@dimen/_3sdp"
+                    android:drawableRight="@drawable/ic_calendar"
+                    android:drawableTint="@color/colorGray500"/>
+                <EditText
+                    android:id="@+id/edtToDate"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:hint="To Date"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorBlack"
+                    android:textColorHint="@color/colorGray500"
+                    android:textSize="@dimen/_12sdp"
+                    android:padding="@dimen/_5sdp"
+                    android:fontFamily="@font/poppins_regular"
+                    android:background="@drawable/bg_button"
+                    android:backgroundTint="@color/shadow_gray"
+                    android:singleLine="true"
+                    android:clickable="true"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:layout_margin="@dimen/_3sdp"
+                    android:drawableRight="@drawable/ic_calendar"
+                    android:drawableTint="@color/colorGray500"/>
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/RvInquiryList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/llDate"
+                android:visibility="visible"
+                tools:listitem="@layout/adapter_no_inquiry_lead_item" />
+
+            <RelativeLayout
+                android:id="@+id/RLNoData"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/no_data_found" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+</RelativeLayout>

@@ -8,5 +8,5 @@ interface RecyclerClickListener {
 }
 
 interface RecyclerItemClickListener {
-    fun onItemClickEvent(view: View, position: Int, type: Int, name : String)
+    fun onItemClickEvent(view: View, position: Int, type: Int, name: String)
 }

@@ -28,6 +28,7 @@ import com.app.insurancevala.utils.errortint
 import com.app.insurancevala.utils.getRequestJSONBody
 import com.app.insurancevala.utils.gone
 import com.app.insurancevala.utils.hideKeyboard
+import com.app.insurancevala.utils.preventTwoClick
 import com.app.insurancevala.utils.visible
 import com.example.awesomedialog.AwesomeDialog
 import com.example.awesomedialog.body
@@ -115,7 +116,11 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
     override fun onItemClickEvent(view: View, position: Int, type: Int) {
         when (type) {
             100 -> { // Play Audio
-                adapter.updatePlayback(position)
+//                adapter.updatePlayback(position)
+                if (!arrayListRecording!![position].RecodingFiles.isNullOrEmpty()){
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(arrayListRecording!![position].RecodingFiles!!))
+                    startActivity(browserIntent)
+                }
             }
 
             101 -> { // Update Recording

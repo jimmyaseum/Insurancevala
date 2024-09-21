@@ -18,19 +18,25 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
+import com.app.insurancevala.adapter.AddClosingAmountAdapter
+import com.app.insurancevala.adapter.AddProspectAmountAdapter
 import com.app.insurancevala.adapter.bottomsheetadapter.*
 import com.app.insurancevala.interFase.RecyclerClickListener
+import com.app.insurancevala.interFase.RecyclerItemClickListener
+import com.app.insurancevala.model.pojo.ClosingAmountInfoModel
+import com.app.insurancevala.model.pojo.ProposedAmountInfoModel
 import com.app.insurancevala.model.response.*
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_edit_nbinquiry.*
+import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class InquiryEditActivity : BaseActivity(), View.OnClickListener {
+class InquiryEditActivity : BaseActivity(), View.OnClickListener, RecyclerClickListener, RecyclerItemClickListener {
     var sharedPreference: SharedPreference? = null
     var state: String? = null
 
@@ -47,7 +53,7 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
 
     var arrayListInquiryType: ArrayList<InquiryTypeModel>? = ArrayList()
     var mInquiryType: String = ""
-    var mInquiryTypeID: Int = 0
+    var mInquiryTypeID: String = ""
 
     var arrayListFamilyMember: ArrayList<FamilyModel>? = ArrayList()
     var mFamilyMember: String = ""
@@ -58,7 +64,7 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
 
     var arrayListInquirySubType: ArrayList<InquirySubTypeModel>? = ArrayList()
     var mInquirySubType: String = ""
-    var mInquirySubTypeID: Int = 0
+    var mInquirySubTypeID: String = ""
 
     var Edit: Boolean = true
 
@@ -69,6 +75,12 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
     var arrayListInquiryCoPersonAllotmentTo: ArrayList<UserModel>? = ArrayList()
     var mInquiryCoPersonAllotmentTo: String = ""
     var mInquiryCoPersonAllotmentToID: Int = 0
+
+    var arrayListProposedAmount: ArrayList<ProposedAmountInfoModel>? = ArrayList()
+    var arrayListClosingAmount: ArrayList<ClosingAmountInfoModel>? = ArrayList()
+    var arrayListInquiryTypeName: ArrayList<com.app.insurancevala.model.pojo.InquiryTypeModel>? = ArrayList()
+    lateinit var addProspectAmountAdapter: AddProspectAmountAdapter
+    lateinit var addClosingAmountAdapter: AddClosingAmountAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -160,7 +172,7 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                 if (arrayListInquiryType.isNullOrEmpty()) {
                     callManageInquiryType(1)
                 } else {
-                    selectInquiryTypeDialog()
+                    multiSelectInquiryTypeDialog()
                 }
             }
 
@@ -169,7 +181,7 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                 if (arrayListInquirySubType.isNullOrEmpty()) {
                     callManageInquirySubType(1, mInquiryTypeID)
                 } else {
-                    selectInquirySubTypeDialog()
+                    multiSelectInquirySubTypeDialog()
                 }
             }
 
@@ -256,13 +268,21 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
             edtLeadStatus.setError("Select Lead Status", errortint(this))
             isValidate = false
         }
-        if (edtProposedAmount.text.isEmpty()) {
-            edtProposedAmount.setError("Enter Proposed Amount", errortint(this))
-            isValidate = false
-        }
         if (edtFrequency.text.isEmpty()) {
             edtFrequency.setError("Select Frequency", errortint(this))
             isValidate = false
+        }
+        if (::addProspectAmountAdapter.isInitialized) {
+            if (!addProspectAmountAdapter.isValidateItem()) {
+                isValidate = false
+            }
+        }
+        if (mLeadstatusID == 7) {
+            if (::addClosingAmountAdapter.isInitialized) {
+                if (!addClosingAmountAdapter.isValidateItem()) {
+                    isValidate = false
+                }
+            }
         }
         return isValidate
     }
@@ -313,18 +333,50 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
 
         showProgress()
 
-        var jsonObject = JSONObject()
+        val arrayListProposedAmount = addProspectAmountAdapter.getAdapterArrayList()
+
+        var arrayListClosingAmount: ArrayList<ClosingAmountInfoModel>? = ArrayList()
+        if (::addClosingAmountAdapter.isInitialized) {
+            arrayListClosingAmount = addClosingAmountAdapter.getAdapterArrayList()
+        }
+
+        val InquiryType = mInquiryTypeID.split(", ")
+
+        val jsonArrayNBInquiryDetail = JSONArray()
+        if (::addProspectAmountAdapter.isInitialized) {
+            if (!arrayListProposedAmount.isNullOrEmpty()) {
+                for (j in 0 until arrayListProposedAmount!!.size) {
+                    val jsonObjectNBInquiryDetail = JSONObject()
+                    jsonObjectNBInquiryDetail.put("SrNo", 0)
+                    jsonObjectNBInquiryDetail.put("InquiryTypeID", InquiryType[j].toInt())
+                    jsonObjectNBInquiryDetail.put("ProposedAmount", arrayListProposedAmount[j].ProspectAmount!!.toDouble())
+                    if (mLeadstatusID == 7) {
+                        jsonObjectNBInquiryDetail.put(
+                            "ClosingAmount",
+                            arrayListClosingAmount!![j].ClosingAmount!!.toDouble()
+                        )
+                    } else {
+                        jsonObjectNBInquiryDetail.put(
+                            "ClosingAmount",
+                            null
+                        )
+                    }
+                    jsonArrayNBInquiryDetail.put(jsonObjectNBInquiryDetail)
+                }
+            }
+        }
+
+        val jsonObject = JSONObject()
+
         jsonObject.put("NBInquiryTypeGUID", NBInquiryTypeGUID)
         jsonObject.put("NBInquiryBy", mFamilyMemberID)
-        jsonObject.put("InquiryTypeID", mInquiryTypeID)
         jsonObject.put("InquirySubTypeID", mInquirySubTypeID)
         jsonObject.put("InquiryAllotmentID", mInquiryAllotmentToID)
         jsonObject.put("CoPersonAllotmentID", mInquiryCoPersonAllotmentToID)
         jsonObject.put("LeadTypeID", mLeadtypeID)
         jsonObject.put("LeadStatusID", mLeadstatusID)
-        jsonObject.put("ProposedAmount", edtProposedAmount.text.toString().toDouble())
         jsonObject.put("Frequency", mFrequency)
-//        jsonObject.put("OperationType", 8)
+        jsonObject.put("NBInquiryDetailReq", jsonArrayNBInquiryDetail)
 
         val call =
             ApiUtils.apiInterface.ManageNBInquiryTypeUpdate(getRequestJSONBody(jsonObject.toString()))
@@ -381,16 +433,16 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
             callManageFamilyDetails(0)
         }
 
-        if (arraylist!!.InquiryTypeID != null && arraylist.InquiryTypeID != 0) {
+        if (!arraylist.InquiryTypeID.isNullOrEmpty()) {
             mInquiryType = arraylist.InquiryType!!
-            mInquiryTypeID = arraylist.InquiryTypeID!!
+            mInquiryTypeID = arraylist.InquiryTypeID.toString()
             edtInquiryType.setText(mInquiryType)
             callManageInquiryType(0)
         }
 
-        if (arraylist.InquirySubTypeID != null && arraylist.InquirySubTypeID != 0) {
+        if (!arraylist.InquirySubTypeID.isNullOrEmpty()) {
             mInquirySubType = arraylist.InquirySubType!!
-            mInquirySubTypeID = arraylist.InquirySubTypeID
+            mInquirySubTypeID = arraylist.InquirySubTypeID.toString()
             edtInquirySub.setText(mInquirySubType)
             callManageInquirySubType(0, mInquiryTypeID)
         }
@@ -407,10 +459,6 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
             mLeadstatusID = arraylist.LeadStatusID
             edtLeadStatus.setText(mLeadstatus)
             callManageLeadStatus(0)
-        }
-
-        if (arraylist.ProposedAmount != null && arraylist.ProposedAmount != 0.0) {
-            edtProposedAmount.setText(arraylist.ProposedAmount.toString())
         }
 
         if (arraylist.Frequency != null && arraylist.Frequency != "") {
@@ -437,11 +485,65 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
             callManageInquiryAllotmentTo(0, 0)
         }
 
+        if (!arraylist.ProposedAmount.isNullOrEmpty()) {
+            val splitListProposedAmount = arraylist.ProposedAmount.split(", ")
+            for (j in splitListProposedAmount.indices) {
+                arrayListProposedAmount!!.add(
+                    ProposedAmountInfoModel(
+                        ProspectAmount = splitListProposedAmount[j]
+                    )
+                )
+            }
+        }
+
+        if (arraylist.ClosingAmount.isNullOrEmpty()) {
+            val splitListClosingAmount = arraylist.ProposedAmount!!.split(", ")
+            for (j in splitListClosingAmount.indices) {
+                arrayListClosingAmount!!.add(
+                    ClosingAmountInfoModel(
+                        ClosingAmount = ""
+                    )
+                )
+            }
+        } else {
+            val splitListClosingAmount = arraylist.ClosingAmount.split(", ")
+            for (j in splitListClosingAmount.indices) {
+                arrayListClosingAmount!!.add(
+                    ClosingAmountInfoModel(
+                        ClosingAmount = splitListClosingAmount[j]
+                    )
+                )
+            }
+        }
+
+        val splitListInquiryType = arraylist.InquiryType!!.split(",")
+        for (j in splitListInquiryType.indices) {
+            arrayListInquiryTypeName!!.add(
+                com.app.insurancevala.model.pojo.InquiryTypeModel(
+                    InquiryType = splitListInquiryType[j]
+                )
+            )
+        }
+
+        if (arrayListProposedAmount!!.size > 0) {
+            cvProposedAmount.visible()
+            addProspectAmountAdapter = AddProspectAmountAdapter(arrayListProposedAmount, arrayListInquiryTypeName!!, this)
+            rvProposedAmount.adapter = addProspectAmountAdapter
+        }
+
+        if (arrayListClosingAmount!!.size > 0 && mLeadstatusID == 7) {
+            cvClosingAmount.visible()
+            addClosingAmountAdapter = AddClosingAmountAdapter(arrayListClosingAmount, arrayListInquiryTypeName!!, this)
+            rvClosingAmount.adapter = addClosingAmountAdapter
+        }
+
     }
 
     private fun callManageFamilyDetails(mode: Int) {
 
-        showProgress()
+        if (mode == 1) {
+            showProgress()
+        }
 
         var jsonObject = JSONObject()
         jsonObject.put("ID", LeadID)
@@ -614,18 +716,8 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                     if (response.body()?.Status == 200) {
                         arrayListInquiryType = response.body()?.Data!!
 
-                        if (arrayListInquiryType!!.size > 0) {
-                            for (i in 0 until arrayListInquiryType!!.size) {
-                                if (state.equals(AppConstant.S_EDIT)) {
-                                    if (arrayListInquiryType!![i].ID == mInquiryTypeID) {
-                                        arrayListInquiryType!![i].IsSelected = true
-                                    }
-                                }
-                            }
-                        }
-
                         if (mode == 1) {
-                            selectInquiryTypeDialog()
+                            multiSelectInquiryTypeDialog()
                         }
                     } else {
                         Snackbar.make(
@@ -648,64 +740,108 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
         })
     }
 
-    private fun selectInquiryTypeDialog() {
-        var dialogSelectInquiryType = Dialog(this)
-        dialogSelectInquiryType.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    private fun multiSelectInquiryTypeDialog() {
+
+        var dialogMultiSelectInquiryType = Dialog(this)
+        dialogMultiSelectInquiryType.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         val dialogView = layoutInflater.inflate(R.layout.dialog_select, null)
-        dialogSelectInquiryType.setContentView(dialogView)
+        dialogMultiSelectInquiryType.setContentView(dialogView)
 
         val lp = WindowManager.LayoutParams()
-        lp.copyFrom(dialogSelectInquiryType.window!!.attributes)
+        lp.copyFrom(dialogMultiSelectInquiryType.window!!.attributes)
 
-        dialogSelectInquiryType.window!!.attributes = lp
-        dialogSelectInquiryType.setCancelable(true)
-        dialogSelectInquiryType.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialogMultiSelectInquiryType.window!!.attributes = lp
+        dialogMultiSelectInquiryType.setCancelable(true)
+        dialogMultiSelectInquiryType.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectInquiryType.window!!.setLayout(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+        dialogMultiSelectInquiryType.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
-        dialogSelectInquiryType.window!!.setGravity(Gravity.CENTER)
+        dialogMultiSelectInquiryType.window!!.setGravity(Gravity.CENTER)
 
         val rvDialogCustomer =
-            dialogSelectInquiryType.findViewById(R.id.rvDialogCustomer) as RecyclerView
+            dialogMultiSelectInquiryType.findViewById(R.id.rvDialogCustomer) as RecyclerView
         val edtSearchCustomer =
-            dialogSelectInquiryType.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid = dialogSelectInquiryType.findViewById(R.id.txtid) as TextView
-        val imgClear = dialogSelectInquiryType.findViewById(R.id.imgClear) as ImageView
-
-        imgClear.setOnClickListener {
-            dialogSelectInquiryType.dismiss()
-        }
+            dialogMultiSelectInquiryType.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogMultiSelectInquiryType.findViewById(R.id.txtid) as TextView
+        val imgClear = dialogMultiSelectInquiryType.findViewById(R.id.imgClear) as ImageView
 
         txtid.text = "Select Inquiry Type"
+        imgClear.setImageResource(R.drawable.done)
 
-        val itemAdapter = BottomSheetInquiryTypeListAdapter(this, arrayListInquiryType!!)
-        itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
-
-                itemAdapter.updateItem(pos)
-                mInquiryTypeID = arrayListInquiryType!![pos].ID!!
-                mInquiryType = arrayListInquiryType!![pos].InquiryType!!
-                edtInquiryType.setText(mInquiryType)
-
-                arrayListInquirySubType = ArrayList()
-                mInquirySubType = ""
-                mInquirySubTypeID = 0
-                edtInquirySub.setText("")
-
-                callManageInquirySubType(1, mInquiryTypeID)
-                dialogSelectInquiryType!!.dismiss()
+        if (arrayListInquiryType!!.size > 0) {
+            for (i in arrayListInquiryType!!.indices) {
+                arrayListInquiryType!![i].IsSelected = false
+                val splitList = mInquiryTypeID.split(",")
+                for (j in splitList.indices) {
+                    if (arrayListInquiryType!![i].ID.toString() == splitList[j].trim()) {
+                        arrayListInquiryType!![i].IsSelected = true
+                    }
+                }
             }
-        })
+        }
 
+        var itemAdapter = InquiryTypeMultiSelectAdapter(this, arrayListInquiryType!!)
         rvDialogCustomer.adapter = itemAdapter
 
         if (arrayListInquiryType!!.size > 6) {
             edtSearchCustomer.visible()
         } else {
             edtSearchCustomer.gone()
+        }
+
+        imgClear.setOnClickListener {
+
+            val inquiryTypes = itemAdapter.getCheckBoxSelected()
+            val inquiryTypesId = itemAdapter.getCheckBoxSelectedID()
+
+            if (!inquiryTypes.isNullOrEmpty()) {
+
+                arrayListInquiryTypeName = ArrayList()
+                arrayListProposedAmount = ArrayList()
+                arrayListClosingAmount = ArrayList()
+
+                for (i in inquiryTypes.indices) {
+                    arrayListInquiryTypeName!!.add(
+                        com.app.insurancevala.model.pojo.InquiryTypeModel(
+                            InquiryType = inquiryTypes[i]
+                        )
+                    )
+                    arrayListProposedAmount!!.add(ProposedAmountInfoModel())
+                    arrayListClosingAmount!!.add(ClosingAmountInfoModel())
+                }
+
+                addProspectAmountAdapter = AddProspectAmountAdapter(arrayListProposedAmount, arrayListInquiryTypeName!!, this)
+                rvProposedAmount.adapter = addProspectAmountAdapter
+
+                addClosingAmountAdapter = AddClosingAmountAdapter(arrayListClosingAmount, arrayListInquiryTypeName!!, this)
+                rvClosingAmount.adapter = addClosingAmountAdapter
+
+                cvProposedAmount.visible()
+
+                mInquiryType = inquiryTypes.toString().replace("[", "").replace("]", "")
+                mInquiryTypeID = inquiryTypesId.toString().replace("[", "").replace("]", "")
+                edtInquiryType.setText(mInquiryType)
+
+                mInquirySubType = ""
+                mInquirySubTypeID = ""
+                edtInquirySub.setText("")
+                callManageInquirySubType(1, inquiryTypesId.toString().replace("[", "").replace("]", ""))
+                dialogMultiSelectInquiryType.dismiss()
+            } else {
+                Snackbar.make(
+                    layout, "Select At-least One Inquiry Type", Snackbar.LENGTH_LONG
+                ).show()
+            }
+
+            if (!inquiryTypes.isNullOrEmpty()) {
+
+            } else {
+                Snackbar.make(
+                    layout, "Select At-least One Inquiry Type", Snackbar.LENGTH_LONG
+                ).show()
+            }
         }
 
         edtSearchCustomer.addTextChangedListener(object : TextWatcher {
@@ -726,55 +862,20 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                     }
 
                     val itemAdapter =
-                        BottomSheetInquiryTypeListAdapter(this@InquiryEditActivity, arrItemsFinal1)
-                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
-
-                            mInquiryTypeID = arrItemsFinal1!![pos].ID!!
-                            mInquiryType = arrItemsFinal1!![pos].InquiryType!!
-                            edtInquiryType.setText(mInquiryType)
-
-                            arrayListInquirySubType = ArrayList()
-                            mInquirySubType = ""
-                            mInquirySubTypeID = 0
-                            edtInquirySub.setText("")
-
-                            callManageInquirySubType(1, mInquiryTypeID)
-
-                            dialogSelectInquiryType!!.dismiss()
-                        }
-                    })
+                        InquiryTypeMultiSelectAdapter(this@InquiryEditActivity, arrItemsFinal1)
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter = BottomSheetInquiryTypeListAdapter(
-                        this@InquiryEditActivity,
-                        arrayListInquiryType!!
+                    val itemAdapter = InquiryTypeMultiSelectAdapter(
+                        this@InquiryEditActivity, arrayListInquiryType!!
                     )
-                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
-
-                            mInquiryTypeID = arrayListInquiryType!![pos].ID!!
-                            mInquiryType = arrayListInquiryType!![pos].InquiryType!!
-                            edtInquiryType.setText(mInquiryType)
-
-                            arrayListInquirySubType = ArrayList()
-                            mInquirySubType = ""
-                            mInquirySubTypeID = 0
-                            edtInquirySub.setText("")
-
-                            callManageInquirySubType(1, mInquiryTypeID)
-                            dialogSelectInquiryType!!.dismiss()
-
-                        }
-                    })
                     rvDialogCustomer.adapter = itemAdapter
                 }
             }
         })
-        dialogSelectInquiryType!!.show()
+        dialogMultiSelectInquiryType.show()
     }
 
-    private fun callManageInquirySubType(mode: Int, mInquiryTypeID: Int) {
+    private fun callManageInquirySubType(mode: Int, mInquiryTypeID: String) {
         if (mode == 1) {
             showProgress()
         }
@@ -793,18 +894,8 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                     if (response.body()?.Status == 200) {
                         arrayListInquirySubType = response.body()?.Data!!
 
-                        if (arrayListInquirySubType!!.size > 0) {
-                            for (i in 0 until arrayListInquirySubType!!.size) {
-                                if (state.equals(AppConstant.S_EDIT)) {
-                                    if (arrayListInquirySubType!![i].ID == mInquirySubTypeID) {
-                                        arrayListInquirySubType!![i].IsSelected = true
-                                    }
-                                }
-                            }
-                        }
-
                         if (mode == 1) {
-                            selectInquirySubTypeDialog()
+                            multiSelectInquirySubTypeDialog()
                         }
                     } else {
                         Snackbar.make(
@@ -825,60 +916,73 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                 ).show()
             }
         })
-
     }
 
-    private fun selectInquirySubTypeDialog() {
-        var dialogSelectInquirySubType = Dialog(this)
-        dialogSelectInquirySubType.requestWindowFeature(Window.FEATURE_NO_TITLE)
+    private fun multiSelectInquirySubTypeDialog() {
+
+        var dialogMultiSelectInquirySubType = Dialog(this)
+        dialogMultiSelectInquirySubType.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         val dialogView = layoutInflater.inflate(R.layout.dialog_select, null)
-        dialogSelectInquirySubType.setContentView(dialogView)
+        dialogMultiSelectInquirySubType.setContentView(dialogView)
 
         val lp = WindowManager.LayoutParams()
-        lp.copyFrom(dialogSelectInquirySubType.window!!.attributes)
+        lp.copyFrom(dialogMultiSelectInquirySubType.window!!.attributes)
 
-        dialogSelectInquirySubType.window!!.attributes = lp
-        dialogSelectInquirySubType.setCancelable(true)
-        dialogSelectInquirySubType.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialogMultiSelectInquirySubType.window!!.attributes = lp
+        dialogMultiSelectInquirySubType.setCancelable(true)
+        dialogMultiSelectInquirySubType.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        dialogSelectInquirySubType.window!!.setLayout(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+        dialogMultiSelectInquirySubType.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
-        dialogSelectInquirySubType.window!!.setGravity(Gravity.CENTER)
+        dialogMultiSelectInquirySubType.window!!.setGravity(Gravity.CENTER)
 
         val rvDialogCustomer =
-            dialogSelectInquirySubType.findViewById(R.id.rvDialogCustomer) as RecyclerView
+            dialogMultiSelectInquirySubType.findViewById(R.id.rvDialogCustomer) as RecyclerView
         val edtSearchCustomer =
-            dialogSelectInquirySubType.findViewById(R.id.edtSearchCustomer) as EditText
-        val txtid = dialogSelectInquirySubType.findViewById(R.id.txtid) as TextView
-        val imgClear = dialogSelectInquirySubType.findViewById(R.id.imgClear) as ImageView
-
-        imgClear.setOnClickListener {
-            dialogSelectInquirySubType.dismiss()
-        }
+            dialogMultiSelectInquirySubType.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogMultiSelectInquirySubType.findViewById(R.id.txtid) as TextView
+        val imgClear = dialogMultiSelectInquirySubType.findViewById(R.id.imgClear) as ImageView
 
         txtid.text = "Select Inquiry Sub Type"
+        imgClear.setImageResource(R.drawable.done)
 
-        val itemAdapter = BottomSheetInquirySubTypeListAdapter(this, arrayListInquirySubType!!)
-        itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-            override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
-
-                itemAdapter.updateItem(pos)
-                mInquirySubTypeID = arrayListInquirySubType!![pos].ID!!
-                mInquirySubType = arrayListInquirySubType!![pos].InquirySubType!!
-                edtInquirySub.setText(mInquirySubType)
-                dialogSelectInquirySubType!!.dismiss()
+        if (arrayListInquirySubType!!.size > 0) {
+            for (i in arrayListInquirySubType!!.indices) {
+                arrayListInquirySubType!![i].IsSelected = false
+                val splitList = mInquirySubTypeID.split(",")
+                for (j in splitList.indices) {
+                    if (arrayListInquirySubType!![i].ID.toString() == splitList[j].trim()) {
+                        arrayListInquirySubType!![i].IsSelected = true
+                    }
+                }
             }
-        })
+        }
 
+        var itemAdapter = InquirySubTypeMultiSelectAdapter(this, arrayListInquirySubType!!)
         rvDialogCustomer.adapter = itemAdapter
 
         if (arrayListInquirySubType!!.size > 6) {
             edtSearchCustomer.visible()
         } else {
             edtSearchCustomer.gone()
+        }
+
+        imgClear.setOnClickListener {
+            val inquirySubTypes = itemAdapter.getCheckBoxSelected()
+            val inquirySubTypesId = itemAdapter.getCheckBoxSelectedID()
+
+            if (!inquirySubTypes.isNullOrEmpty()) {
+                mInquirySubType = inquirySubTypes.toString().replace("[", "").replace("]", "")
+                mInquirySubTypeID = inquirySubTypesId.toString().replace("[", "").replace("]", "")
+                edtInquirySub.setText(mInquirySubType)
+                dialogMultiSelectInquirySubType.dismiss()
+            } else {
+                Snackbar.make(
+                    layout, "Select At-least One Inquiry Sub Type", Snackbar.LENGTH_LONG
+                ).show()
+            }
         }
 
         edtSearchCustomer.addTextChangedListener(object : TextWatcher {
@@ -893,48 +997,23 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                 if (char.toString().trim().isNotEmpty()) {
                     val strSearch = char.toString()
                     for (model in arrayListInquirySubType!!) {
-                        if (model.InquirySubType!!.toLowerCase()
-                                .contains(strSearch.toLowerCase())
-                        ) {
+                        if (model.InquirySubType!!.toLowerCase().contains(strSearch.toLowerCase())) {
                             arrItemsFinal1.add(model)
                         }
                     }
 
-                    val itemAdapter = BottomSheetInquirySubTypeListAdapter(
-                        this@InquiryEditActivity,
-                        arrItemsFinal1
-                    )
-                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
-                            itemAdapter.updateItem(pos)
-                            mInquirySubTypeID = arrItemsFinal1!![pos].ID!!
-                            mInquirySubType = arrItemsFinal1!![pos].InquirySubType!!
-                            edtInquirySub.setText(mInquirySubType)
-                            dialogSelectInquirySubType!!.dismiss()
-                        }
-                    })
+                    val itemAdapter =
+                        InquirySubTypeMultiSelectAdapter(this@InquiryEditActivity, arrItemsFinal1)
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter = BottomSheetInquirySubTypeListAdapter(
-                        this@InquiryEditActivity,
-                        arrayListInquirySubType!!
+                    val itemAdapter = InquirySubTypeMultiSelectAdapter(
+                        this@InquiryEditActivity, arrayListInquirySubType!!
                     )
-                    itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
-                        override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
-
-                            itemAdapter.updateItem(pos)
-                            mInquirySubTypeID = arrayListInquirySubType!![pos].ID!!
-                            mInquirySubType = arrayListInquirySubType!![pos].InquirySubType!!
-                            edtInquirySub.setText(mInquirySubType)
-                            dialogSelectInquirySubType!!.dismiss()
-
-                        }
-                    })
                     rvDialogCustomer.adapter = itemAdapter
                 }
             }
         })
-        dialogSelectInquirySubType!!.show()
+        dialogMultiSelectInquirySubType.show()
     }
 
     private fun callManageLeadType(mode: Int) {
@@ -1081,7 +1160,6 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                             mLeadtypeID = arrayListleadtype!![pos].ID!!
                             edtLeadType.setText(mLeadtype)
                             dialogSelectLeadType!!.dismiss()
-
                         }
                     })
                     rvDialogCustomer.adapter = itemAdapter
@@ -1183,6 +1261,13 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                 mLeadstatusID = arrayListleadstatus!![pos].ID!!
                 edtLeadStatus.setText(mLeadstatus)
                 dialogSelectLeadStatus!!.dismiss()
+
+                if (mLeadstatusID == 7 && !edtInquiryType.text.isNullOrEmpty()) {
+                    adapterClosingAmount()
+                    cvClosingAmount.visible()
+                } else {
+                    cvClosingAmount.gone()
+                }
             }
         })
 
@@ -1221,6 +1306,13 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                             mLeadstatusID = arrItemsFinal1!![pos].ID!!
                             edtLeadStatus.setText(mLeadstatus)
                             dialogSelectLeadStatus!!.dismiss()
+
+                            if (mLeadstatusID == 7 && !edtInquiryType.text.isNullOrEmpty()) {
+                                adapterClosingAmount()
+                                cvClosingAmount.visible()
+                            } else {
+                                cvClosingAmount.gone()
+                            }
                         }
                     })
                     rvDialogCustomer.adapter = itemAdapter
@@ -1238,6 +1330,12 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
                             edtLeadStatus.setText(mLeadstatus)
                             dialogSelectLeadStatus!!.dismiss()
 
+                            if (mLeadstatusID == 7 && !edtInquiryType.text.isNullOrEmpty()) {
+                                adapterClosingAmount()
+                                cvClosingAmount.visible()
+                            } else {
+                                cvClosingAmount.gone()
+                            }
                         }
                     })
                     rvDialogCustomer.adapter = itemAdapter
@@ -1245,6 +1343,11 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
             }
         })
         dialogSelectLeadStatus!!.show()
+    }
+
+    private fun adapterClosingAmount() {
+        addClosingAmountAdapter = AddClosingAmountAdapter(arrayListClosingAmount, arrayListInquiryTypeName!!, this)
+        rvClosingAmount.adapter = addClosingAmountAdapter
     }
 
     private fun callManageInquiryAllotmentTo(mode: Int, type: Int) {
@@ -1617,6 +1720,14 @@ class InquiryEditActivity : BaseActivity(), View.OnClickListener {
             }
         })
         dialogSelectFrequency!!.show()
+    }
+
+    override fun onItemClickEvent(view: View, position: Int, type: Int) {
+
+    }
+
+    override fun onItemClickEvent(view: View, position: Int, type: Int, name: String) {
+
     }
 
 }

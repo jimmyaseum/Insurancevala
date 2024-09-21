@@ -16,10 +16,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-
-    aaptOptions {
-        cruncherEnabled = false
-    }
     buildTypes {
         release {
             debuggable false
@@ -32,9 +28,9 @@ android {
             shrinkResources false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
         }
     }
+
     dataBinding {
         enabled = true
     }

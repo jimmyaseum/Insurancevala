@@ -5,16 +5,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerClickListener
+import com.app.insurancevala.model.pojo.ClosingAmountInfoModel
+import com.app.insurancevala.model.pojo.InquiryTypeModel
+import com.app.insurancevala.model.pojo.ProposedAmountInfoModel
 import com.app.insurancevala.model.response.NBInquiryModel
 import com.app.insurancevala.utils.PrefConstants
 import com.app.insurancevala.utils.SharedPreference
 import com.app.insurancevala.utils.gone
 import com.app.insurancevala.utils.preventTwoClick
 import com.app.insurancevala.utils.visible
+import kotlinx.android.synthetic.main.adapter_dashboard_inner_item.view.txtFrequency
 import kotlinx.android.synthetic.main.adapter_inquiry_item.view.*
 
 class InquiryListAdapter(private val context: Context?, private val arrayList: ArrayList<NBInquiryModel>, private val sharedPreference: SharedPreference, private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<InquiryListAdapter.ViewHolder>() {
@@ -51,9 +54,9 @@ class InquiryListAdapter(private val context: Context?, private val arrayList: A
 
             this.context = context
 
-            if (!arrayList[position].InquiryType.isNullOrEmpty()) {
+            /*if (!arrayList[position].InquiryType.isNullOrEmpty()) {
                 itemView.txtInquiryType.text = arrayList[position].InquiryType
-            }
+            }*/
 
             var colors = arrayOf(R.drawable.bg_shadow_orange, R.drawable.bg_shadow_purple, R.drawable.bg_shadow_blue)
             val reminder = position % 3
@@ -61,46 +64,91 @@ class InquiryListAdapter(private val context: Context?, private val arrayList: A
 
             if(!arrayList[position].InquirySubType.isNullOrEmpty()) {
                 itemView.txtInquirySubType.text = arrayList[position].InquirySubType
+            } else {
+                itemView.txtInquirySubType.text = ""
             }
 
             if(!arrayList[position].NBInquiryByName.isNullOrEmpty()) {
                 itemView.txtInquiryPerson.text = arrayList[position].NBInquiryByName
+            }  else {
+                itemView.txtInquiryPerson.text = ""
             }
 
             if(arrayList[position].InquiryNo != null && arrayList[position].InquiryNo != 0) {
                 itemView.txtInquiryNo.text = arrayList[position].InquiryNo.toString()
+            }  else {
+                itemView.txtInquiryNo.text = ""
             }
 
             if(!arrayList[position].CoPersonAllotmentName.isNullOrEmpty()) {
                 itemView.txtCoAllottedPerson.text = arrayList[position].CoPersonAllotmentName
+            } else {
+                itemView.txtCoAllottedPerson.text = "NA"
             }
 
             if(!arrayList[position].InquiryAllotmentName.isNullOrEmpty()) {
                 itemView.txtAllottedToPerson.text = arrayList[position].InquiryAllotmentName
+            } else {
+                itemView.txtAllottedToPerson.text = ""
             }
 
             if(!arrayList[position].CreatedByName.isNullOrEmpty()) {
                 itemView.txtAllottedByPerson.text = arrayList[position].CreatedByName
+            } else {
+                itemView.txtAllottedByPerson.text = ""
             }
 
             if(!arrayList[position].InquiryDate.isNullOrEmpty()) {
                 itemView.txtInquiryDate.text = arrayList[position].InquiryDate
+            } else {
+                itemView.txtInquiryDate.text = ""
             }
 
             if(!arrayList[position].LeadStatus.isNullOrEmpty()) {
                 itemView.txtLeadStatus.text = arrayList[position].LeadStatus
+            } else {
+                itemView.txtLeadStatus.text = ""
             }
 
             if(!arrayList[position].LeadType.isNullOrEmpty()) {
                 itemView.txtLeadType.text = arrayList[position].LeadType
+            } else {
+                itemView.txtLeadType.text = ""
             }
 
-            if(arrayList[position].ProposedAmount != null && arrayList[position].ProposedAmount != 0.0) {
-                itemView.txtProposedAmount.text = arrayList[position].ProposedAmount.toString()
+            val arrayListProposedAmount = ArrayList<ProposedAmountInfoModel>()
+            val arrayListClosingAmount = ArrayList<ClosingAmountInfoModel>()
+            val arrayListInquiryType = ArrayList<InquiryTypeModel>()
+
+            val InquiryType = arrayList[position].InquiryType!!.split(", ")
+            val ProposedAmount = arrayList[position].ProposedAmount!!.split(", ")
+            val ClosingAmount = arrayList[position].ClosingAmount!!.trim().split(", ")
+            for (i in InquiryType.indices) {
+                arrayListProposedAmount.add(ProposedAmountInfoModel(ProspectAmount = ProposedAmount[i]))
+                if (arrayList[position].ClosingAmount!!.trim().isNotEmpty()) {
+                    arrayListClosingAmount.add(ClosingAmountInfoModel(ClosingAmount = ClosingAmount[i]))
+                } else {
+                    arrayListClosingAmount.add(ClosingAmountInfoModel(ClosingAmount = ""))
+                }
+                arrayListInquiryType.add(InquiryTypeModel(InquiryType = InquiryType[i]))
             }
+
+            val adapterInquiryTypeList = InquiryTypeListAdapter(
+                arrayListProposedAmount,
+                arrayListClosingAmount,
+                arrayListInquiryType,
+                recyclerItemClickListener
+            )
+            itemView.rvInquiryList.adapter = adapterInquiryTypeList
+
+            /*if(!arrayList[position].ProposedAmount.isNullOrEmpty()) {
+                itemView.txtProposedAmount.text = arrayList[position].ProposedAmount.toString()
+            }*/
 
             if(!arrayList[position].Frequency.isNullOrEmpty()) {
                 itemView.txtFrequency.text = arrayList[position].Frequency
+            } else {
+                itemView.txtFrequency.text = ""
             }
 
             itemView.setOnClickListener {

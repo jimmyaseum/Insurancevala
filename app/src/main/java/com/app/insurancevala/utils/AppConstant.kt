@@ -4,7 +4,7 @@ object AppConstant {
 
     var TOKEN : String = ""
 
-//    val BASE_URL = "http://appapi.mitulthakkar.com/api/" //  AI005 Live URL For App
+//    val BASE_URL = "https://appapi.mitulthakkar.com/api/" //  AI005 Live URL For App
 
     val BASE_URL = "http://ivappapi.novotrips.com/api/" //  AI005 Test URL For App
 

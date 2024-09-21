@@ -125,7 +125,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
 
             txtHearderText.text = "Create Client"
             if (isOnline(this)) {
-                callManageLeadCount()
+//                callManageLeadCount()
                 callManageInitial(0, "Activity")
                 callManageOccupation(0)
                 callRelation(0)
@@ -303,9 +303,9 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
     }
 
     private fun callManageInitial(mode: Int, flag: String) {
-        if (mode == 1) {
-            showProgress()
-        }
+
+        showProgress()
+
         var jsonObject = JSONObject()
         jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
         val call = ApiUtils.apiInterface.ManageInitial(getRequestJSONBody(jsonObject.toString()))
@@ -469,9 +469,9 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
     }
 
     private fun callRelation(mode: Int) {
-        if (mode == 1) {
-            showProgress()
-        }
+
+        showProgress()
+
         val call = ApiUtils.apiInterface.getRelationAllActive()
         call.enqueue(object : Callback<RelationResponse> {
             override fun onResponse(
@@ -609,9 +609,9 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
     }
 
     private fun callManageOccupation(mode: Int) {
-        if (mode == 1) {
-            showProgress()
-        }
+
+        showProgress()
+
         val call = ApiUtils.apiInterface.getOccupationAllActive()
         call.enqueue(object : Callback<OccupationResponse> {
             override fun onResponse(
@@ -773,9 +773,8 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
     }
 
     private fun callManageUsers(mode: Int) {
-        if (mode == 1) {
-            showProgress()
-        }
+
+        showProgress()
 
         if (sharedPreference == null) {
             sharedPreference = SharedPreference(this)
@@ -952,9 +951,9 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
     }
 
     private fun callManageLeadSource(mode: Int) {
-        if (mode == 1) {
-            showProgress()
-        }
+
+        showProgress()
+
         var jsonObject = JSONObject()
         jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
         val call = ApiUtils.apiInterface.ManageLeadSource(getRequestJSONBody(jsonObject.toString()))
@@ -1116,9 +1115,9 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
     }
 
     private fun callManageCity(mode: Int) {
-        if (mode == 1) {
-            showProgress()
-        }
+
+        showProgress()
+
         var jsonObject = JSONObject()
         jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
         val call = ApiUtils.apiInterface.ManageCityFindAll(getRequestJSONBody(jsonObject.toString()))
@@ -1866,10 +1865,13 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
 
     private fun callManageLeadCount() {
 
+        showProgress()
+
         val call = ApiUtils.apiInterface.ManageLeadCount()
         call.enqueue(object : Callback<LeadCountResponse> {
             override fun onResponse(call: Call<LeadCountResponse>, response: Response<LeadCountResponse>) {
                 if (response.code() == 200) {
+                    hideProgress()
                     if (response.body()?.Status == 200) {
                         val arrayListLead = response.body()?.Data!!
                         if(arrayListLead.LeadCount != 0) {

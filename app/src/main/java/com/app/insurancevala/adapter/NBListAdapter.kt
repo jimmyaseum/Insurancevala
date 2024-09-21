@@ -9,9 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.model.response.NBModel
+import com.app.insurancevala.model.response.NewNBModel
 import kotlinx.android.synthetic.main.adapter_nb_item.view.*
 
-class NBListAdapter(private val context: Context?,private val arrayList: ArrayList<NBModel>?,private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<NBListAdapter.ViewHolder>() {
+class NBListAdapter(private val context: Context?, private val arrayList: ArrayList<NewNBModel>?, private val recyclerItemClickListener: RecyclerClickListener) : RecyclerView.Adapter<NBListAdapter.ViewHolder>() {
 
     var adapterPositionGet: Int = -1
 
@@ -38,7 +39,7 @@ class NBListAdapter(private val context: Context?,private val arrayList: ArrayLi
         fun bindItems(
             context: Context,
             position: Int,
-            arrayList : NBModel,
+            arrayList : NewNBModel,
             recyclerItemClickListener: RecyclerClickListener
         ) {
 

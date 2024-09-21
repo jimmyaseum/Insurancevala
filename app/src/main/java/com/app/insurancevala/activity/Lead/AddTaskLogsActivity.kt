@@ -81,6 +81,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
     //date
     val CalenderDate = Calendar.getInstance()
     var TaskDueDate: String = ""
+    var TaskStartDate: String = ""
 
     //followup date
     val CalenderFollowUpTaskDate = Calendar.getInstance()
@@ -138,9 +139,11 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
     private fun setDefaultDate() {
         val mDate = convertDateStringToString(getcurrentdate() , AppConstant.dd_MM_yyyy_HH_mm_ss,AppConstant.dd_LLL_yyyy)
         val mTime = convertDateStringToString(getcurrentdate() , AppConstant.dd_MM_yyyy_HH_mm_ss,AppConstant.HH_MM_AA_FORMAT)
+        edtTaskDate.setText(mDate)
         edtDueDate.setText(mDate)
         edtReminderDate.setText(mDate)
 
+        TaskStartDate = convertDateStringToString(getcurrentdate() , AppConstant.dd_MM_yyyy_HH_mm_ss,AppConstant.yyyy_MM_dd_Dash).toString()
         TaskDueDate = convertDateStringToString(getcurrentdate() , AppConstant.dd_MM_yyyy_HH_mm_ss,AppConstant.yyyy_MM_dd_Dash).toString()
         FollowUpTaskDate = convertDateStringToString(getcurrentdate() , AppConstant.dd_MM_yyyy_HH_mm_ss,AppConstant.yyyy_MM_dd_Dash).toString()
 
@@ -206,6 +209,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         edtAttachments.setOnClickListener(this)
         cbIsReminder.setOnClickListener(this)
 
+        edtTaskDate.setOnClickListener(this)
         edtDueDate.setOnClickListener(this)
         edtReminderDate.setOnClickListener(this)
         edtReminderTime.setOnClickListener(this)
@@ -235,6 +239,29 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                     selectUsersDialog()
                 }
             }
+            R.id.edtTaskDate -> {
+                preventTwoClick(v)
+                val dpd = DatePickerDialog(
+                    this,
+                    DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+                        CalenderDate.set(Calendar.YEAR, year)
+                        CalenderDate.set(Calendar.MONTH, monthOfYear)
+                        CalenderDate.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+                        TaskStartDate = SimpleDateFormat(AppConstant.yyyy_MM_dd_Dash, Locale.US).format(CalenderDate.time)
+
+                        val selecteddate = SimpleDateFormat(AppConstant.dd_MM_yyyy_HH_mm_ss, Locale.US).format(CalenderDate.time)
+                        val mDate = convertDateStringToString(selecteddate , AppConstant.dd_MM_yyyy_HH_mm_ss,AppConstant.dd_LLL_yyyy)
+                        edtTaskDate.setText(mDate)
+                    },
+                    CalenderDate.get(Calendar.YEAR),
+                    CalenderDate.get(Calendar.MONTH),
+                    CalenderDate.get(Calendar.DAY_OF_MONTH)
+                )
+//                dpd.datePicker.minDate = System.currentTimeMillis() - 1000
+                dpd.datePicker.maxDate = System.currentTimeMillis() - 1000
+                dpd.show()
+            }
             R.id.edtDueDate -> {
                 preventTwoClick(v)
                 val dpd = DatePickerDialog(
@@ -254,7 +281,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
                     CalenderDate.get(Calendar.MONTH),
                     CalenderDate.get(Calendar.DAY_OF_MONTH)
                 )
-//                dpd.datePicker.minDate = System.currentTimeMillis() - 1000
+                dpd.datePicker.minDate = System.currentTimeMillis() - 1000
 //                dpd.datePicker.maxDate = System.currentTimeMillis() - 1000
                 dpd.show()
             }
@@ -359,6 +386,10 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
             edtDescription.setError("Enter Description",errortint(this))
             isValidate = false
         }
+        if (edtTaskDate.text.isEmpty()) {
+            edtTaskDate.setError("Select Task Date",errortint(this))
+            isValidate = false
+        }
         if (edtDueDate.text.isEmpty()) {
             edtDueDate.setError("Select Due Date",errortint(this))
             isValidate = false
@@ -402,6 +433,7 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         jsonObject.put("LeadID", LeadID)
         jsonObject.put("TaskOwnerID", mUsersID)
         jsonObject.put("Subject", edtSubject.text.toString().trim())
+        jsonObject.put("StartDate", TaskStartDate)
         jsonObject.put("DueDate", TaskDueDate)
         jsonObject.put("TaskStatus", mTaskstatus)
         jsonObject.put("Priority", mTaskpriority)
@@ -710,6 +742,11 @@ class AddTaskLogsActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
         if(model.TaskOwnerID != null && model.TaskOwnerID != 0) {
             mUsersID = model.TaskOwnerID.toInt()
             callManageUsers(0)
+        }
+
+        if(model.StartDate != null && model.StartDate != "") {
+            edtTaskDate.setText(model.StartDate)
+            TaskStartDate = convertDateStringToString(model.StartDate , AppConstant.dd_MM_yyyy_Slash,AppConstant.yyyy_MM_dd_Dash).toString()
         }
 
         if(model.DueDate != null && model.DueDate != "") {

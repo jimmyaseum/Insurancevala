@@ -12,23 +12,26 @@ data class InquiryInformationModel (
     @SerializedName("FamilyMember")
     var FamilyMember: String = "",
 
+    @SerializedName("ProposedAmount")
+    var ProposedAmount: ArrayList<ProposedAmountInfoModel>? = null,
+
+    @SerializedName("ClosingAmount")
+    var ClosingAmount: ArrayList<ClosingAmountInfoModel>? = null,
+
     @SerializedName("FamilyMemberId")
     var FamilyMemberId: Int = 0,
 
     @SerializedName("InquirytypeId")
-    var InquirytypeId: Int = 0,
+    var InquirytypeId: String = "",
 
     @SerializedName("Inquirytype")
     var Inquirytype: String = "",
 
     @SerializedName("InquirysubtypeId")
-    var InquirysubtypeId: Int = 0,
+    var InquirysubtypeId: String = "",
 
     @SerializedName("Inquirysubtype")
     var Inquirysubtype: String = "",
-
-    @SerializedName("Proposed")
-    var Proposed: String = "",
 
     @SerializedName("Frequency")
     var Frequency: String = "",
@@ -73,9 +76,6 @@ data class InquiryInformationModel (
 
     @SerializedName("tilInquirysubtype")
     var tilInquirysubtype: EditText? = null,
-
-    @SerializedName("tilProposed")
-    var tilProposed: EditText? = null,
 
     @SerializedName("tilFrequency")
     var tilFrequency: EditText? = null,

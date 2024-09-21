@@ -4,9 +4,8 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.Gravity
 import android.view.View
 import android.view.Window
@@ -27,7 +26,6 @@ import com.app.insurancevala.model.pojo.DocumentsModel
 import com.app.insurancevala.model.pojo.DocumentsResponse
 import com.app.insurancevala.model.response.ActivityLogModel
 import com.app.insurancevala.model.response.ActivityLogResponse
-import com.app.insurancevala.model.response.NBInquiryTypeAddUpdateResponse
 import com.app.insurancevala.retrofit.ApiUtils
 import com.app.insurancevala.utils.*
 import com.ferfalk.simplesearchview.SimpleSearchView
@@ -37,6 +35,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import kotlinx.android.synthetic.main.activity_particular_inquiry_log.*
+import java.util.Locale
 
 class ParticularInquiryActivityLog : BaseActivity(), View.OnClickListener, RecyclerClickListener {
 
@@ -330,6 +329,29 @@ class ParticularInquiryActivityLog : BaseActivity(), View.OnClickListener, Recyc
             103 -> {
                 preventTwoClick(view)
                 callAttachmentList(arrayListActivity!![position].LogGUID!!)
+            }
+
+            104 -> {
+                preventTwoClick(view)
+                if (!arrayListActivity!![position].ActivityDescription.isNullOrEmpty()){
+                    if(arrayListActivity!![position].ActivityDescription!!.contains(".pdf")) {
+                        var format = "https://docs.google.com/gview?embedded=true&url=%s"
+                        val fullPath: String = java.lang.String.format(Locale.ENGLISH, format, arrayListActivity!![position].ActivityDescription!!)
+                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(fullPath))
+                        startActivity(browserIntent)
+                    } else {
+                        val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(arrayListActivity!![position].ActivityDescription!!))
+                        startActivity(browserIntent)
+                    }
+                }
+            }
+
+            105 -> {
+                preventTwoClick(view)
+                if (!arrayListActivity!![position].ActivityDescription.isNullOrEmpty()){
+                    val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(arrayListActivity!![position].ActivityDescription!!))
+                    startActivity(browserIntent)
+                }
             }
         }
     }
