@@ -9,6 +9,7 @@ import android.media.MediaPlayer
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
+import android.text.InputFilter
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -318,8 +319,16 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
         img?.setImageResource(R.drawable.ic_profile)
         edtName?.requestFocus()
 
-        val fileName = getFileNameFromUri(fileUri)
+        val fileName = getFileNameFromUri(fileUri).replace(".", "")
         edtName?.setText(fileName)
+
+        // InputFilter to prevent user from entering "."
+        val filterNoDot = InputFilter { source, _, _, _, _, _ ->
+            if (source == ".") "" else null
+        }
+
+        // Apply the filter to edtName
+        edtName?.filters = arrayOf(filterNoDot)
 
         txtButtonSubmit?.setOnClickListener {
             if (!edtName?.text.toString().trim().isEmpty()) {
@@ -349,7 +358,7 @@ class RecordingsListActivity : BaseActivity(), View.OnClickListener, RecyclerCli
 
         audioRequestBody?.let {
             // URL encode the audioName
-            val encodedAudioName = URLEncoder.encode(audioName, "UTF-8")
+            val encodedAudioName = URLEncoder.encode(audioName + ".mp3", "UTF-8")
 
             partsList.add(MultipartBody.Part.createFormData("RecodingFiles", encodedAudioName, it))
         }

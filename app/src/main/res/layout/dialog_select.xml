@@ -63,13 +63,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:fontFamily="@font/poppins_regular"
+                android:fontFamily="@font/poppins_semibold"
                 android:text="Enter Minimum 3 Character"
                 android:gravity="center"
-                android:textColorHint="@color/colorGradish"
                 android:textSize="@dimen/_12sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:background="@color/colorWhite"
+                android:layout_marginTop="@dimen/_10sdp"
                 android:visibility="gone"/>
 
             <androidx.recyclerview.widget.RecyclerView

@@ -1,15 +1,18 @@
 package com.app.insurancevala.activity.Lead
 
+import android.Manifest
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.Window
@@ -18,39 +21,91 @@ import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.app.insurancevala.FilePickerBuilder
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
 import com.app.insurancevala.adapter.AddMoreFamilyMemberAdapter
-import com.app.insurancevala.adapter.bottomsheetadapter.*
+import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetCitiesListAdapter
+import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetInitialListAdapter
+import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetLeadSourceListAdapter
+import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetOccupationListAdapter
+import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetRelationListAdapter
+import com.app.insurancevala.adapter.bottomsheetadapter.BottomSheetUsersListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
 import com.app.insurancevala.interFase.RecyclerItemClickListener
 import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.api.LeadCountResponse
 import com.app.insurancevala.model.pojo.FamilyMemberInfoModel
-import com.app.insurancevala.model.pojo.InquiryInformationModel
-import com.app.insurancevala.model.response.*
+import com.app.insurancevala.model.response.CityModel
+import com.app.insurancevala.model.response.CityResponse
+import com.app.insurancevala.model.response.CommonImageUploadResponse
+import com.app.insurancevala.model.response.InitialModel
+import com.app.insurancevala.model.response.InitialResponse
+import com.app.insurancevala.model.response.LeadByGUIDResponse
+import com.app.insurancevala.model.response.LeadModel
+import com.app.insurancevala.model.response.LeadSourceModel
+import com.app.insurancevala.model.response.LeadSourceResponse
+import com.app.insurancevala.model.response.OccupationModel
+import com.app.insurancevala.model.response.OccupationResponse
+import com.app.insurancevala.model.response.RefGUIDResponse
+import com.app.insurancevala.model.response.RelationModel
+import com.app.insurancevala.model.response.RelationResponse
+import com.app.insurancevala.model.response.UserModel
+import com.app.insurancevala.model.response.UserResponse
 import com.app.insurancevala.retrofit.ApiUtils
-import com.app.insurancevala.utils.*
-import com.example.awesomedialog.*
+import com.app.insurancevala.utils.AppConstant
+import com.app.insurancevala.utils.CommonUtil
+import com.app.insurancevala.utils.LogUtil
+import com.app.insurancevala.utils.PrefConstants
+import com.app.insurancevala.utils.SharedPreference
+import com.app.insurancevala.utils.TAG
+import com.app.insurancevala.utils.convertDateStringToString
+import com.app.insurancevala.utils.errortint
+import com.app.insurancevala.utils.getRequestJSONBody
+import com.app.insurancevala.utils.gone
+import com.app.insurancevala.utils.hideKeyboard
+import com.app.insurancevala.utils.internetErrordialog
+import com.app.insurancevala.utils.isOnline
+import com.app.insurancevala.utils.loadUrl
+import com.app.insurancevala.utils.preventTwoClick
+import com.app.insurancevala.utils.toEditable
+import com.app.insurancevala.utils.toast
+import com.app.insurancevala.utils.visible
+import com.example.awesomedialog.AwesomeDialog
+import com.example.awesomedialog.body
+import com.example.awesomedialog.icon
+import com.example.awesomedialog.onNegative
+import com.example.awesomedialog.onPositive
+import com.example.awesomedialog.position
+import com.example.awesomedialog.title
 import com.google.android.material.snackbar.Snackbar
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
+import droidninja.filepicker.FilePickerConst
 import kotlinx.android.synthetic.main.activity_add_lead.*
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import org.json.JSONArray
 import org.json.JSONObject
+import pub.devrel.easypermissions.AppSettingsDialog
+import pub.devrel.easypermissions.EasyPermissions
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
-class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickListener {
+class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickListener,
+    EasyPermissions.PermissionCallbacks {
 
-    var isShow: Int = 0
+    var isShow: Boolean = false
     var sharedPreference: SharedPreference? = null
     var state: String? = null
     var LeadID: Int? = null
@@ -96,6 +151,14 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
     var year = 0
     var month = 0
     var day = 0
+
+    var mode: Int? = null
+
+    var ImagePathMain = ArrayList<String>()
+    var imageURIMain: Uri? = null
+
+    var ImagePathOther = ArrayList<String>()
+    var imageURIOther: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -163,6 +226,9 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         edtMarriage.setOnClickListener(this)
         edtCity.setOnClickListener(this)
 
+        imgMain.setOnClickListener(this)
+        imgOther.setOnClickListener(this)
+
         rvFamilyMember.layoutManager =
             LinearLayoutManager(applicationContext, RecyclerView.VERTICAL, false)
         rvFamilyMember.isNestedScrollingEnabled = false
@@ -177,31 +243,132 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
             }
 
             R.id.txtShowAllFiels -> {
-                if (isShow % 2 == 0) {
+                if (isShow) {
                     txtShowAllFiels.setCompoundDrawablesWithIntrinsicBounds(
-                        0,
-                        0,
-                        R.drawable.ic_up,
-                        0
+                        0, 0, R.drawable.ic_up, 0
                     )
                     llMoreFields.setVisibility(View.VISIBLE)
-                    txtShowAllFiels.text = "Swich to smart view"
+                    txtShowAllFiels.text = "Switch to smart view"
+                    isShow = false
                 } else {
                     txtShowAllFiels.setCompoundDrawablesWithIntrinsicBounds(
-                        0,
-                        0,
-                        R.drawable.ic_down,
-                        0
+                        0, 0, R.drawable.ic_down, 0
                     )
                     llMoreFields.setVisibility(View.GONE)
                     txtShowAllFiels.text = "Show all fields"
+                    isShow = true
                 }
-                isShow = isShow + 1
             }
 
             R.id.txtSave -> {
                 preventTwoClick(v)
                 validation()
+            }
+
+            R.id.imgMain -> {
+                preventTwoClick(v)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    if (EasyPermissions.hasPermissions(
+                            this, Manifest.permission.READ_MEDIA_IMAGES
+                        )
+                    ) {
+                        if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
+                            mode = 1
+                            photoPickerMain()
+                        } else {
+                            EasyPermissions.requestPermissions(
+                                this,
+                                getString(R.string.msg_permission_camera),
+                                900,
+                                Manifest.permission.CAMERA
+                            )
+                        }
+                    } else {
+                        EasyPermissions.requestPermissions(
+                            this,
+                            getString(R.string.msg_permission_storage),
+                            900,
+                            Manifest.permission.READ_MEDIA_IMAGES
+                        )
+                    }
+                } else {
+                    if (EasyPermissions.hasPermissions(
+                            this, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        )
+                    ) {
+                        if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
+                            mode = 1
+                            photoPickerMain()
+                        } else {
+                            EasyPermissions.requestPermissions(
+                                this,
+                                getString(R.string.msg_permission_camera),
+                                900,
+                                Manifest.permission.CAMERA
+                            )
+                        }
+                    } else {
+                        EasyPermissions.requestPermissions(
+                            this,
+                            getString(R.string.msg_permission_storage),
+                            900,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        )
+                    }
+                }
+            }
+
+            R.id.imgOther -> {
+                preventTwoClick(v)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    if (EasyPermissions.hasPermissions(
+                            this, Manifest.permission.READ_MEDIA_IMAGES
+                        )
+                    ) {
+                        if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
+                            mode = 2
+                            photoPickerMain()
+                        } else {
+                            EasyPermissions.requestPermissions(
+                                this,
+                                getString(R.string.msg_permission_camera),
+                                900,
+                                Manifest.permission.CAMERA
+                            )
+                        }
+                    } else {
+                        EasyPermissions.requestPermissions(
+                            this,
+                            getString(R.string.msg_permission_storage),
+                            900,
+                            Manifest.permission.READ_MEDIA_IMAGES
+                        )
+                    }
+                } else {
+                    if (EasyPermissions.hasPermissions(
+                            this, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        )
+                    ) {
+                        if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA)) {
+                            mode = 2
+                            photoPickerMain()
+                        } else {
+                            EasyPermissions.requestPermissions(
+                                this,
+                                getString(R.string.msg_permission_camera),
+                                900,
+                                Manifest.permission.CAMERA
+                            )
+                        }
+                    } else {
+                        EasyPermissions.requestPermissions(
+                            this,
+                            getString(R.string.msg_permission_storage),
+                            900,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        )
+                    }
+                }
             }
 
             R.id.tvAddMore -> {
@@ -302,6 +469,99 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         rvFamilyMember.smoothScrollToPosition(adapter.getItemCount() - 1)
     }
 
+    private fun photoPickerMain() {
+        if (mode == 1) {
+            FilePickerBuilder.instance.setMaxCount(1).setSelectedFiles(ImagePathMain)
+                .setActivityTheme(R.style.LibAppTheme).pickPhoto(this, 20111)
+        } else if (mode == 2) {
+            FilePickerBuilder.instance.setMaxCount(1).setSelectedFiles(ImagePathOther)
+                .setActivityTheme(R.style.LibAppTheme).pickPhoto(this, 20111)
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            //Photo Selection
+            CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
+                if (resultCode == Activity.RESULT_OK) {
+
+                    val result: CropImage.ActivityResult = CropImage.getActivityResult(data)
+                    if (result.uri != null) {
+                        val imageUri = result.uri!!
+
+                        val fullName = imageUri.path!!.substringAfterLast("/")
+                        val fileName = fullName.substringBeforeLast(".")
+                        val extension = imageUri.path!!.substringAfterLast(".")
+
+                        if (mode == 1) {
+                            LogUtil.d(TAG, "==>Hello111 " + imageUri)
+                            imgMain.setImageURI(imageUri)
+                            imageURIMain = imageUri
+                        } else if (mode == 2) {
+                            LogUtil.d(TAG, "==>Hello222 " + imageUri)
+                            imgOther.setImageURI(imageUri)
+                            imageURIOther = imageUri
+                        }
+                    }
+
+                } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                    val result: CropImage.ActivityResult = CropImage.getActivityResult(data)
+
+                    val error = result.error
+                    toast("No apps can perform this action.", Toast.LENGTH_LONG)
+                }
+            }
+
+            20111 -> {
+                if (resultCode == Activity.RESULT_OK && data != null) {
+
+                    if (mode == 1) {
+                        ImagePathMain = ArrayList()
+//                    ImagePaths.addAll(data.getParcelableArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)!!)
+                        ImagePathMain.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)!!)
+                        if (!ImagePathMain.isNullOrEmpty()) {
+//                        val PassportPath = ImagePaths[0]
+                            val PassportPath = Uri.fromFile(File(ImagePathMain[0]))
+                            CropImage.activity(PassportPath)
+                                .setGuidelines(CropImageView.Guidelines.ON).start(this)
+                        }
+                    } else if (mode == 2) {
+                        ImagePathOther = ArrayList()
+//                    ImagePaths.addAll(data.getParcelableArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)!!)
+                        ImagePathOther.addAll(data.getStringArrayListExtra(FilePickerConst.KEY_SELECTED_MEDIA)!!)
+                        if (!ImagePathOther.isNullOrEmpty()) {
+//                        val PassportPath = ImagePaths[0]
+                            val PassportPath = Uri.fromFile(File(ImagePathOther[0]))
+                            CropImage.activity(PassportPath)
+                                .setGuidelines(CropImageView.Guidelines.ON).start(this)
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //Permission Result
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+
+    //EasyPermissions.PermissionCallbacks
+    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {}
+
+    //EasyPermissions.PermissionCallbacks
+    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            AppSettingsDialog.Builder(this).build().show()
+        }
+    }
+
     private fun callManageInitial(mode: Int, flag: String) {
 
         showProgress()
@@ -311,8 +571,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         val call = ApiUtils.apiInterface.ManageInitial(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<InitialResponse> {
             override fun onResponse(
-                call: Call<InitialResponse>,
-                response: Response<InitialResponse>
+                call: Call<InitialResponse>, response: Response<InitialResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
@@ -340,9 +599,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                         }
                     } else {
                         Snackbar.make(
-                            layout,
-                            response.body()?.Details.toString(),
-                            Snackbar.LENGTH_LONG
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
                         ).show()
                     }
                 }
@@ -351,9 +608,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
             override fun onFailure(call: Call<InitialResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                 ).show()
             }
         })
@@ -374,8 +629,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         dialogSelectInitial.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialogSelectInitial.window!!.setLayout(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
         dialogSelectInitial.window!!.setGravity(Gravity.CENTER)
 
@@ -475,8 +729,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         val call = ApiUtils.apiInterface.getRelationAllActive()
         call.enqueue(object : Callback<RelationResponse> {
             override fun onResponse(
-                call: Call<RelationResponse>,
-                response: Response<RelationResponse>
+                call: Call<RelationResponse>, response: Response<RelationResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
@@ -488,9 +741,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                         }
                     } else {
                         Snackbar.make(
-                            layout,
-                            response.body()?.Details.toString(),
-                            Snackbar.LENGTH_LONG
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
                         ).show()
                     }
                 }
@@ -499,9 +750,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
             override fun onFailure(call: Call<RelationResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                 ).show()
             }
         })
@@ -522,8 +771,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         dialogSelectRelation.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialogSelectRelation.window!!.setLayout(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
         dialogSelectRelation.window!!.setGravity(Gravity.CENTER)
 
@@ -615,8 +863,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         val call = ApiUtils.apiInterface.getOccupationAllActive()
         call.enqueue(object : Callback<OccupationResponse> {
             override fun onResponse(
-                call: Call<OccupationResponse>,
-                response: Response<OccupationResponse>
+                call: Call<OccupationResponse>, response: Response<OccupationResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
@@ -642,9 +889,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                         }
                     } else {
                         Snackbar.make(
-                            layout,
-                            response.body()?.Details.toString(),
-                            Snackbar.LENGTH_LONG
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
                         ).show()
                     }
                 }
@@ -653,9 +898,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
             override fun onFailure(call: Call<OccupationResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                 ).show()
             }
         })
@@ -676,8 +919,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         dialogSelectOccupation.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialogSelectOccupation.window!!.setLayout(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
         dialogSelectOccupation.window!!.setGravity(Gravity.CENTER)
 
@@ -749,11 +991,9 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter =
-                        BottomSheetOccupationListAdapter(
-                            this@AddLeadActivity,
-                            arrayListOccupation!!
-                        )
+                    val itemAdapter = BottomSheetOccupationListAdapter(
+                        this@AddLeadActivity, arrayListOccupation!!
+                    )
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
@@ -786,8 +1026,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         val call = ApiUtils.apiInterface.ManageUsers(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<UserResponse> {
             override fun onResponse(
-                call: Call<UserResponse>,
-                response: Response<UserResponse>
+                call: Call<UserResponse>, response: Response<UserResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
@@ -823,9 +1062,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                         }
                     } else {
                         Snackbar.make(
-                            layout,
-                            response.body()?.Details.toString(),
-                            Snackbar.LENGTH_LONG
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
                         ).show()
                     }
                 }
@@ -834,9 +1071,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
             override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                 ).show()
             }
         })
@@ -857,8 +1092,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         dialogSelectUsers.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialogSelectUsers.window!!.setLayout(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
         dialogSelectUsers.window!!.setGravity(Gravity.CENTER)
 
@@ -906,8 +1140,9 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                 if (char.toString().trim().isNotEmpty()) {
                     val strSearch = char.toString()
                     for (model in arrayListUsers!!) {
-                        if (model.FirstName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
-                            model.LastName!!.toLowerCase().contains(strSearch.toLowerCase())
+                        if (model.FirstName!!.toLowerCase()
+                                .contains(strSearch.toLowerCase()) || model.LastName!!.toLowerCase()
+                                .contains(strSearch.toLowerCase())
                         ) {
                             arrItemsFinal1.add(model)
                         }
@@ -959,8 +1194,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         val call = ApiUtils.apiInterface.ManageLeadSource(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<LeadSourceResponse> {
             override fun onResponse(
-                call: Call<LeadSourceResponse>,
-                response: Response<LeadSourceResponse>
+                call: Call<LeadSourceResponse>, response: Response<LeadSourceResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
@@ -986,9 +1220,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                         }
                     } else {
                         Snackbar.make(
-                            layout,
-                            response.body()?.Details.toString(),
-                            Snackbar.LENGTH_LONG
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
                         ).show()
                     }
                 }
@@ -997,9 +1229,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
             override fun onFailure(call: Call<LeadSourceResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                 ).show()
             }
         })
@@ -1020,8 +1250,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         dialogSelectLeadSource.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialogSelectLeadSource.window!!.setLayout(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
         dialogSelectLeadSource.window!!.setGravity(Gravity.CENTER)
 
@@ -1091,11 +1320,9 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                     })
                     rvDialogCustomer.adapter = itemAdapter
                 } else {
-                    val itemAdapter =
-                        BottomSheetLeadSourceListAdapter(
-                            this@AddLeadActivity,
-                            arrayListleadsource!!
-                        )
+                    val itemAdapter = BottomSheetLeadSourceListAdapter(
+                        this@AddLeadActivity, arrayListleadsource!!
+                    )
                     itemAdapter.setRecyclerRowClick(object : RecyclerClickListener {
                         override fun onItemClickEvent(v: View, pos: Int, flag: Int) {
 
@@ -1120,11 +1347,11 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
 
         var jsonObject = JSONObject()
         jsonObject.put("OperationType", AppConstant.GETALLACTIVEWITHFILTER)
-        val call = ApiUtils.apiInterface.ManageCityFindAll(getRequestJSONBody(jsonObject.toString()))
+        val call =
+            ApiUtils.apiInterface.ManageCityFindAll(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<CityResponse> {
             override fun onResponse(
-                call: Call<CityResponse>,
-                response: Response<CityResponse>
+                call: Call<CityResponse>, response: Response<CityResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
@@ -1161,9 +1388,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                         }
                     } else {
                         Snackbar.make(
-                            layout,
-                            response.body()?.Details.toString(),
-                            Snackbar.LENGTH_LONG
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
                         ).show()
                     }
                 }
@@ -1172,9 +1397,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
             override fun onFailure(call: Call<CityResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                 ).show()
             }
         })
@@ -1195,8 +1418,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         dialogSelectCity.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         dialogSelectCity.window!!.setLayout(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
+            LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT
         )
         dialogSelectCity.window!!.setGravity(Gravity.CENTER)
 
@@ -1324,11 +1546,11 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
 
         var jsonObject = JSONObject()
         jsonObject.put("ID", ID)
-        val call = ApiUtils.apiInterface.deleteFamilyDetail(getRequestJSONBody(jsonObject.toString()))
+        val call =
+            ApiUtils.apiInterface.deleteFamilyDetail(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<CommonResponse> {
             override fun onResponse(
-                call: Call<CommonResponse>,
-                response: Response<CommonResponse>
+                call: Call<CommonResponse>, response: Response<CommonResponse>
             ) {
                 hideProgress()
                 if (response.code() == 200) {
@@ -1336,9 +1558,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                         adapter.remove(position)
                     } else {
                         Snackbar.make(
-                            layout,
-                            response.body()?.Details.toString(),
-                            Snackbar.LENGTH_LONG
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
                         ).show()
                     }
                 }
@@ -1347,9 +1567,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
             override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                 ).show()
             }
         })
@@ -1370,12 +1588,10 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         }
 
         val dpd = DatePickerDialog(
-            this,
-            DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
+            this, DatePickerDialog.OnDateSetListener { view, year, monthOfYear, dayOfMonth ->
 
                 val selectDate = convertDateStringToString(
-                    "$dayOfMonth/${monthOfYear + 1}/$year",
-                    AppConstant.DATE_INPUT_FORMAT
+                    "$dayOfMonth/${monthOfYear + 1}/$year", AppConstant.DATE_INPUT_FORMAT
                 )!!
 
                 /*  Date of Birth  */
@@ -1392,10 +1608,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                 this.month = monthOfYear
                 this.day = dayOfMonth
 
-            },
-            year,
-            month,
-            day
+            }, year, month, day
         )
         dpd.datePicker.maxDate = System.currentTimeMillis()
         dpd.show()
@@ -1413,18 +1626,14 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                 calendarNow!!.set(Calendar.DAY_OF_MONTH, dayOfMonth)
 
                 val mdate = SimpleDateFormat(
-                    AppConstant.yyyy_MM_dd_Dash,
-                    Locale.US
+                    AppConstant.yyyy_MM_dd_Dash, Locale.US
                 ).format(calendarNow!!.time)
 
                 val selecteddate = SimpleDateFormat(
-                    AppConstant.dd_MM_yyyy_HH_mm_ss,
-                    Locale.US
+                    AppConstant.dd_MM_yyyy_HH_mm_ss, Locale.US
                 ).format(calendarNow!!.time)
                 val date = convertDateStringToString(
-                    selecteddate,
-                    AppConstant.dd_MM_yyyy_HH_mm_ss,
-                    AppConstant.dd_LLL_yyyy
+                    selecteddate, AppConstant.dd_MM_yyyy_HH_mm_ss, AppConstant.dd_LLL_yyyy
                 )
 
                 adapter.updateDOBItem(mDOBItemPostion, date!!, mdate)
@@ -1559,28 +1768,29 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         }
 
         if (state.equals(AppConstant.S_ADD)) {
-            val call = ApiUtils.apiInterface.ManageLeadsInsert(getRequestJSONBody(jsonObject.toString()))
+            val call =
+                ApiUtils.apiInterface.ManageLeadsInsert(getRequestJSONBody(jsonObject.toString()))
             call.enqueue(object : Callback<RefGUIDResponse> {
-                override fun onResponse(call: Call<RefGUIDResponse>, response: Response<RefGUIDResponse>) {
+                override fun onResponse(
+                    call: Call<RefGUIDResponse>, response: Response<RefGUIDResponse>
+                ) {
                     hideProgress()
                     if (response.code() == 200) {
                         if (response.body()?.Status == 201) {
                             Snackbar.make(
-                                layout,
-                                response.body()?.Details.toString(),
-                                Snackbar.LENGTH_LONG
-                            )
-                                .show()
-                            val intent = Intent()
-                            setResult(RESULT_OK, intent)
-                            finish()
+                                layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
+                            ).show()
+                            if (!ImagePathMain.isNullOrEmpty() || !ImagePathOther.isNullOrEmpty()) {
+                                callAttachmentAPI(response.body()?.Data!!.ID!!)
+                            } else {
+                                val intent = Intent()
+                                setResult(RESULT_OK, intent)
+                                finish()
+                            }
                         } else {
                             Snackbar.make(
-                                layout,
-                                response.body()?.Details.toString(),
-                                Snackbar.LENGTH_LONG
-                            )
-                                .show()
+                                layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
+                            ).show()
                             val intent = Intent()
                             setResult(RESULT_OK, intent)
                             finish()
@@ -1591,9 +1801,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                 override fun onFailure(call: Call<RefGUIDResponse>, t: Throwable) {
                     hideProgress()
                     Snackbar.make(
-                        layout,
-                        getString(R.string.error_failed_to_connect),
-                        Snackbar.LENGTH_LONG
+                        layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                     ).show()
                     val intent = Intent()
                     setResult(RESULT_OK, intent)
@@ -1601,31 +1809,32 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                 }
             })
         } else {
-            val call = ApiUtils.apiInterface.ManageLeadsUpdate(getRequestJSONBody(jsonObject.toString()))
+            val call =
+                ApiUtils.apiInterface.ManageLeadsUpdate(getRequestJSONBody(jsonObject.toString()))
             call.enqueue(object : Callback<CommonResponse> {
-                override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
+                override fun onResponse(
+                    call: Call<CommonResponse>, response: Response<CommonResponse>
+                ) {
                     hideProgress()
                     if (response.code() == 200) {
                         if (response.body()?.Status == 201) {
                             Snackbar.make(
-                                layout,
-                                response.body()?.Details.toString(),
-                                Snackbar.LENGTH_LONG
-                            )
-                                .show()
+                                layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
+                            ).show()
                             val intent = Intent()
                             setResult(RESULT_OK, intent)
                             finish()
                         } else {
                             Snackbar.make(
-                                layout,
-                                response.body()?.Details.toString(),
-                                Snackbar.LENGTH_LONG
-                            )
-                                .show()
-                            val intent = Intent()
-                            setResult(RESULT_OK, intent)
-                            finish()
+                                layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
+                            ).show()
+                            if (imageURIMain != null || imageURIOther != null) {
+                                callAttachmentAPI(LeadID!!)
+                            } else {
+                                val intent = Intent()
+                                setResult(RESULT_OK, intent)
+                                finish()
+                            }
                         }
                     }
                 }
@@ -1633,9 +1842,7 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                 override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
                     hideProgress()
                     Snackbar.make(
-                        layout,
-                        getString(R.string.error_failed_to_connect),
-                        Snackbar.LENGTH_LONG
+                        layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
                     ).show()
                     val intent = Intent()
                     setResult(RESULT_OK, intent)
@@ -1645,6 +1852,69 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         }
     }
 
+    //Insert Attachment
+    private fun callAttachmentAPI(ID: Int) {
+
+        val partsMainImage: MultipartBody.Part
+        val partsOtherImage: MultipartBody.Part
+
+
+        if (!ImagePathMain.isNullOrEmpty()) {
+            partsMainImage = CommonUtil.prepareFilePart(
+                this, "application/*", "MainImage", imageURIMain!!
+            )
+        } else {
+            val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
+            partsMainImage =
+                MultipartBody.Part.createFormData("MainImage", "", attachmentEmpty)
+        }
+
+        if (!ImagePathOther.isNullOrEmpty()) {
+            partsOtherImage = CommonUtil.prepareFilePart(
+                this, "image/*", "OtherImage", imageURIOther!!
+            )
+        } else {
+            val attachmentEmpty: RequestBody = RequestBody.create(MediaType.parse("text/plain"), "")
+            partsOtherImage =
+                MultipartBody.Part.createFormData("OtherImage", "", attachmentEmpty)
+        }
+
+        val call = ApiUtils.apiInterface.ManageLeadImageInsert(
+            CommonUtil.createPartFromString(ID.toString()),
+            MainImage = partsMainImage,
+            OtherImage = partsOtherImage
+        )
+        call.enqueue(object : Callback<CommonImageUploadResponse> {
+            override fun onResponse(
+                call: Call<CommonImageUploadResponse>, response: Response<CommonImageUploadResponse>
+            ) {
+                hideProgress()
+                if (response.code() == 200) {
+                    if (response.body()?.Status == 200) {
+                        toast(response.body()?.Details.toString(), AppConstant.TOAST_SHORT)
+                        val intent = Intent()
+                        setResult(RESULT_OK, intent)
+                        finish()
+                    } else {
+                        toast(response.body()?.Details.toString(), AppConstant.TOAST_SHORT)
+                        val intent = Intent()
+                        setResult(RESULT_OK, intent)
+                        finish()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<CommonImageUploadResponse>, t: Throwable) {
+                hideProgress()
+                val intent = Intent()
+                setResult(RESULT_OK, intent)
+                finish()
+                LogUtil.e(TAG, "=====onFailure====" + t.printStackTrace())
+                toast(getString(R.string.error_failed_to_connect), AppConstant.TOAST_SHORT)
+            }
+        })
+    }
+
     private fun callManageLeadGUID() {
 
         showProgress()
@@ -1652,9 +1922,12 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
         var jsonObject = JSONObject()
         jsonObject.put("LeadGUID", LeadGUID)
 
-        val call = ApiUtils.apiInterface.ManageLeadsFindByID(getRequestJSONBody(jsonObject.toString()))
+        val call =
+            ApiUtils.apiInterface.ManageLeadsFindByID(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<LeadByGUIDResponse> {
-            override fun onResponse(call: Call<LeadByGUIDResponse>, response: Response<LeadByGUIDResponse>) {
+            override fun onResponse(
+                call: Call<LeadByGUIDResponse>, response: Response<LeadByGUIDResponse>
+            ) {
                 if (response.code() == 200) {
                     if (response.body()?.Status == 200) {
                         val arrayListLead = response.body()?.Data!!
@@ -1662,11 +1935,8 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                         hideProgress()
                     } else {
                         Snackbar.make(
-                            layout,
-                            response.body()?.Details.toString(),
-                            Snackbar.LENGTH_LONG
-                        )
-                            .show()
+                            layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG
+                        ).show()
                     }
                 }
             }
@@ -1674,11 +1944,8 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
             override fun onFailure(call: Call<LeadByGUIDResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(
-                    layout,
-                    getString(R.string.error_failed_to_connect),
-                    Snackbar.LENGTH_LONG
-                )
-                    .show()
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
+                ).show()
             }
         })
     }
@@ -1774,13 +2041,23 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
             mCityID = model.CityID
             callManageCity(0)
         }
+        if (!model.MainImage.isNullOrEmpty()) {
+            imgMain.loadUrl(model.MainImage, R.drawable.ic_camera)
+        }
+        if (!model.OtherImage.isNullOrEmpty()) {
+            imgOther.loadUrl(model.OtherImage, R.drawable.ic_camera)
+        }
 
-        if(!model.FamilyDetails!!.isNullOrEmpty()) {
+        if (!model.FamilyDetails!!.isNullOrEmpty()) {
             arrayListFamilyInfo = ArrayList()
 
-            for(i in 0 until model.FamilyDetails.size) {
+            for (i in 0 until model.FamilyDetails.size) {
 
-                val mDate = convertDateStringToString(model.FamilyDetails[i].BirthDate!! , AppConstant.DATE_INPUT_FORMAT,AppConstant.DEFAULT_DATE_FORMAT)
+                val mDate = convertDateStringToString(
+                    model.FamilyDetails[i].BirthDate!!,
+                    AppConstant.DATE_INPUT_FORMAT,
+                    AppConstant.DEFAULT_DATE_FORMAT
+                )
 
                 arrayListFamilyInfo?.add(
                     FamilyMemberInfoModel(
@@ -1853,8 +2130,10 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
                         }.onPositive("Yes") {
                             if (adapter.arrayList!!.get(position).ID == 0) {
                                 adapter.remove(position)
-                            } else{
-                                callDeleteFamilyMember(adapter.arrayList!!.get(position).ID, position)
+                            } else {
+                                callDeleteFamilyMember(
+                                    adapter.arrayList!!.get(position).ID, position
+                                )
                             }
                         }
                 }
@@ -1869,13 +2148,15 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
 
         val call = ApiUtils.apiInterface.ManageLeadCount()
         call.enqueue(object : Callback<LeadCountResponse> {
-            override fun onResponse(call: Call<LeadCountResponse>, response: Response<LeadCountResponse>) {
+            override fun onResponse(
+                call: Call<LeadCountResponse>, response: Response<LeadCountResponse>
+            ) {
                 if (response.code() == 200) {
                     hideProgress()
                     if (response.body()?.Status == 200) {
                         val arrayListLead = response.body()?.Data!!
-                        if(arrayListLead.LeadCount != 0) {
-                            txtClientNo.setText("Client No : "+ arrayListLead.LeadCount)
+                        if (arrayListLead.LeadCount != 0) {
+                            txtClientNo.setText("Client No : " + arrayListLead.LeadCount)
                             txtClientNo.visible()
                         }
                     } else {
@@ -1887,9 +2168,10 @@ class AddLeadActivity : BaseActivity(), View.OnClickListener, RecyclerItemClickL
             }
 
             override fun onFailure(call: Call<LeadCountResponse>, t: Throwable) {
-                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+                Snackbar.make(
+                    layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG
+                ).show()
             }
         })
     }
-
 }

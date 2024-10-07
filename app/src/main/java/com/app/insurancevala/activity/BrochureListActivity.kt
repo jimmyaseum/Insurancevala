@@ -1,16 +1,30 @@
 package com.app.insurancevala.activity
 
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.view.animation.AnimationUtils
+import android.widget.EditText
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.app.insurancevala.R
 import com.app.insurancevala.activity.BaseActivity
+import com.app.insurancevala.adapter.AttachmentListAdapter
+import com.app.insurancevala.adapter.BrochureMultipleAttachmentListAdapter
 import com.app.insurancevala.adapter.PlanBrochuresListAdapter
 import com.app.insurancevala.adapter.UsersListAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
+import com.app.insurancevala.interFase.RecyclerItemClickListener
 import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.response.PlanBrochuresModel
 import com.app.insurancevala.model.response.PlanBrochuresResponse
@@ -31,7 +45,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class BrochureListActivity : BaseActivity(), View.OnClickListener, RecyclerClickListener {
+class BrochureListActivity : BaseActivity(), View.OnClickListener, RecyclerClickListener{
 
     lateinit var adapter : PlanBrochuresListAdapter
     var arrayListPlanBrochure: ArrayList<PlanBrochuresModel>? = ArrayList()
@@ -41,7 +55,6 @@ class BrochureListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_brochure_list)
-        overridePendingTransition(R.anim.fadein, R.anim.fadeout)
         initializeView()
     }
 
@@ -173,7 +186,64 @@ class BrochureListActivity : BaseActivity(), View.OnClickListener, RecyclerClick
                         CallDeleteAPI(arrayListPlanBrochureNew!![position].ID!!)
                     }
             }
+            104 -> {
+                preventTwoClick(view)
+                selectAttachmentDialog(position)
+            }
         }
+    }
+
+    private fun selectAttachmentDialog(position: Int) {
+        var dialogSelectAttachment = Dialog(this)
+        dialogSelectAttachment.requestWindowFeature(Window.FEATURE_NO_TITLE)
+
+        val dialogView = layoutInflater.inflate(R.layout.dialog_select, null)
+        dialogSelectAttachment.setContentView(dialogView)
+
+        val lp = WindowManager.LayoutParams()
+        lp.copyFrom(dialogSelectAttachment.window!!.attributes)
+
+        dialogSelectAttachment.window!!.attributes = lp
+        dialogSelectAttachment.setCancelable(true)
+        dialogSelectAttachment.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        dialogSelectAttachment.window!!.setLayout(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        )
+        dialogSelectAttachment.window!!.setGravity(Gravity.CENTER)
+
+        val rvDialogCustomer =
+            dialogSelectAttachment.findViewById(R.id.rvDialogCustomer) as RecyclerView
+        val edtSearchCustomer =
+            dialogSelectAttachment.findViewById(R.id.edtSearchCustomer) as EditText
+        val txtid = dialogSelectAttachment.findViewById(R.id.txtid) as TextView
+        val imgClear = dialogSelectAttachment.findViewById(R.id.imgClear) as ImageView
+        val txtChar = dialogSelectAttachment.findViewById(R.id.txtChar) as TextView
+
+        imgClear.gone()
+        edtSearchCustomer.gone()
+
+        txtid.text = "Attachment List"
+        txtChar.text = "No Data Found"
+
+        rvDialogCustomer.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
+        rvDialogCustomer.isNestedScrollingEnabled = false
+
+        if(!arrayListPlanBrochureNew!![position].PlanBrochureAttachmentList.isNullOrEmpty()) {
+            val arrayListAttachment = arrayListPlanBrochureNew!![position].PlanBrochureAttachmentList!!
+            val adapter = BrochureMultipleAttachmentListAdapter(this, arrayListAttachment, this, false)
+            rvDialogCustomer.adapter = adapter
+
+            rvDialogCustomer.visible()
+            txtChar.gone()
+        } else {
+            rvDialogCustomer.adapter = null
+            rvDialogCustomer.gone()
+            txtChar.visible()
+        }
+
+        dialogSelectAttachment!!.show()
     }
 
     @Deprecated("Deprecated in Java")

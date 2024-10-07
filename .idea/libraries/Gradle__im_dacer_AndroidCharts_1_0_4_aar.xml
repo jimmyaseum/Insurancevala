@@ -1,5 +1,5 @@
 <component name="libraryTable">
-  <library name="Gradle: im.dacer:AndroidCharts:1.0.4@aar">
+  <library name="Gradle: im.dacer:AndroidCharts:1.0.4@aar" external-system-id="GRADLE">
     <CLASSES>
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/f1d70c6db184eccc267789c37685620c/transformed/jetified-AndroidCharts-1.0.4/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-3/f1d70c6db184eccc267789c37685620c/transformed/jetified-AndroidCharts-1.0.4/res" />

@@ -22,6 +22,7 @@ import com.app.insurancevala.activity.NBInquiry.AddNBActivity
 import com.app.insurancevala.activity.NBInquiry.InquiryListActivity
 import com.app.insurancevala.adapter.FamilyMemberAdapter
 import com.app.insurancevala.interFase.RecyclerClickListener
+import com.app.insurancevala.model.api.CommonResponse
 import com.app.insurancevala.model.response.FamilyDetailsModel
 import com.app.insurancevala.model.response.LeadByGUIDResponse
 import com.app.insurancevala.model.response.LeadImageResponse
@@ -92,6 +93,7 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
         imgBack.setOnClickListener(this)
         imgEdit.setOnClickListener(this)
         imgProfilePic.setOnClickListener(this)
+        imgPdfDownload.setOnClickListener(this)
 
         imgInquiry.setOnClickListener(this)
         imgLead.setOnClickListener(this)
@@ -186,6 +188,10 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
                         )
                     }
                 }
+            }
+            R.id.imgPdfDownload -> {
+                preventTwoClick(v)
+                callLeadPdfDownload()
             }
             R.id.imgInquiry -> {
                 preventTwoClick(v)
@@ -350,6 +356,7 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
                         val fileName = fullName.substringBeforeLast(".")
                         val extension = imageUri.path!!.substringAfterLast(".")
 
+                        LogUtil.d(TAG,"==>Hello "+imageUri)
                         imgProfilePic.setImageURI(imageUri)
                         imageURI = imageUri
                         callUploadImage(LeadGUID)
@@ -409,6 +416,46 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
             }
 
             override fun onFailure(call: Call<LeadByGUIDResponse>, t: Throwable) {
+                hideProgress()
+                Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
+            }
+        })
+    }
+
+    private fun callLeadPdfDownload() {
+
+        showProgress()
+
+        var jsonObject = JSONObject()
+        jsonObject.put("LeadGUID", LeadGUID)
+
+        val call = ApiUtils.apiInterface.ManageLeadReportPDF(getRequestJSONBody(jsonObject.toString()))
+        call.enqueue(object : Callback<CommonResponse> {
+            override fun onResponse(call: Call<CommonResponse>, response: Response<CommonResponse>) {
+                hideProgress()
+                if (response.code() == 200) {
+                    if (response.body()?.Status == 200) {
+                        val pdfURL = response.body()?.Data!!
+                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                            data = Uri.parse(pdfURL)
+                        }
+                        startActivity(intent)
+
+                        /*val pdfURL = response.body()?.Data ?: return
+                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                            data = Uri.parse(pdfURL)
+                            type = "application/pdf"
+                            flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+                        }
+                        val chooser = Intent.createChooser(intent, "Open PDF")
+                        startActivity(chooser)*/
+                    } else {
+                        Snackbar.make(layout, response.body()?.Details.toString(), Snackbar.LENGTH_LONG).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<CommonResponse>, t: Throwable) {
                 hideProgress()
                 Snackbar.make(layout, getString(R.string.error_failed_to_connect), Snackbar.LENGTH_LONG).show()
             }
@@ -693,10 +740,6 @@ class LeadDashboardActivity : BaseActivity() , View.OnClickListener, RecyclerCli
 
                                     mUsersName = arrayListUsers!![i].FirstName!! + " "+ arrayListUsers!![i].LastName!!
                                     txtLeadOwerName.setText(mUsersName + " (Owner)")
-                                    if (mUsersName != "") {
-                                        txtLeadOwerName.visible()
-                                        view.visible()
-                                    }
                                 }
                             }
                         }

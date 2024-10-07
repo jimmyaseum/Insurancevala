@@ -64,7 +64,7 @@
                 android:background="@drawable/bg_button"
                 android:backgroundTint="@color/colorGradish"
                 android:orientation="vertical"
-                android:padding="@dimen/_15sdp">
+                android:padding="@dimen/_10sdp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -75,7 +75,6 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:layout_marginLeft="@dimen/_5sdp"
                         android:orientation="vertical">
 
                         <TextView
@@ -152,31 +151,29 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
 
-                    <LinearLayout
+                    <TextView
+                        android:id="@+id/txtLeadOwerName"
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:orientation="vertical">
+                        android:fontFamily="@font/poppins_semibold"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/colorWhite"
+                        android:textSize="@dimen/_12sdp"
+                        android:visibility="visible" />
 
-                        <TextView
-                            android:id="@+id/txtLeadOwerName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/poppins_semibold"
-                            android:text=""
-                            android:textColor="@color/colorWhite"
-                            android:textSize="@dimen/_12sdp"
-                            android:visibility="gone"/>
-                    </LinearLayout>
+                    <ImageView
+                        android:id="@+id/imgPdfDownload"
+                        android:layout_width="@dimen/_24sdp"
+                        android:layout_height="@dimen/_24sdp"
+                        android:src="@drawable/pdficon"/>
+
                 </LinearLayout>
 
                 <View
-                    android:id="@+id/view"
                     android:layout_width="match_parent"
                     android:layout_height="1px"
-                    android:visibility="gone"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_5sdp"
+                    android:layout_marginVertical="@dimen/_5sdp"
                     android:background="@color/colorGray100" />
 
             </LinearLayout>
@@ -184,8 +181,8 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/white"
                 android:layout_marginTop="@dimen/_5sdp"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="4dp"
                 app:cardUseCompatPadding="true"
                 app:elevation="4dp">
@@ -200,10 +197,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_5sdp"
                         android:fontFamily="@font/poppins_semibold"
                         android:text="Family Details"
                         android:textColor="@color/color7"
-                        android:layout_marginHorizontal="@dimen/_5sdp"
                         android:textSize="@dimen/_12sdp" />
 
                     <LinearLayout
@@ -221,8 +218,8 @@
                             android:id="@+id/ll2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/_5sdp"
-                            android:layout_marginHorizontal="@dimen/_5sdp">
+                            android:layout_marginHorizontal="@dimen/_5sdp"
+                            android:layout_marginTop="@dimen/_5sdp">
 
                             <TextView
                                 android:layout_width="0dp"
@@ -278,8 +275,8 @@
             <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/white"
                 android:layout_marginTop="@dimen/_5sdp"
+                app:cardBackgroundColor="@color/white"
                 app:cardCornerRadius="4dp"
                 app:cardUseCompatPadding="true"
                 app:elevation="4dp">
@@ -293,10 +290,10 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/_5sdp"
                         android:fontFamily="@font/poppins_semibold"
                         android:text="Others"
                         android:textColor="@color/color10"
-                        android:layout_marginHorizontal="@dimen/_5sdp"
                         android:textSize="@dimen/_12sdp" />
 
                     <androidx.cardview.widget.CardView
@@ -453,7 +450,7 @@
                             android:layout_height="1px"
                             android:layout_marginTop="@dimen/_5sdp"
                             android:layout_marginBottom="@dimen/_5sdp"
-                            android:background="@color/colorGray100"/>
+                            android:background="@color/colorGray100" />
 
                         <LinearLayout
                             android:layout_width="match_parent"

@@ -19,6 +19,8 @@ class RefGUIDResponse {
 }
 
 class GUIDModel (
+    @SerializedName("ID")
+    var ID: Int? = null,
     @SerializedName("ReferenceGUID")
     var ReferenceGUID: String? = null,
     @SerializedName("Details")

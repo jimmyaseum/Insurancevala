@@ -51,7 +51,20 @@ class BrochureMultipleAttachmentListAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindItems(mContext, remove, arrayList!![position], recyclerItemClickListener, position)
+        holder.bindItems(
+            mContext,
+            remove,
+            arrayList!![position],
+            recyclerItemClickListener,
+            position
+        )
+
+        if (position == arrayList.size - 1) {
+            holder.itemView.v1.gone()  // Hide the view when it's the last item
+        } else {
+            holder.itemView.v1.visible()  // Make the view visible for other items
+        }
+
         // Register the receiver
         mContext.registerReceiver(
             downloadCompleteReceiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE)
@@ -90,10 +103,10 @@ class BrochureMultipleAttachmentListAdapter(
                     ) || model.AttachmentURL.endsWith(".gif")
                 ) {
                     Glide.with(mContext).load(model.AttachmentURL).apply(
-                            RequestOptions().placeholder(R.drawable.ic_profile)
-                                .error(R.drawable.ic_profile)
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                        ).into(itemView.imgFile)
+                        RequestOptions().placeholder(R.drawable.ic_profile)
+                            .error(R.drawable.ic_profile)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    ).into(itemView.imgFile)
                 }
                 // Other file types
                 else {
@@ -118,7 +131,7 @@ class BrochureMultipleAttachmentListAdapter(
                 itemView.imgRemove.gone()
 
                 val readMoreOption = ReadMoreOption.Builder(mContext)
-                    .textLength(20, ReadMoreOption.TYPE_CHARACTER)
+                    .textLength(40, ReadMoreOption.TYPE_CHARACTER)
                     .moreLabel("More")
                     .lessLabel("Less")
                     .moreLabelColor(mContext.getColor(R.color.color5))
@@ -148,8 +161,8 @@ class BrochureMultipleAttachmentListAdapter(
                     val downloadUri = Uri.parse(model.AttachmentURL)
 
                     val request = DownloadManager.Request(downloadUri).setAllowedNetworkTypes(
-                            DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE
-                        ).setAllowedOverRoaming(false).setTitle(model.AttachmentName)
+                        DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE
+                    ).setAllowedOverRoaming(false).setTitle(model.AttachmentName)
                         .setDescription("Downloading ${model.AttachmentName}")
                         .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                         .setDestinationInExternalPublicDir(

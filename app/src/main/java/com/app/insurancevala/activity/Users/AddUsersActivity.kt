@@ -494,23 +494,41 @@ class AddUsersActivity : BaseActivity(), View.OnClickListener, EasyPermissions.P
                         ).show()
 
                         var ReferenceGUID = response.body()?.Data!![0]!!.ReferenceGUID.toString()
-
-                        if (imageURI != null) {
-                            CallUploadImage(ReferenceGUID)
+                        if (state.equals(AppConstant.S_ADD)) {
+                            if (imageURI != null) {
+                                CallUploadImage(ReferenceGUID)
+                            } else {
+                                val intent = Intent()
+                                setResult(RESULT_OK, intent)
+                                finish()
+                            }
                         } else {
-                            val intent = Intent()
-                            setResult(RESULT_OK, intent)
-                            finish()
+                            if (imageURI != null) {
+                                CallUploadImage(UserGUID)
+                            } else if (state.equals(AppConstant.S_EDIT)) {
+                                val intent = Intent()
+                                setResult(RESULT_OK, intent)
+                                 finish()
+                            }
                         }
                     } else if (response.body()?.Status == 200) {
-                        var ReferenceGUID = response.body()?.Data!![0]!!.ReferenceGUID.toString()
-
-                        if (imageURI != null) {
-                            CallUploadImage(ReferenceGUID)
+                        var ReferenceGUID = response.body()?.Data!![0].ReferenceGUID.toString()
+                        if (state.equals(AppConstant.S_ADD)) {
+                            if (imageURI != null) {
+                                CallUploadImage(ReferenceGUID)
+                            } else {
+                                val intent = Intent()
+                                setResult(RESULT_OK, intent)
+                                finish()
+                            }
                         } else {
-                            val intent = Intent()
-                            setResult(RESULT_OK, intent)
-                            finish()
+                            if (imageURI != null) {
+                                CallUploadImage(UserGUID)
+                            } else if (state.equals(AppConstant.S_EDIT)) {
+                                val intent = Intent()
+                                setResult(RESULT_OK, intent)
+                                finish()
+                            }
                         }
                     } else {
                         Snackbar.make(

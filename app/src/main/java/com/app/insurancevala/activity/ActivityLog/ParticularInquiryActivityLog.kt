@@ -251,7 +251,7 @@ class ParticularInquiryActivityLog : BaseActivity(), View.OnClickListener, Recyc
         if (!Lead) {
             call = ApiUtils.apiInterface.ActivityLogFindAll(getRequestJSONBody(jsonObject.toString()))
         } else {
-            call = ApiUtils.apiInterface.ActivityLogGUID(getRequestJSONBody(jsonObject.toString()))
+            call = ApiUtils.apiInterface.NBLeadActivityLogFindAll(getRequestJSONBody(jsonObject.toString()))
         }
         call.enqueue(object : Callback<ActivityLogResponse> {
             override fun onResponse(

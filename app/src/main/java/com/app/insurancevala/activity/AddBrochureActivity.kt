@@ -156,7 +156,7 @@ class AddBrochureActivity : BaseActivity(), View.OnClickListener, RecyclerClickL
 
     private fun SetInitListner() {
         // attachment
-        rvAttachment.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        rvAttachment.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         rvAttachment.isNestedScrollingEnabled = false
 
         arrayListAttachment = ArrayList()

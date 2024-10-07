@@ -51,6 +51,11 @@ class TasksListAdapter(private val context: Context?, private val arrayList: Arr
                 itemView.txtSubject.text = arrayList[position].Subject
             }
 
+            if(!arrayList[position].StartDate.isNullOrEmpty())
+            {
+                itemView.txtStartDate.text = "From " + arrayList[position].StartDate!! + " To "
+            }
+
             if(!arrayList[position].DueDate.isNullOrEmpty())
             {
                 itemView.txtDueDate.text = arrayList[position].DueDate!!

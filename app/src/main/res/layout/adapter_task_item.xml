@@ -40,19 +40,20 @@
                     android:layout_width="@dimen/_28sdp"
                     android:layout_height="@dimen/_28sdp"
                     android:padding="@dimen/_5sdp"
-                    android:src="@drawable/ic_time"
-                    app:tint="@color/color5"/>
+                    android:src="@drawable/ic_status"
+                    app:tint="@color/button_primary"/>
                 <TextView
-                    android:id="@+id/txtDueDate"
+                    android:id="@+id/txtStatus"
                     android:layout_width="wrap_content"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text=""
                     android:gravity="center_vertical"
-                    android:textColor="@color/color5"
+                    android:textColor="@color/button_primary"
                     android:textSize="@dimen/_10sdp"
                     android:fontFamily="@font/poppins_regular"
                     android:layout_marginLeft="@dimen/_5sdp"/>
+
                 <ImageView
                     android:layout_width="@dimen/_28sdp"
                     android:layout_height="@dimen/_28sdp"
@@ -98,19 +99,38 @@
                     android:layout_width="@dimen/_28sdp"
                     android:layout_height="@dimen/_28sdp"
                     android:padding="@dimen/_5sdp"
-                    android:src="@drawable/ic_status"
-                    app:tint="@color/button_primary"/>
-                <TextView
-                    android:id="@+id/txtStatus"
+                    android:src="@drawable/ic_time"
+                    app:tint="@color/color5"/>
+
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:text=""
-                    android:gravity="center_vertical"
-                    android:textColor="@color/button_primary"
-                    android:textSize="@dimen/_10sdp"
-                    android:fontFamily="@font/poppins_regular"
-                    android:layout_marginLeft="@dimen/_5sdp"/>
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/txtStartDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:gravity="center_vertical"
+                        android:textColor="@color/color5"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/poppins_regular"
+                        android:layout_marginLeft="@dimen/_5sdp"/>
+
+                    <TextView
+                        android:id="@+id/txtDueDate"
+                        android:layout_width="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:gravity="center_vertical"
+                        android:textColor="@color/color5"
+                        android:textSize="@dimen/_10sdp"
+                        android:fontFamily="@font/poppins_regular" />
+
+                </LinearLayout>
 
                 <ImageView
                     android:id="@+id/imgDone"

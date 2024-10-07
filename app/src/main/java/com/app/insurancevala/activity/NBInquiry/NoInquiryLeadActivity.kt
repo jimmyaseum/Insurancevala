@@ -132,7 +132,8 @@ class NoInquiryLeadActivity : BaseActivity(), View.OnClickListener, RecyclerClic
                     val strSearch = newText
                     for (model in arrayListInquiry!!) {
                         try {
-                            if (model.InquiryType!!.toLowerCase().contains(strSearch.toLowerCase()) ||
+                            if (model.InquiryPerson!!.toLowerCase().contains(strSearch.toLowerCase()) ||
+                                model.InquiryType!!.toLowerCase().contains(strSearch.toLowerCase()) ||
                                 model.InquirySubType!!.toLowerCase().contains(strSearch.toLowerCase()) ||
                                 model.AllotmentName!!.toLowerCase().contains(strSearch.toLowerCase()) ||
                                 model.ProposedAmount.toString()!!.toLowerCase().contains(strSearch.toLowerCase()) ||

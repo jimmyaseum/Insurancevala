@@ -81,17 +81,15 @@
                     android:padding="@dimen/_5sdp"
                     android:src="@drawable/ic_delete"
                     app:tint="@color/colorRed" />
-            </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvAttachment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_5sdp"
-                tools:listitem="@layout/adapter_multiple_attachment_list"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:orientation="horizontal"
-                android:overScrollMode="never" />
+                <ImageView
+                    android:id="@+id/imgAttachment"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:padding="@dimen/_5sdp"
+                    android:src="@drawable/baseline_attach_file_24"/>
+            </LinearLayout>
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

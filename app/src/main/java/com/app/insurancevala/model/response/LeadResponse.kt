@@ -131,6 +131,10 @@ data class LeadModel (
     val TotalMeeting: Int? = null,
     @SerializedName("TotalCall")
     val TotalCall: Int? = null,
+    @SerializedName("MainImage")
+    val MainImage: String? = null,
+    @SerializedName("OtherImage")
+    val OtherImage: String? = null,
     @SerializedName("FamilysDetails")
     val FamilyDetails: ArrayList<FamilyDetailsModel>? = null
 ):Serializable

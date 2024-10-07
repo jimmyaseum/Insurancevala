@@ -62,6 +62,14 @@ interface ApiInterface {
     ): retrofit2.Call<UserImageResponse>
 
     @Multipart
+    @POST("Leads/LeadImageUpload") // done
+    fun ManageLeadImageInsert(
+        @Part("ID") ReferenceGUID: RequestBody?,
+        @Part MainImage: MultipartBody.Part,
+        @Part OtherImage: MultipartBody.Part,
+    ): retrofit2.Call<CommonImageUploadResponse>
+
+    @Multipart
     @POST("Leads/LeadImageUpdate") // done
     fun ManageLeadImage(
         @Part("LeadGUID") ReferenceGUID: RequestBody?,
@@ -165,9 +173,6 @@ interface ApiInterface {
 
     @POST("ActivityLog/NBLeadActivityLogFindAll")
     fun NBLeadActivityLogFindAll(@Body body: RequestBody?): retrofit2.Call<ActivityLogResponse>
-
-    @POST("ActivityLog/NBLeadActivityLogFindAll")
-    fun ActivityLogGUID(@Body body: RequestBody?): retrofit2.Call<ActivityLogResponse>
 
     @POST("MasterSub/DashBoardCountView")
     fun ManageDashboard(@Body body: RequestBody?): retrofit2.Call<DashboardResponse>
@@ -422,6 +427,9 @@ interface ApiInterface {
 
     @POST("Leads/LeadsFindByID")
     fun ManageLeadsFindByID(@Body body: RequestBody?): retrofit2.Call<LeadByGUIDResponse>
+
+    @POST("Leads/LeadReportPDF")
+    fun ManageLeadReportPDF(@Body body: RequestBody?): retrofit2.Call<CommonResponse>
 
     @GET("PlanBrochure/PlanBrochureFindAllActive")
     fun getPlanBrochureAllActive(): Call<PlanBrochuresResponse>

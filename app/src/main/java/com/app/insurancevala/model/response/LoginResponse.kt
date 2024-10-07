@@ -31,7 +31,7 @@ data class LoginModel (
     val MobileNo: String? = null,
     @SerializedName("EmailID")
     val EmailID: String? = null,
-    @SerializedName("Token")
+    @SerializedName("DeviceToken")
     val Token: String? = null,
     @SerializedName("IsUser")
     val IsUser: Int? = null,

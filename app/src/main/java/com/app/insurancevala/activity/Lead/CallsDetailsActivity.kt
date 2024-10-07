@@ -44,8 +44,7 @@ class CallsDetailsActivity  : BaseActivity(), View.OnClickListener {
         if (sharedPreference == null) {
             sharedPreference = SharedPreference(applicationContext)
         }
-        AppConstant.TOKEN =
-            sharedPreference?.getPreferenceString(PrefConstants.PREF_TOKEN).toString()
+        AppConstant.TOKEN = sharedPreference?.getPreferenceString(PrefConstants.PREF_TOKEN).toString()
     }
 
     override fun initializeView() {

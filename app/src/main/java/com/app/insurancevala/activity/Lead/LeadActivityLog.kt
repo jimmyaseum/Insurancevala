@@ -324,7 +324,7 @@ class LeadActivityLog : BaseActivity(), View.OnClickListener, RecyclerClickListe
         jsonObject.put("ToDate", "")
 
         val call =
-            ApiUtils.apiInterface.ActivityLogGUID(getRequestJSONBody(jsonObject.toString()))
+            ApiUtils.apiInterface.NBLeadActivityLogFindAll(getRequestJSONBody(jsonObject.toString()))
         call.enqueue(object : Callback<ActivityLogResponse> {
             override fun onResponse(
                 call: Call<ActivityLogResponse>,

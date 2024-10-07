@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/layout">
+    android:id="@+id/layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:id="@+id/llTop"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_40sdp"
-        android:orientation="horizontal"
         android:layout_alignParentTop="true"
-        android:padding="@dimen/_5sdp"
-        android:background="@color/colorPrimary">
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        android:padding="@dimen/_5sdp">
 
         <ImageView
             android:id="@+id/imgBack"
             android:layout_width="@dimen/_30sdp"
             android:layout_height="@dimen/_30sdp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             android:padding="@dimen/_5sdp"
             android:src="@drawable/ic_back"
-            app:tint="@color/colorWhite"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"/>
+            app:tint="@color/colorWhite" />
 
         <TextView
             android:id="@+id/txtHearderText"
@@ -40,14 +40,14 @@
             android:id="@+id/txtSave"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
             android:fontFamily="@font/poppins_semibold"
             android:gravity="center"
+            android:paddingRight="@dimen/_5sdp"
             android:text="Save"
             android:textColor="@color/button_primary"
-            android:textSize="@dimen/_12sdp"
-            android:layout_alignParentRight="true"
-            android:paddingRight="@dimen/_5sdp"
-            android:layout_centerVertical="true"/>
+            android:textSize="@dimen/_12sdp" />
 
     </RelativeLayout>
 
@@ -55,34 +55,34 @@
         android:id="@+id/scrollview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/llTop"
-        android:layout_above="@+id/llBottom">
+        android:layout_above="@+id/llBottom"
+        android:layout_below="@+id/llTop">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_margin="@dimen/_5sdp"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/_20sdp"
-            android:layout_margin="@dimen/_5sdp">
+            android:paddingBottom="@dimen/_20sdp">
 
             <TextView
                 android:id="@+id/txtClientNo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorBlack"
-                android:text="Client No : "
-                android:textSize="@dimen/_15sdp"
-                android:fontFamily="@font/poppins_medium"
-                android:layout_marginTop="@dimen/_7sdp"
                 android:layout_marginLeft="@dimen/_7sdp"
-                android:visibility="gone"/>
+                android:layout_marginTop="@dimen/_7sdp"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Client No : "
+                android:textColor="@color/colorBlack"
+                android:textSize="@dimen/_15sdp"
+                android:visibility="gone" />
 
             <LinearLayout
                 android:id="@+id/LLType"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="right|center_vertical"
+                android:orientation="horizontal"
                 android:padding="@dimen/_5sdp">
 
                 <RadioGroup
@@ -90,27 +90,29 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
+
                     <RadioButton
                         android:id="@+id/rbForExisting"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Existing Client"
+                        android:buttonTint="@color/colorBlack"
                         android:checked="true"
-                        android:textSize="@dimen/_10sdp"
-                        android:textColor="@color/colorBlack"
                         android:fontFamily="@font/poppins_semibold"
-                        android:buttonTint="@color/colorBlack" />
+                        android:text="Existing Client"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/_10sdp" />
+
                     <RadioButton
                         android:id="@+id/rbForProspect"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Prospect"
-                        android:textSize="@dimen/_10sdp"
-                        android:textColor="@color/colorBlack"
+                        android:buttonTint="@color/colorBlack"
                         android:fontFamily="@font/poppins_semibold"
-                        android:buttonTint="@color/colorBlack" />
+                        android:text="Prospect"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/_10sdp" />
 
                 </RadioGroup>
             </LinearLayout>
@@ -119,55 +121,59 @@
                 android:id="@+id/LLInitial"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="@dimen/_5sdp">
 
                 <ImageView
                     android:layout_width="@dimen/_15sdp"
                     android:layout_height="@dimen/_15sdp"
                     android:src="@drawable/ic_initial"
-                    app:tint="@color/colorGray500"/>
+                    app:tint="@color/colorGray500" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginLeft="@dimen/_5sdp">
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/txtInitial"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:textColor="@color/colorGray500"
-                        android:text="Initial"
-                        android:textSize="@dimen/_10sdp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_regular"
                         android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_regular"/>
+                        android:text="Initial"
+                        android:textColor="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp" />
+
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="2"
                         android:layout_height="wrap_content"
+                        android:layout_weight="2"
                         android:orientation="vertical">
+
                         <EditText
                             android:id="@+id/edtInitial"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/colorBlack"
-                            android:textColorHint="@color/colorGray500"
-                            android:textSize="@dimen/_10sdp"
-                            android:fontFamily="@font/poppins_regular"
                             android:background="@null"
-                            android:singleLine="true"
                             android:clickable="true"
+                            android:drawableRight="@drawable/ic_down"
+                            android:drawableTint="@color/colorGray500"
                             android:editable="false"
                             android:focusable="false"
-                            android:drawableRight="@drawable/ic_down"
-                            android:drawableTint="@color/colorGray500" />
+                            android:fontFamily="@font/poppins_regular"
+                            android:singleLine="true"
+                            android:textColor="@color/colorBlack"
+                            android:textColorHint="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_1sdp"
-                            android:background="@color/colorGradish"/>
+                            android:background="@color/colorGradish" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -178,52 +184,56 @@
                 android:id="@+id/LLFirstName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="@dimen/_5sdp">
 
                 <ImageView
                     android:layout_width="@dimen/_15sdp"
                     android:layout_height="@dimen/_15sdp"
                     android:src="@drawable/ic_username"
-                    app:tint="@color/colorGray500"/>
+                    app:tint="@color/colorGray500" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginLeft="@dimen/_5sdp">
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/txtFirstName"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:textColor="@color/colorGray500"
-                        android:text="First Name"
-                        android:textSize="@dimen/_10sdp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_regular"
                         android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_regular"/>
+                        android:text="First Name"
+                        android:textColor="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp" />
+
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="2"
                         android:layout_height="wrap_content"
+                        android:layout_weight="2"
                         android:orientation="vertical">
+
                         <EditText
                             android:id="@+id/edtFirstName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:fontFamily="@font/poppins_regular"
+                            android:imeOptions="actionNext"
+                            android:inputType="textCapWords"
+                            android:singleLine="true"
                             android:textColor="@color/colorBlack"
                             android:textColorHint="@color/colorGray500"
-                            android:textSize="@dimen/_10sdp"
-                            android:fontFamily="@font/poppins_regular"
-                            android:background="@null"
-                            android:singleLine="true"
-                            android:imeOptions="actionNext"
-                            android:inputType="textCapWords" />
+                            android:textSize="@dimen/_10sdp" />
+
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_1sdp"
-                            android:background="@color/colorGradish"/>
+                            android:background="@color/colorGradish" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -234,52 +244,56 @@
                 android:id="@+id/LLLastName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="@dimen/_5sdp">
 
                 <ImageView
                     android:layout_width="@dimen/_15sdp"
                     android:layout_height="@dimen/_15sdp"
                     android:src="@drawable/ic_username"
-                    app:tint="@color/colorGray500"/>
+                    app:tint="@color/colorGray500" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginLeft="@dimen/_5sdp">
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/txtLastName"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:textColor="@color/colorGray500"
-                        android:text="Last Name"
-                        android:textSize="@dimen/_10sdp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_regular"
                         android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_regular"/>
+                        android:text="Last Name"
+                        android:textColor="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp" />
+
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="2"
                         android:layout_height="wrap_content"
+                        android:layout_weight="2"
                         android:orientation="vertical">
+
                         <EditText
                             android:id="@+id/edtLastName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:fontFamily="@font/poppins_regular"
+                            android:imeOptions="actionNext"
+                            android:inputType="textCapWords"
+                            android:singleLine="true"
                             android:textColor="@color/colorBlack"
                             android:textColorHint="@color/colorGray500"
-                            android:textSize="@dimen/_10sdp"
-                            android:fontFamily="@font/poppins_regular"
-                            android:background="@null"
-                            android:singleLine="true"
-                            android:imeOptions="actionNext"
-                            android:inputType="textCapWords" />
+                            android:textSize="@dimen/_10sdp" />
+
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_1sdp"
-                            android:background="@color/colorGradish"/>
+                            android:background="@color/colorGradish" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -290,54 +304,58 @@
                 android:id="@+id/LLMobileNo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="@dimen/_5sdp">
 
                 <ImageView
                     android:layout_width="@dimen/_15sdp"
                     android:layout_height="@dimen/_15sdp"
                     android:src="@drawable/ic_call"
-                    app:tint="@color/colorGray500"/>
+                    app:tint="@color/colorGray500" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginLeft="@dimen/_5sdp">
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/txtMobileNo"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:textColor="@color/colorGray500"
-                        android:text="Mobile No"
-                        android:textSize="@dimen/_10sdp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_regular"
                         android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_regular"/>
+                        android:text="Mobile No"
+                        android:textColor="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp" />
+
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="2"
                         android:layout_height="wrap_content"
+                        android:layout_weight="2"
                         android:orientation="vertical">
+
                         <EditText
                             android:id="@+id/edtMobileNo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/colorBlack"
-                            android:textColorHint="@color/colorGray500"
-                            android:textSize="@dimen/_10sdp"
-                            android:fontFamily="@font/poppins_regular"
                             android:background="@null"
-                            android:singleLine="true"
+                            android:fontFamily="@font/poppins_regular"
                             android:imeOptions="actionNext"
                             android:inputType="number"
+                            android:maxEms="12"
                             android:maxLength="12"
-                            android:maxEms="12"/>
+                            android:singleLine="true"
+                            android:textColor="@color/colorBlack"
+                            android:textColorHint="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_1sdp"
-                            android:background="@color/colorGradish"/>
+                            android:background="@color/colorGradish" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -348,52 +366,56 @@
                 android:id="@+id/LLEmailAddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="@dimen/_5sdp">
 
                 <ImageView
                     android:layout_width="@dimen/_15sdp"
                     android:layout_height="@dimen/_15sdp"
                     android:src="@drawable/ic_email"
-                    app:tint="@color/colorGray500"/>
+                    app:tint="@color/colorGray500" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginLeft="@dimen/_5sdp">
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/txtEmailAddress"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:textColor="@color/colorGray500"
-                        android:text="Email"
-                        android:textSize="@dimen/_10sdp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_regular"
                         android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_regular"/>
+                        android:text="Email"
+                        android:textColor="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp" />
+
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="2"
                         android:layout_height="wrap_content"
+                        android:layout_weight="2"
                         android:orientation="vertical">
+
                         <EditText
                             android:id="@+id/edtEmailAddress"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:fontFamily="@font/poppins_regular"
+                            android:imeOptions="actionNext"
+                            android:inputType="textCapWords"
+                            android:singleLine="true"
                             android:textColor="@color/colorBlack"
                             android:textColorHint="@color/colorGray500"
-                            android:textSize="@dimen/_10sdp"
-                            android:fontFamily="@font/poppins_regular"
-                            android:background="@null"
-                            android:singleLine="true"
-                            android:imeOptions="actionNext"
-                            android:inputType="textCapWords" />
+                            android:textSize="@dimen/_10sdp" />
+
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_1sdp"
-                            android:background="@color/colorGradish"/>
+                            android:background="@color/colorGradish" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -404,52 +426,56 @@
                 android:id="@+id/LLGroupCode"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="@dimen/_5sdp">
 
                 <ImageView
                     android:layout_width="@dimen/_15sdp"
                     android:layout_height="@dimen/_15sdp"
                     android:src="@drawable/ic_title"
-                    app:tint="@color/colorGray500"/>
+                    app:tint="@color/colorGray500" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginLeft="@dimen/_5sdp">
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/txtGroupCode"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:textColor="@color/colorGray500"
-                        android:text="Group Code"
-                        android:textSize="@dimen/_10sdp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_regular"
                         android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_regular"/>
+                        android:text="Group Code"
+                        android:textColor="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp" />
+
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="2"
                         android:layout_height="wrap_content"
+                        android:layout_weight="2"
                         android:orientation="vertical">
+
                         <EditText
                             android:id="@+id/edtGroupCode"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:fontFamily="@font/poppins_regular"
+                            android:imeOptions="actionNext"
+                            android:inputType="textCapWords"
+                            android:singleLine="true"
                             android:textColor="@color/colorBlack"
                             android:textColorHint="@color/colorGray500"
-                            android:textSize="@dimen/_10sdp"
-                            android:fontFamily="@font/poppins_regular"
-                            android:background="@null"
-                            android:singleLine="true"
-                            android:imeOptions="actionNext"
-                            android:inputType="textCapWords" />
+                            android:textSize="@dimen/_10sdp" />
+
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_1sdp"
-                            android:background="@color/colorGradish"/>
+                            android:background="@color/colorGradish" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -460,55 +486,59 @@
                 android:id="@+id/LLOccupation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="@dimen/_5sdp">
 
                 <ImageView
                     android:layout_width="@dimen/_15sdp"
                     android:layout_height="@dimen/_15sdp"
                     android:src="@drawable/ic_title"
-                    app:tint="@color/colorGray500"/>
+                    app:tint="@color/colorGray500" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginLeft="@dimen/_5sdp">
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/txtOccupation"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:textColor="@color/colorGray500"
-                        android:text="Occupation"
-                        android:textSize="@dimen/_10sdp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_regular"
                         android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_regular"/>
+                        android:text="Occupation"
+                        android:textColor="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp" />
+
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="2"
                         android:layout_height="wrap_content"
+                        android:layout_weight="2"
                         android:orientation="vertical">
+
                         <EditText
                             android:id="@+id/edtOccupation"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/colorBlack"
-                            android:textColorHint="@color/colorGray500"
-                            android:textSize="@dimen/_10sdp"
-                            android:fontFamily="@font/poppins_regular"
                             android:background="@null"
-                            android:singleLine="true"
                             android:clickable="true"
+                            android:drawableRight="@drawable/ic_down"
+                            android:drawableTint="@color/colorGray500"
                             android:editable="false"
                             android:focusable="false"
-                            android:drawableRight="@drawable/ic_down"
-                            android:drawableTint="@color/colorGray500"   />
+                            android:fontFamily="@font/poppins_regular"
+                            android:singleLine="true"
+                            android:textColor="@color/colorBlack"
+                            android:textColorHint="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="@dimen/_1sdp"
-                            android:background="@color/colorGradish"/>
+                            android:background="@color/colorGradish" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -519,45 +549,48 @@
                 android:id="@+id/LLCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:padding="@dimen/_5sdp">
 
                 <ImageView
                     android:layout_width="@dimen/_15sdp"
                     android:layout_height="@dimen/_15sdp"
                     android:src="@drawable/ic_category"
-                    app:tint="@color/colorGray500"/>
+                    app:tint="@color/colorGray500" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginLeft="@dimen/_5sdp">
+                    android:layout_marginLeft="@dimen/_5sdp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/txtCategory"
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="match_parent"
-                        android:textColor="@color/colorGray500"
-                        android:text="Category"
-                        android:textSize="@dimen/_10sdp"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/poppins_regular"
                         android:gravity="center_vertical"
-                        android:fontFamily="@font/poppins_regular"/>
+                        android:text="Category"
+                        android:textColor="@color/colorGray500"
+                        android:textSize="@dimen/_10sdp" />
+
                     <LinearLayout
                         android:layout_width="0dp"
-                        android:layout_weight="2"
                         android:layout_height="wrap_content"
+                        android:layout_weight="2"
                         android:orientation="vertical">
+
                         <RatingBar
                             android:id="@+id/rating_bar"
+                            style="?android:attr/ratingBarStyleIndicator"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:numStars="5"
-                            android:stepSize="1"
                             android:isIndicator="false"
+                            android:numStars="5"
                             android:progressTint="@color/gold"
-                            style="?android:attr/ratingBarStyleIndicator" />
+                            android:stepSize="1" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -568,9 +601,9 @@
                 android:id="@+id/llMoreFields"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:animateLayoutChanges="true"
                 android:orientation="vertical"
-                android:visibility="visible"
-                android:animateLayoutChanges="true">
+                android:visibility="visible">
 
                 <!--Lead Info-->
                 <TextView
@@ -578,66 +611,70 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:fontFamily="@font/poppins_semibold"
                     android:gravity="center"
                     android:text="Lead Info"
                     android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/_12sdp"
-                    android:layout_marginTop="@dimen/_10sdp"/>
+                    android:textSize="@dimen/_12sdp" />
 
                 <LinearLayout
                     android:id="@+id/LLLeadOwner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_initial"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtLeadOwner"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Lead Owner"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="Lead Owner"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtLeadOwner"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorBlack"
-                                android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
                                 android:background="@null"
-                                android:singleLine="true"
                                 android:clickable="true"
+                                android:drawableRight="@drawable/ic_down"
+                                android:drawableTint="@color/colorGray500"
                                 android:editable="false"
                                 android:focusable="false"
-                                android:drawableRight="@drawable/ic_down"
-                                android:drawableTint="@color/colorGray500" />
+                                android:fontFamily="@font/poppins_regular"
+                                android:singleLine="true"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -648,52 +685,56 @@
                     android:id="@+id/LLCompanyName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_company"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtCompanyName"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Company "
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="Company "
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtCompanyName"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:fontFamily="@font/poppins_regular"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords"
+                                android:singleLine="true"
                                 android:textColor="@color/colorBlack"
                                 android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
-                                android:background="@null"
-                                android:singleLine="true"
-                                android:imeOptions="actionNext"
-                                android:inputType="textCapWords" />
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -704,52 +745,56 @@
                     android:id="@+id/LLTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_title"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtTitle"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Title"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="Title"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtTitle"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:fontFamily="@font/poppins_regular"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords"
+                                android:singleLine="true"
                                 android:textColor="@color/colorBlack"
                                 android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
-                                android:background="@null"
-                                android:singleLine="true"
-                                android:imeOptions="actionNext"
-                                android:inputType="textCapWords" />
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -760,53 +805,57 @@
                     android:id="@+id/LLPhoneNo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_phone"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtPhoneNo"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Phone No"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="Phone No"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtPhoneNo"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorBlack"
-                                android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
                                 android:background="@null"
-                                android:singleLine="true"
+                                android:fontFamily="@font/poppins_regular"
                                 android:imeOptions="actionNext"
                                 android:inputType="number"
-                                android:maxEms="10"/>
+                                android:maxEms="10"
+                                android:singleLine="true"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -817,52 +866,56 @@
                     android:id="@+id/LLWebsite"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_website"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtWebsite"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Website"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="Website"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtWebsite"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:fontFamily="@font/poppins_regular"
+                                android:imeOptions="actionNext"
+                                android:inputType="text"
+                                android:singleLine="true"
                                 android:textColor="@color/colorBlack"
                                 android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
-                                android:background="@null"
-                                android:singleLine="true"
-                                android:imeOptions="actionNext"
-                                android:inputType="text" />
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -873,56 +926,59 @@
                     android:id="@+id/LLLeadSource"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_initial"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtLeadSource"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Source"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="Source"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtLeadSource"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorBlack"
-                                android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
                                 android:background="@null"
-                                android:singleLine="true"
                                 android:clickable="true"
+                                android:drawableRight="@drawable/ic_down"
+                                android:drawableTint="@color/colorGray500"
                                 android:editable="false"
                                 android:focusable="false"
-                                android:drawableRight="@drawable/ic_down"
-                                android:drawableTint="@color/colorGray500"/>
+                                android:fontFamily="@font/poppins_regular"
+                                android:singleLine="true"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -933,52 +989,56 @@
                     android:id="@+id/LLReferenceName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_username"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtReferenceName"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Ref. Name"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="Ref. Name"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtReferenceName"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:fontFamily="@font/poppins_regular"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords"
+                                android:singleLine="true"
                                 android:textColor="@color/colorBlack"
                                 android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
-                                android:background="@null"
-                                android:singleLine="true"
-                                android:imeOptions="actionNext"
-                                android:inputType="textCapWords" />
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -989,53 +1049,57 @@
                     android:id="@+id/LLReferenceMobileNo"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_call"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtReferenceMobileNo"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Ref. Mobile No"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="Ref. Mobile No"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtReferenceMobileNo"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorBlack"
-                                android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
                                 android:background="@null"
-                                android:singleLine="true"
+                                android:fontFamily="@font/poppins_regular"
                                 android:imeOptions="actionNext"
                                 android:inputType="number"
-                                android:maxLength="10"/>
+                                android:maxLength="10"
+                                android:singleLine="true"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -1046,52 +1110,56 @@
                     android:id="@+id/LLIndustry"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_industry"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtIndustry"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Industry"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="Industry"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtIndustry"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:fontFamily="@font/poppins_regular"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords"
+                                android:singleLine="true"
                                 android:textColor="@color/colorBlack"
                                 android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
-                                android:background="@null"
-                                android:singleLine="true"
-                                android:imeOptions="actionNext"
-                                android:inputType="textCapWords" />
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -1102,52 +1170,56 @@
                     android:id="@+id/LLNoOfEmp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_email"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtNoOfEmp"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="No Of Emp"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="No Of Emp"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtNoOfEmp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:fontFamily="@font/poppins_regular"
+                                android:imeOptions="actionNext"
+                                android:inputType="number"
+                                android:singleLine="true"
                                 android:textColor="@color/colorBlack"
                                 android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
-                                android:background="@null"
-                                android:singleLine="true"
-                                android:imeOptions="actionNext"
-                                android:inputType="number" />
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -1158,52 +1230,56 @@
                     android:id="@+id/LLAnnualRevenue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_email"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtAnnualRevenue"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Annual Revenue"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="Annual Revenue"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtAnnualRevenue"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:fontFamily="@font/poppins_regular"
+                                android:imeOptions="actionNext"
+                                android:inputType="numberDecimal"
+                                android:singleLine="true"
                                 android:textColor="@color/colorBlack"
                                 android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
-                                android:background="@null"
-                                android:singleLine="true"
-                                android:imeOptions="actionNext"
-                                android:inputType="numberDecimal" />
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -1216,62 +1292,66 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:fontFamily="@font/poppins_semibold"
                     android:gravity="center"
                     android:text="Address Info"
                     android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/_12sdp"
-                    android:layout_marginTop="@dimen/_10sdp"/>
+                    android:textSize="@dimen/_12sdp" />
 
                 <LinearLayout
                     android:id="@+id/LLAddress"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_industry"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtAddress"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/colorGray500"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:text="Address"
-                            android:textSize="@dimen/_10sdp"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtAddress"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:fontFamily="@font/poppins_regular"
+                                android:imeOptions="actionNext"
+                                android:inputType="textCapWords"
+                                android:singleLine="true"
                                 android:textColor="@color/colorBlack"
                                 android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
-                                android:background="@null"
-                                android:singleLine="true"
-                                android:imeOptions="actionNext"
-                                android:inputType="textCapWords" />
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -1282,55 +1362,59 @@
                     android:id="@+id/LLCity"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_username"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtCity"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="City"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="City"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtCity"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorBlack"
-                                android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
                                 android:background="@null"
-                                android:singleLine="true"
                                 android:clickable="true"
+                                android:drawableRight="@drawable/ic_down"
+                                android:drawableTint="@color/colorGray500"
                                 android:editable="false"
                                 android:focusable="false"
-                                android:drawableRight="@drawable/ic_down"
-                                android:drawableTint="@color/colorGray500"/>
+                                android:fontFamily="@font/poppins_regular"
+                                android:singleLine="true"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -1341,55 +1425,59 @@
                     android:id="@+id/LLState"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_username"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtState"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="State"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="State"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtState"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorBlack"
-                                android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
                                 android:background="@null"
-                                android:singleLine="true"
                                 android:clickable="true"
+                                android:drawableRight="@drawable/ic_down"
+                                android:drawableTint="@color/colorGray500"
                                 android:editable="false"
                                 android:focusable="false"
-                                android:drawableRight="@drawable/ic_down"
-                                android:drawableTint="@color/colorGray500"/>
+                                android:fontFamily="@font/poppins_regular"
+                                android:singleLine="true"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -1400,55 +1488,59 @@
                     android:id="@+id/LLCountry"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_call"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtCountry"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Country"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="Country"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtCountry"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorBlack"
-                                android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
                                 android:background="@null"
-                                android:singleLine="true"
                                 android:clickable="true"
+                                android:drawableRight="@drawable/ic_down"
+                                android:drawableTint="@color/colorGray500"
                                 android:editable="false"
                                 android:focusable="false"
-                                android:drawableRight="@drawable/ic_down"
-                                android:drawableTint="@color/colorGray500"/>
+                                android:fontFamily="@font/poppins_regular"
+                                android:singleLine="true"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -1459,52 +1551,56 @@
                     android:id="@+id/LLZipcode"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_email"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtZipcode"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Zipcode"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular"/>
+                            android:text="Zipcode"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtZipcode"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:fontFamily="@font/poppins_regular"
+                                android:imeOptions="actionNext"
+                                android:inputType="number"
+                                android:singleLine="true"
                                 android:textColor="@color/colorBlack"
                                 android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
-                                android:background="@null"
-                                android:singleLine="true"
-                                android:imeOptions="actionNext"
-                                android:inputType="number" />
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -1515,52 +1611,55 @@
                     android:id="@+id/LLNotes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_description"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtNotes"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Notes"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular" />
+                            android:text="Notes"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
+
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtNotes"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:fontFamily="@font/poppins_regular"
+                                android:inputType="textMultiLine|textCapWords"
+                                android:minLines="2"
                                 android:textColor="@color/colorBlack"
                                 android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
-                                android:background="@null"
-                                android:minLines="2"
-                                android:inputType="textMultiLine|textCapWords"/>
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -1573,69 +1672,71 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
+                    android:layout_marginTop="@dimen/_10sdp"
                     android:fontFamily="@font/poppins_semibold"
                     android:gravity="center"
                     android:text="Personal Info"
                     android:textColor="@color/colorBlack"
-                    android:textSize="@dimen/_12sdp"
-                    android:layout_marginTop="@dimen/_10sdp"/>
+                    android:textSize="@dimen/_12sdp" />
 
                 <!--Date of Birth-->
                 <LinearLayout
                     android:id="@+id/LLBirthDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_cal"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtBirthDate"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Birth Date"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular" />
+                            android:text="Birth Date"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
 
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtDateOfBirth"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorBlack"
-                                android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
                                 android:background="@null"
-                                android:singleLine="true"
                                 android:clickable="true"
+                                android:drawableRight="@drawable/ic_down"
+                                android:drawableTint="@color/colorGray500"
                                 android:editable="false"
                                 android:focusable="false"
-                                android:drawableRight="@drawable/ic_down"
-                                android:drawableTint="@color/colorGray500"/>
+                                android:fontFamily="@font/poppins_regular"
+                                android:singleLine="true"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -1647,58 +1748,125 @@
                     android:id="@+id/LLMarriage"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <ImageView
                         android:layout_width="@dimen/_15sdp"
                         android:layout_height="@dimen/_15sdp"
                         android:src="@drawable/ic_cal"
-                        app:tint="@color/colorGray500"/>
+                        app:tint="@color/colorGray500" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginLeft="@dimen/_5sdp">
+                        android:layout_marginLeft="@dimen/_5sdp"
+                        android:orientation="horizontal">
 
                         <TextView
                             android:id="@+id/txtMarriage"
                             android:layout_width="0dp"
-                            android:layout_weight="1"
                             android:layout_height="match_parent"
-                            android:textColor="@color/colorGray500"
-                            android:text="Marriage Date"
-                            android:textSize="@dimen/_10sdp"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/poppins_regular"
                             android:gravity="center_vertical"
-                            android:fontFamily="@font/poppins_regular" />
+                            android:text="Marriage Date"
+                            android:textColor="@color/colorGray500"
+                            android:textSize="@dimen/_10sdp" />
 
                         <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_weight="2"
                             android:layout_height="wrap_content"
+                            android:layout_weight="2"
                             android:orientation="vertical">
+
                             <EditText
                                 android:id="@+id/edtMarriage"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:textColor="@color/colorBlack"
-                                android:textColorHint="@color/colorGray500"
-                                android:textSize="@dimen/_10sdp"
-                                android:fontFamily="@font/poppins_regular"
                                 android:background="@null"
-                                android:singleLine="true"
                                 android:clickable="true"
+                                android:drawableRight="@drawable/ic_down"
+                                android:drawableTint="@color/colorGray500"
                                 android:editable="false"
                                 android:focusable="false"
-                                android:drawableRight="@drawable/ic_down"
-                                android:drawableTint="@color/colorGray500"/>
+                                android:fontFamily="@font/poppins_regular"
+                                android:singleLine="true"
+                                android:textColor="@color/colorBlack"
+                                android:textColorHint="@color/colorGray500"
+                                android:textSize="@dimen/_10sdp" />
+
                             <View
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_1sdp"
-                                android:background="@color/colorGradish"/>
+                                android:background="@color/colorGradish" />
                         </LinearLayout>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <!--Images-->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:gravity="center"
+                            android:text="Main Image"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/imgMain"
+                            android:layout_width="@dimen/_45sdp"
+                            android:layout_height="@dimen/_45sdp"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:src="@drawable/ic_camera"
+                            app:civ_border_color="@color/colorPrimary"
+                            app:civ_border_width="1dp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <!--Images-->
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:gravity="center"
+                            android:text="Other Image"
+                            android:textColor="@color/colorBlack"
+                            android:textSize="@dimen/_12sdp" />
+
+                        <de.hdodenhof.circleimageview.CircleImageView
+                            android:id="@+id/imgOther"
+                            android:layout_width="@dimen/_45sdp"
+                            android:layout_height="@dimen/_45sdp"
+                            android:layout_marginStart="@dimen/_5sdp"
+                            android:src="@drawable/ic_camera"
+                            app:civ_border_color="@color/colorPrimary"
+                            app:civ_border_width="1dp" />
 
                     </LinearLayout>
 
@@ -1708,8 +1876,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_marginTop="@dimen/_10sdp">
+                    android:layout_marginTop="@dimen/_10sdp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/txtFamilyMember"
@@ -1720,19 +1888,19 @@
                         android:gravity="center_vertical"
                         android:text="Family Member"
                         android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/_12sdp"/>
+                        android:textSize="@dimen/_12sdp" />
 
                     <TextView
                         android:id="@+id/tvAddMore"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingVertical="@dimen/_3sdp"
-                        android:paddingHorizontal="@dimen/_7sdp"
-                        android:text="Add More"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:textColor="@color/colorBlack"
                         android:background="@drawable/bg_edittext"
-                        android:textSize="@dimen/_10sdp"/>
+                        android:fontFamily="@font/poppins_semibold"
+                        android:paddingHorizontal="@dimen/_7sdp"
+                        android:paddingVertical="@dimen/_3sdp"
+                        android:text="Add More"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="@dimen/_10sdp" />
 
                 </LinearLayout>
 
@@ -1740,15 +1908,15 @@
                     android:id="@+id/LLFamilyMember"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
                     android:gravity="center_vertical"
+                    android:orientation="horizontal"
                     android:padding="@dimen/_5sdp">
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rvFamilyMember"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        tools:listitem="@layout/adapter_add_more_family_member"/>
+                        tools:listitem="@layout/adapter_add_more_family_member" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -1761,29 +1929,29 @@
         android:id="@+id/llBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="@dimen/_10sdp">
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:orientation="vertical">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/_1sdp"
-            android:background="@color/button_primary"
-            android:layout_marginBottom="@dimen/_5sdp"/>
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:background="@color/button_primary" />
 
         <TextView
             android:id="@+id/txtShowAllFiels"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:drawableRight="@drawable/ic_up"
+            android:drawablePadding="@dimen/_10sdp"
+            android:drawableTint="@color/colorBlack"
             android:fontFamily="@font/poppins_medium"
             android:gravity="center"
-            android:text="Show all fields"
+            android:text="Switch to smart view"
             android:textColor="@color/colorBlack"
-            android:textSize="@dimen/_12sdp"
-            android:layout_gravity="center"
-            android:drawableTint="@color/colorBlack"
-            android:drawablePadding="@dimen/_10sdp"
-            android:drawableRight="@drawable/ic_down"/>
+            android:textSize="@dimen/_12sdp" />
 
     </LinearLayout>
 
